@@ -3,7 +3,7 @@ import React from "react";
 
 export default function EventLog({ events }) {
   return (
-    <div className="bg-white rounded-lg p-4 h-full overflow-y-auto shadow-md">
+    <div className="bg-white rounded-lg p-4 max-h-[calc(100vh-8rem)] overflow-y-auto shadow-md">
       <h2 className="text-lg font-semibold mb-4">Conversation Transcript</h2>
       <div className="flex flex-col gap-3">
         {events

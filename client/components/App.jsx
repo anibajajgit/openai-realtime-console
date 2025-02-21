@@ -136,8 +136,8 @@ export default function App() {
           <h1>Voice chat app</h1>
         </div>
       </nav>
-      <main className="absolute top-16 left-0 right-0 bottom-0">
-        <div className="flex h-full">
+      <main className="fixed top-16 left-0 right-0 bottom-0 overflow-hidden">
+        <div className="flex h-full bg-gray-50">
           <section className="w-2/5 p-4">
             {isSessionActive && <EventLog events={events} />}
           </section>
