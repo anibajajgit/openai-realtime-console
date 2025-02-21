@@ -149,12 +149,16 @@ export default function App() {
                     navigator.mediaDevices.getUserMedia({ video: true })
                       .then(stream => {
                         video.srcObject = stream;
-                        video.play();
+                        video.onloadedmetadata = () => {
+                          video.play().catch(err => console.error("Error playing video:", err));
+                        };
                       })
                       .catch(err => console.error("Error accessing camera:", err));
                   }
                 }}
                 className="w-full h-full object-cover rounded-lg"
+                playsInline
+                muted
               />
             </div>
             <div className="h-32">
