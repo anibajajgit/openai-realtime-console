@@ -1,0 +1,45 @@
+WebSocket server error:
+Error: getaddrinfo ENOTFOUND workspace.anirudhbajaj1.repl.co
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)
+Token generation error: TypeError: fetch failed
+    at node:internal/deps/undici/undici:13392:13
+    at async file:///home/runner/workspace/server.js:39:22 {
+  [cause]: InvalidArgumentError: invalid upgrade header
+      at processHeader (node:internal/deps/undici/undici:2164:15)
+      at new Request (node:internal/deps/undici/undici:1998:15)
+      at [dispatch] (node:internal/deps/undici/undici:7700:25)
+      at Intercept (node:internal/deps/undici/undici:7435:20)
+      at [Intercepted Dispatch] (node:internal/deps/undici/undici:572:16)
+      at Client.dispatch (node:internal/deps/undici/undici:588:44)
+      at [dispatch] (node:internal/deps/undici/undici:819:32)
+      at [Intercepted Dispatch] (node:internal/deps/undici/undici:565:33)
+      at Pool.dispatch (node:internal/deps/undici/undici:588:44)
+      at [dispatch] (node:internal/deps/undici/undici:8122:27)
+      at Intercept (node:internal/deps/undici/undici:7435:20)
+      at [Intercepted Dispatch] (node:internal/deps/undici/undici:572:16)
+      at Agent.dispatch (node:internal/deps/undici/undici:588:44)
+      at node:internal/deps/undici/undici:11032:55
+      at new Promise (<anonymous>)
+      at dispatch (node:internal/deps/undici/undici:11032:16)
+      at httpNetworkFetch (node:internal/deps/undici/undici:10929:73)
+      at httpNetworkOrCacheFetch (node:internal/deps/undici/undici:10815:39)
+      at httpFetch (node:internal/deps/undici/undici:10648:43)
+      at schemeFetch (node:internal/deps/undici/undici:10565:18)
+      at node:internal/deps/undici/undici:10410:26
+      at mainFetch (node:internal/deps/undici/undici:10429:11)
+      at fetching (node:internal/deps/undici/undici:10377:7)
+      at fetch (node:internal/deps/undici/undici:10246:20)
+      at fetch (node:internal/deps/undici/undici:13390:10)
+      at fetch (node:internal/bootstrap/web/exposed-window-or-worker:72:12)
+      at file:///home/runner/workspace/server.js:39:28
+      at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (/home/runner/workspace/node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+      at /home/runner/workspace/node_modules/express/lib/router/index.js:284:15
+      at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+      at Immediate.next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+      at process.processImmediate (node:internal/timers:485:21) {
+    code: 'UND_ERR_INVALID_ARG'
+  }
+}
