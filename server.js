@@ -20,7 +20,7 @@ const vite = await createViteServer({
 });
 app.use(vite.middlewares);
 
-// API route for token generation
+// API route for token generation and WebSocket upgrade
 app.get("/token", async (req, res) => {
   try {
     const response = await fetch(
@@ -30,6 +30,8 @@ app.get("/token", async (req, res) => {
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
+          "Upgrade": "websocket",
+          "Connection": "Upgrade"
         },
         body: JSON.stringify({
           model: "gpt-4o-realtime-preview-2024-12-17",
