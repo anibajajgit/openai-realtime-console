@@ -38,14 +38,22 @@ export default function EventLog({ events }) {
               }
               // Handle user audio input
               else if (event.item?.content?.[0]?.type === "input_audio") {
-                text = "Recording audio...";
+                // Store reference to this event for updating later
+                text = event.transcript || "Recording audio...";
                 isUser = event.item.role === "user";
               }
               break;
 
             case "audio.transcription":
-              text = event.transcript;
-              isUser = true;
+              // Update the existing "Recording audio..." message
+              const transcriptionEvent = events.find(e => 
+                e.type === "conversation.item.created" && 
+                e.item?.content?.[0]?.type === "input_audio"
+              );
+              if (transcriptionEvent) {
+                transcriptionEvent.transcript = event.transcript;
+              }
+              return null; // Don't create a new message
               break;
 
             case "response.text.done":
