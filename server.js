@@ -12,11 +12,19 @@ const vite = await createViteServer({
   server: { 
     middlewareMode: true,
     hmr: {
+      clientPort: 443,
       port: 24678,
       host: '0.0.0.0'
     }
   },
   appType: "custom",
+});
+
+// Enable CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  next();
 });
 app.use(vite.middlewares);
 
