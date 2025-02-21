@@ -30,23 +30,28 @@ export default function EventLog({ events }) {
           let isUser = false;
 
           switch (event.type) {
-            case "conversation.item.create":
-              // Handle initial audio input
-              if (event.item?.content?.[0]?.type === "input_audio") {
-                text = "🎤 Recording...";
-                isUser = true;
+            case "conversation.item.created":
+              // Handle user text input
+              if (event.item?.content?.[0]?.type === "input_text") {
+                text = event.item.content[0].text;
+                isUser = event.item.role === "user";
+              }
+              // Handle user audio input with transcript
+              else if (event.item?.content?.[0]?.type === "input_audio" && event.item?.content?.[0]?.transcript) {
+                text = event.item.content[0].transcript;
+                isUser = event.item.role === "user";
               }
               break;
 
-            case "audio.transcription":
-              // Handle transcription updates
-              text = event.transcript;
-              isUser = true;
+            case "response.text.done":
+              // Handle assistant text responses
+              text = event.text;
+              isUser = false;
               break;
 
-            case "text.chunk":
-              // Handle assistant responses
-              text = event.chunk?.text;
+            case "response.audio_transcript.done":
+              // Handle assistant audio responses
+              text = event.transcript;
               isUser = false;
               break;
           }
