@@ -1,0 +1,43 @@
+Raw event data: {"type":"input_audio_buffer.speech_started","event_id":"event_B3WhlOArhTjtMeMTPmIxv","audio_start_ms":1568,"item_id":"item_B3WhlzAXiSmloxt7Nqurz"}
+App.jsx:124 Parsed event: {type: 'input_audio_buffer.speech_started', event_id: 'event_B3WhlOArhTjtMeMTPmIxv', audio_start_ms: 1568, item_id: 'item_B3WhlzAXiSmloxt7Nqurz'}
+App.jsx:130 Non-transcription event: input_audio_buffer.speech_started
+App.jsx:123 Raw event data: {"type":"input_audio_buffer.speech_stopped","event_id":"event_B3WhmvG9JXytBwdoOl86Q","audio_end_ms":2304,"item_id":"item_B3WhlzAXiSmloxt7Nqurz"}
+App.jsx:124 Parsed event: {type: 'input_audio_buffer.speech_stopped', event_id: 'event_B3WhmvG9JXytBwdoOl86Q', audio_end_ms: 2304, item_id: 'item_B3WhlzAXiSmloxt7Nqurz'}
+App.jsx:130 Non-transcription event: input_audio_buffer.speech_stopped
+App.jsx:123 Raw event data: {"type":"input_audio_buffer.committed","event_id":"event_B3WhmV4fdiM9Bm0Zhp1pG","previous_item_id":null,"item_id":"item_B3WhlzAXiSmloxt7Nqurz"}
+App.jsx:124 Parsed event: {type: 'input_audio_buffer.committed', event_id: 'event_B3WhmV4fdiM9Bm0Zhp1pG', previous_item_id: null, item_id: 'item_B3WhlzAXiSmloxt7Nqurz'}
+App.jsx:130 Non-transcription event: input_audio_buffer.committed
+App.jsx:123 Raw event data: {"type":"conversation.item.created","event_id":"event_B3Whmizshx0t273Qm5WqI","previous_item_id":null,"item":{"id":"item_B3WhlzAXiSmloxt7Nqurz","object":"realtime.item","type":"message","status":"completed","role":"user","content":[{"type":"input_audio","transcript":null}]}}
+App.jsx:124 Parsed event: {type: 'conversation.item.created', event_id: 'event_B3Whmizshx0t273Qm5WqI', previous_item_id: null, item: {…}}
+App.jsx:130 Non-transcription event: conversation.item.created
+App.jsx:123 Raw event data: {"type":"response.created","event_id":"event_B3WhmvjEWUNNNF46oCIvj","response":{"object":"realtime.response","id":"resp_B3WhmuxoJYb2vZtTgi9bf","status":"in_progress","status_details":null,"output":[],"conversation_id":"conv_B3WhjTJeihX8ni6815YOa","modalities":["audio","text"],"voice":"verse","output_audio_format":"pcm16","temperature":0.8,"max_output_tokens":"inf","usage":null,"metadata":null}}
+App.jsx:124 Parsed event: {type: 'response.created', event_id: 'event_B3WhmvjEWUNNNF46oCIvj', response: {…}}
+App.jsx:130 Non-transcription event: response.created
+App.jsx:123 Raw event data: {"type":"rate_limits.updated","event_id":"event_B3WhmINH7hUeq7bAsudS1","rate_limits":[{"name":"requests","limit":1000,"remaining":999,"reset_seconds":86.4},{"name":"tokens","limit":40000,"remaining":35173,"reset_seconds":7.24}]}
+App.jsx:124 Parsed event: {type: 'rate_limits.updated', event_id: 'event_B3WhmINH7hUeq7bAsudS1', rate_limits: Array(2)}
+App.jsx:130 Non-transcription event: rate_limits.updated
+App.jsx:123 Raw event data: {"type":"response.output_item.added","event_id":"event_B3WhmXy8NyicfOzelGIzR","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf","output_index":0,"item":{"id":"item_B3WhmPhJi3qBsjgF5Jqbl","object":"realtime.item","type":"message","status":"in_progress","role":"assistant","content":[]}}
+App.jsx:124 Parsed event: {type: 'response.output_item.added', event_id: 'event_B3WhmXy8NyicfOzelGIzR', response_id: 'resp_B3WhmuxoJYb2vZtTgi9bf', output_index: 0, item: {…}}
+App.jsx:130 Non-transcription event: response.output_item.added
+App.jsx:123 Raw event data: {"type":"conversation.item.created","event_id":"event_B3WhmUPMNvD6xoi3v7Vwp","previous_item_id":"item_B3WhlzAXiSmloxt7Nqurz","item":{"id":"item_B3WhmPhJi3qBsjgF5Jqbl","object":"realtime.item","type":"message","status":"in_progress","role":"assistant","content":[]}}
+App.jsx:124 Parsed event: {type: 'conversation.item.created', event_id: 'event_B3WhmUPMNvD6xoi3v7Vwp', previous_item_id: 'item_B3WhlzAXiSmloxt7Nqurz', item: {…}}
+App.jsx:130 Non-transcription event: conversation.item.created
+App.jsx:123 Raw event data: {"type":"response.content_part.added","event_id":"event_B3WhmmLd4EhQny9pWgcKM","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf","item_id":"item_B3WhmPhJi3qBsjgF5Jqbl","output_index":0,"content_index":0,"part":{"type":"audio","transcript":""}}
+App.jsx:124 Parsed event: {type: 'response.content_part.added', event_id: 'event_B3WhmmLd4EhQny9pWgcKM', response_id: 'resp_B3WhmuxoJYb2vZtTgi9bf', item_id: 'item_B3WhmPhJi3qBsjgF5Jqbl', output_index: 0, …}
+App.jsx:130 Non-transcription event: response.content_part.added
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3WhmoOXzNZmVmm4nY6ov","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf","item_id":"item_B3WhmPhJi3qBsjgF5Jqbl","output_index":0,"content_index":0,"delta":"Hey"}
+App.jsx:124 Parsed event: {type: 'response.audio_transcript.delta', event_id: 'event_B3WhmoOXzNZmVmm4nY6ov', response_id: 'resp_B3WhmuxoJYb2vZtTgi9bf', item_id: 'item_B3WhmPhJi3qBsjgF5Jqbl', output_index: 0, …}
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3WhmdnpRg35Ff8UPQK6T","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf","item_id":"item_B3WhmPhJi3qBsjgF5Jqbl","output_index":0,"content_index":0,"delta":" there"}
+App.jsx:124 Parsed event: {type: 'response.audio_transcript.delta', event_id: 'event_B3WhmdnpRg35Ff8UPQK6T', response_id: 'resp_B3WhmuxoJYb2vZtTgi9bf', item_id: 'item_B3WhmPhJi3qBsjgF5Jqbl', output_index: 0, …}
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3WhmrNy6E94S0Zrxlu1N","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf","item_id":"item_B3WhmPhJi3qBsjgF5Jqbl","output_index":0,"content_index":0,"delta":"!"}
+App.jsx:124 Parsed event: {type: 'response.audio_transcript.delta', event_id: 'event_B3WhmrNy6E94S0Zrxlu1N', response_id: 'resp_B3WhmuxoJYb2vZtTgi9bf', item_id: 'item_B3WhmPhJi3qBsjgF5Jqbl', output_index: 0, …}
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3WhmoAC4Nir3B44NjLsP","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf","item_id":"item_B3WhmPhJi3qBsjgF5Jqbl","output_index":0,"content_index":0,"delta":" How"}
+App.jsx:124 Parsed event: {type: 'response.audio_transcript.delta', event_id: 'event_B3WhmoAC4Nir3B44NjLsP', response_id: 'resp_B3WhmuxoJYb2vZtTgi9bf', item_id: 'item_B3WhmPhJi3qBsjgF5Jqbl', output_index: 0, …}
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3WhmjsQOR97lsa7tPX1P","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf","item_id":"item_B3WhmPhJi3qBsjgF5Jqbl","output_index":0,"content_index":0,"delta":"'s"}
+App.jsx:124 Parsed event: {type: 'response.audio_transcript.delta', event_id: 'event_B3WhmjsQOR97lsa7tPX1P', response_id: 'resp_B3WhmuxoJYb2vZtTgi9bf', item_id: 'item_B3WhmPhJi3qBsjgF5Jqbl', output_index: 0, …}
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"output_audio_buffer.started","event_id":"event_702e9b81a6f04ca4","response_id":"resp_B3WhmuxoJYb2vZtTgi9bf"}
