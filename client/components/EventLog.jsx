@@ -2,15 +2,17 @@
 import React from "react";
 
 export default function EventLog({ events }) {
+  if (!Array.isArray(events)) return null;
+
   return (
-    <div className="bg-white rounded-lg p-4 max-h-[calc(100vh-8rem)] overflow-y-auto shadow-md">
+    <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 max-h-[calc(100vh-8rem)] overflow-y-auto shadow-md w-full">
       <h2 className="text-lg font-semibold mb-4">Conversation Transcript</h2>
       <div className="flex flex-col gap-3">
         {events
           .slice()
           .reverse()
           .map((event) => {
-            if (event.item?.type === 'message') {
+            if (event?.item?.type === 'message' && event?.item?.content?.[0]?.text) {
               return (
                 <div 
                   key={event.event_id} 
