@@ -118,7 +118,12 @@ export default function App() {
     if (dataChannel) {
       // Append new server events to the list
       dataChannel.addEventListener("message", (e) => {
-        setEvents((prev) => [JSON.parse(e.data), ...prev]);
+        const event = JSON.parse(e.data);
+        if (event.type === "audio.transcription") {
+          setEvents(prev => [event, ...prev]);
+        } else {
+          setEvents(prev => [event, ...prev]);
+        }
       });
 
       // Set session active when the data channel is opened
@@ -169,6 +174,13 @@ export default function App() {
                 sendTextMessage={sendTextMessage}
                 events={events}
                 isSessionActive={isSessionActive}
+                onAudioTranscript={(transcript) => {
+                  setEvents(prev => [{
+                    type: "audio.transcription",
+                    transcript,
+                    event_id: Date.now().toString()
+                  }, ...prev]);
+                }}
               />
             </div>
           </section>
