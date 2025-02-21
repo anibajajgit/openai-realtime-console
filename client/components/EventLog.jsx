@@ -25,63 +25,29 @@ export default function EventLog({ events }) {
     >
       <h2 className="text-lg font-semibold mb-4">Conversation Transcript</h2>
       <div className="flex flex-col gap-3">
-        {events.map((event) => {
+        {events.map((event, index) => {
           let text = '';
           let isUser = false;
 
-          switch (event.type) {
-            case "conversation.item.created":
-              // Handle text input
-              if (event.item?.content?.[0]?.type === "input_text") {
-                text = event.item.content[0].text;
-                isUser = event.item.role === "user";
-              }
-              // Handle user audio input
-              else if (event.item?.content?.[0]?.type === "input_audio") {
-                // Store reference to this event for updating later
-                text = event.transcript || "Recording audio...";
-                isUser = event.item.role === "user";
-              }
-              break;
-
-            case "audio.transcription":
-              // Update the existing "Recording audio..." message
-              const transcriptionEvent = events.find(e => 
-                e.type === "conversation.item.created" && 
-                e.item?.content?.[0]?.type === "input_audio"
-              );
-              if (transcriptionEvent) {
-                transcriptionEvent.transcript = event.transcript;
-              }
-              return null; // Don't create a new message
-              break;
-
-            case "response.text.done":
-              // Handle assistant text responses
-              text = event.text;
-              isUser = false;
-              break;
-
-            case "response.audio_transcript.done":
-              // Handle assistant audio responses
-              text = event.transcript;
-              isUser = false;
-              break;
+          if (event.type === 'audio.transcription') {
+            text = event.transcript;
+            isUser = true;
+          } else if (event.type === 'conversation.item.text' || event.type === 'conversation.item.create') {
+            if (event.item?.content?.[0]?.text) {
+              text = event.item.content[0].text;
+              isUser = event.item.role === 'user';
+            }
           }
 
           if (!text) return null;
 
           return (
             <div 
-              key={event.event_id} 
-              className={`p-3 rounded-lg ${
-                isUser ? 'bg-blue-100' : 'bg-gray-100'
-              } max-w-[80%] ${isUser ? 'self-end' : 'self-start'}`}
+              key={event.event_id || index}
+              className={`p-3 rounded-lg ${isUser ? 'bg-blue-100 ml-auto' : 'bg-gray-100'} max-w-[80%]`}
             >
-              <div className="text-sm text-gray-600 mb-1">
-                {isUser ? 'You' : 'Assistant'}
-              </div>
-              <div className="whitespace-pre-wrap">{text}</div>
+              <p className="text-sm text-gray-600 mb-1">{isUser ? 'You' : 'Assistant'}</p>
+              <p>{text}</p>
             </div>
           );
         })}
