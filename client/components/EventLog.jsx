@@ -27,10 +27,25 @@ export default function EventLog({ events }) {
       <h2 className="text-lg font-semibold mb-4">Conversation Transcript</h2>
       <div className="flex flex-col gap-3">
         {events.map((event) => {
-          if (!event?.item?.content) return null;
-          
-          const isUser = event.item.role === 'user';
-          const text = event.item.content[0]?.text || '';
+          let text = '';
+          let isUser = false;
+
+          switch (event.type) {
+            case "conversation.item.create":
+              if (event.item?.content?.[0]?.type === "input_text") {
+                text = event.item.content[0].text;
+                isUser = event.item.role === "user";
+              }
+              break;
+            case "response.done":
+              if (event.response?.output?.[0]?.content?.[0]?.text) {
+                text = event.response.output[0].content[0].text;
+                isUser = false;
+              }
+              break;
+          }
+
+          if (!text) return null;
           
           return (
             <div 
