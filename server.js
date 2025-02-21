@@ -13,9 +13,9 @@ const vite = await createViteServer({
   server: { 
     middlewareMode: true,
     hmr: {
-      protocol: 'wss',
-      host: process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co',
-      port: 443,
+      protocol: 'ws',
+      host: '0.0.0.0',
+      port: 24678,
       clientPort: 443
     }
   },
@@ -42,9 +42,7 @@ app.get("/token", async (req, res) => {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "Upgrade": "websocket",
-          "Connection": "Upgrade"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           model: "gpt-4o-realtime-preview-2024-12-17",
