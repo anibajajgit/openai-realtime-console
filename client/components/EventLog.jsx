@@ -26,27 +26,26 @@ export default function EventLog({ events }) {
     >
       <h2 className="text-lg font-semibold mb-4">Conversation Transcript</h2>
       <div className="flex flex-col gap-3">
-        {events
-          .slice()
-          .reverse()
-          .map((event) => {
-            if (!event?.item?.content?.[0]?.text) return null;
-            
-            const isUser = event.item.role === 'user';
-            return (
-              <div 
-                key={event.event_id} 
-                className={`p-3 rounded-lg ${
-                  isUser ? 'bg-blue-100 ml-auto' : 'bg-gray-100'
-                } max-w-[80%] ${isUser ? 'self-end' : 'self-start'} mb-2`}
-              >
-                <div className="text-sm text-gray-600 mb-1">
-                  {isUser ? 'You' : 'Assistant'}
-                </div>
-                <div className="whitespace-pre-wrap">{event.item.content[0].text}</div>
+        {events.map((event) => {
+          if (!event?.item?.content) return null;
+          
+          const isUser = event.item.role === 'user';
+          const text = event.item.content[0]?.text || '';
+          
+          return (
+            <div 
+              key={event.event_id} 
+              className={`p-3 rounded-lg ${
+                isUser ? 'bg-blue-100' : 'bg-gray-100'
+              } max-w-[80%] ${isUser ? 'self-end' : 'self-start'}`}
+            >
+              <div className="text-sm text-gray-600 mb-1">
+                {isUser ? 'You' : 'Assistant'}
               </div>
-            );
-          })}
+              <div className="whitespace-pre-wrap">{text}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
