@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import logo from "/assets/openai-logomark.svg";
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
-import ToolPanel from "./ToolPanel";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
