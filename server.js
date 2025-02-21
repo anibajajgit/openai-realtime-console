@@ -5,6 +5,7 @@ import "dotenv/config";
 
 const app = express();
 const port = process.env.PORT || 3000;
+const hmrPort = process.env.HMR_PORT || 24678;
 const apiKey = process.env.OPENAI_API_KEY;
 
 // Configure Vite middleware for React client
@@ -14,8 +15,8 @@ const vite = await createViteServer({
     hmr: {
       protocol: 'ws',
       host: '0.0.0.0',
-      port: 24678,
-      clientPort: 443
+      port: hmrPort,
+      clientPort: hmrPort
     }
   },
   appType: "custom",
