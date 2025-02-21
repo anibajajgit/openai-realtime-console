@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "/assets/openai-logomark.svg";
+
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
 
@@ -133,8 +133,7 @@ export default function App() {
     <>
       <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
         <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
-          <img style={{ width: "24px" }} src={logo} />
-          <h1>realtime console</h1>
+          <h1>Voice chat app</h1>
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
