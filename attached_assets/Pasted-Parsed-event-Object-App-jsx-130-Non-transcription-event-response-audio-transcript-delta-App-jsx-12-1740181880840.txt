@@ -1,0 +1,188 @@
+Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4nobLODLIMZMKMHYGo","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":" busy"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4nwOfiw4csQd6GZUG0","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":","}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4n8AgiVCZyKHsICvay","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":" or"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4n9kcrLRMDKb9WfBof","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":" just"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4nip1frACF2ETHqshS","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":" chilling"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4n4QMq91F6hM7AugDk","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":" out"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4nU7mkVoO3VhoyGryg","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":" today"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4nPpQaQNDDprGfgX2h","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":"?"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4nUplknCsrZGpW3AQ8","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"delta":" "}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio.done","event_id":"event_B3X4nFvyaayVN0O6KwzFD","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio.done
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.done","event_id":"event_B3X4n4zL4gGmHZwGi7c2E","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"transcript":"I'm doing great, thanks for asking! How about you? Keeping busy, or just chilling out today? "}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.done
+App.jsx:123 Raw event data: {"type":"response.content_part.done","event_id":"event_B3X4nhWrntAwjopEyowe6","response_id":"resp_B3X4m09p4eUORUI5fhVbh","item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","output_index":0,"content_index":0,"part":{"type":"audio","transcript":"I'm doing great, thanks for asking! How about you? Keeping busy, or just chilling out today? "}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.content_part.done
+App.jsx:123 Raw event data: {"type":"response.output_item.done","event_id":"event_B3X4nhQVp6f394SMpRm9p","response_id":"resp_B3X4m09p4eUORUI5fhVbh","output_index":0,"item":{"id":"item_B3X4mG2ZpUZ2KjkOhSkmg","object":"realtime.item","type":"message","status":"completed","role":"assistant","content":[{"type":"audio","transcript":"I'm doing great, thanks for asking! How about you? Keeping busy, or just chilling out today? "}]}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.output_item.done
+App.jsx:123 Raw event data: {"type":"response.done","event_id":"event_B3X4nZVgHAtMVTqOoeHoF","response":{"object":"realtime.response","id":"resp_B3X4m09p4eUORUI5fhVbh","status":"completed","status_details":null,"output":[{"id":"item_B3X4mG2ZpUZ2KjkOhSkmg","object":"realtime.item","type":"message","status":"completed","role":"assistant","content":[{"type":"audio","transcript":"I'm doing great, thanks for asking! How about you? Keeping busy, or just chilling out today? "}]}],"conversation_id":"conv_B3X4hbFXhak85qeTyr360","modalities":["text","audio"],"voice":"verse","output_audio_format":"pcm16","temperature":0.8,"max_output_tokens":"inf","usage":{"total_tokens":353,"input_tokens":192,"output_tokens":161,"input_token_details":{"text_tokens":143,"audio_tokens":49,"cached_tokens":128,"cached_tokens_details":{"text_tokens":128,"audio_tokens":0}},"output_token_details":{"text_tokens":36,"audio_tokens":125}},"metadata":null}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.done
+App.jsx:123 Raw event data: {"type":"output_audio_buffer.stopped","event_id":"event_e0ea706e6e9b4b23","response_id":"resp_B3X4m09p4eUORUI5fhVbh"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: output_audio_buffer.stopped
+App.jsx:123 Raw event data: {"type":"input_audio_buffer.speech_started","event_id":"event_B3X4tMOFvsw5ocsWK3Ga0","audio_start_ms":11328,"item_id":"item_B3X4t78HCaERiI2f1jtSP"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: input_audio_buffer.speech_started
+App.jsx:123 Raw event data: {"type":"input_audio_buffer.speech_stopped","event_id":"event_B3X4uOBQNuedzdcxKKEqU","audio_end_ms":12288,"item_id":"item_B3X4t78HCaERiI2f1jtSP"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: input_audio_buffer.speech_stopped
+App.jsx:123 Raw event data: {"type":"input_audio_buffer.committed","event_id":"event_B3X4uM9hPAzvZ74QVjKfE","previous_item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","item_id":"item_B3X4t78HCaERiI2f1jtSP"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: input_audio_buffer.committed
+App.jsx:123 Raw event data: {"type":"conversation.item.created","event_id":"event_B3X4uGM6YeYPWkyICCxRL","previous_item_id":"item_B3X4mG2ZpUZ2KjkOhSkmg","item":{"id":"item_B3X4t78HCaERiI2f1jtSP","object":"realtime.item","type":"message","status":"completed","role":"user","content":[{"type":"input_audio","transcript":null}]}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: conversation.item.created
+App.jsx:123 Raw event data: {"type":"response.created","event_id":"event_B3X4up9MpmYpD10htLoMO","response":{"object":"realtime.response","id":"resp_B3X4u5ORKLPZJbjtBfQWT","status":"in_progress","status_details":null,"output":[],"conversation_id":"conv_B3X4hbFXhak85qeTyr360","modalities":["text","audio"],"voice":"verse","output_audio_format":"pcm16","temperature":0.8,"max_output_tokens":"inf","usage":null,"metadata":null}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.created
+App.jsx:123 Raw event data: {"type":"rate_limits.updated","event_id":"event_B3X4uQZ2cRjmRAlAoPziD","rate_limits":[{"name":"requests","limit":1000,"remaining":997,"reset_seconds":249.508},{"name":"tokens","limit":40000,"remaining":34955,"reset_seconds":7.567}]}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: rate_limits.updated
+App.jsx:123 Raw event data: {"type":"response.output_item.added","event_id":"event_B3X4ugtOWtzAu0aa7OTUm","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","output_index":0,"item":{"id":"item_B3X4uSe78NQ2zPagf3N5C","object":"realtime.item","type":"message","status":"in_progress","role":"assistant","content":[]}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.output_item.added
+App.jsx:123 Raw event data: {"type":"conversation.item.created","event_id":"event_B3X4uArgTIaFGm8yVGTkC","previous_item_id":"item_B3X4t78HCaERiI2f1jtSP","item":{"id":"item_B3X4uSe78NQ2zPagf3N5C","object":"realtime.item","type":"message","status":"in_progress","role":"assistant","content":[]}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: conversation.item.created
+App.jsx:123 Raw event data: {"type":"response.content_part.added","event_id":"event_B3X4uSTIZo6SVs9GKlF5J","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"part":{"type":"audio","transcript":""}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.content_part.added
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uyQn5rwAoOuSR1rFQ","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":"Nice"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4ucUldzGBkEBAhhITX","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":","}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uOqqGEBxiSmRbNfO5","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" that"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uv8lB2T3pASwVIyja","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" sounds"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"output_audio_buffer.started","event_id":"event_d7eb177a26dd441f","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: output_audio_buffer.started
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uOoTkI9w4Z4nElIJc","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" relaxing"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4urddfBaQYTGUupsxY","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":"!"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uvqsU7WAgJNUW87aZ","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" Sometimes"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uVKGpeZUZxScw9eZK","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" a"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4u4gcsPlKPkXsCfBGd","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" chill"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uSLSwC9URjB7RMK3R","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" day"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4uBFEkd9ChpBF7xECx","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" is"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4ugqqlv5A1PUqbL06X","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" just"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4unKvNAw9JSdgMNlWg","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" what"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vVGImlB2kDTKrvyzs","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" the"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vWjbBJQ5teAnAGUY3","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" doctor"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vl8lOD394LzlJMwG4","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" ordered"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vc9tkfysI76C3OdUU","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":"."}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vwLQkqJGTM1G3GkaD","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" Got"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vNMBcPeG5FHoKLNcs","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" anything"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4v4dzKBbre575ZirAf","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" fun"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vEt0f2qAdG8qEmJEq","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" planned"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vYFeau4nnWsNkB524","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":","}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vJdD2MYwW4lrAKErN","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" or"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vWMNg21v7uPxDrmeB","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" are"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vYNkjgpZoy0OMeGG3","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" you"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vwcOmhFU2TNbSRqL1","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" just"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4v5o9f3TFGquLvn9iP","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" going"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vUgx5gcDh53zDItzc","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" with"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vXtfAdHv1dER7QX7L","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" the"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vr4O5d0T3RuTcdg2o","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":" flow"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.delta","event_id":"event_B3X4vHop9QVXy0Tb5ZYTD","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"delta":"?"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.delta
+App.jsx:123 Raw event data: {"type":"conversation.item.input_audio_transcription.completed","event_id":"event_B3X4vIr2BN1wkKcNP12rh","item_id":"item_B3X4t78HCaERiI2f1jtSP","content_index":0,"transcript":"I'm just chilling out\n"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: conversation.item.input_audio_transcription.completed
+App.jsx:123 Raw event data: {"type":"response.audio.done","event_id":"event_B3X4wLOk3DVOmm3Kvsw0p","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio.done
+App.jsx:123 Raw event data: {"type":"response.audio_transcript.done","event_id":"event_B3X4w8v2nK5ZYI43U2sMS","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"transcript":"Nice, that sounds relaxing! Sometimes a chill day is just what the doctor ordered. Got anything fun planned, or are you just going with the flow?"}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.audio_transcript.done
+App.jsx:123 Raw event data: {"type":"response.content_part.done","event_id":"event_B3X4wOWd3eGRf1n9sMArQ","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","item_id":"item_B3X4uSe78NQ2zPagf3N5C","output_index":0,"content_index":0,"part":{"type":"audio","transcript":"Nice, that sounds relaxing! Sometimes a chill day is just what the doctor ordered. Got anything fun planned, or are you just going with the flow?"}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.content_part.done
+App.jsx:123 Raw event data: {"type":"response.output_item.done","event_id":"event_B3X4wxE9tPdYr8FreLg0t","response_id":"resp_B3X4u5ORKLPZJbjtBfQWT","output_index":0,"item":{"id":"item_B3X4uSe78NQ2zPagf3N5C","object":"realtime.item","type":"message","status":"completed","role":"assistant","content":[{"type":"audio","transcript":"Nice, that sounds relaxing! Sometimes a chill day is just what the doctor ordered. Got anything fun planned, or are you just going with the flow?"}]}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.output_item.done
+App.jsx:123 Raw event data: {"type":"response.done","event_id":"event_B3X4wkIUniomrGAKCSrTC","response":{"object":"realtime.response","id":"resp_B3X4u5ORKLPZJbjtBfQWT","status":"completed","status_details":null,"output":[{"id":"item_B3X4uSe78NQ2zPagf3N5C","object":"realtime.item","type":"message","status":"completed","role":"assistant","content":[{"type":"audio","transcript":"Nice, that sounds relaxing! Sometimes a chill day is just what the doctor ordered. Got anything fun planned, or are you just going with the flow?"}]}],"conversation_id":"conv_B3X4hbFXhak85qeTyr360","modalities":["text","audio"],"voice":"verse","output_audio_format":"pcm16","temperature":0.8,"max_output_tokens":"inf","usage":{"total_tokens":609,"input_tokens":373,"output_tokens":236,"input_token_details":{"text_tokens":189,"audio_tokens":184,"cached_tokens":128,"cached_tokens_details":{"text_tokens":128,"audio_tokens":0}},"output_token_details":{"text_tokens":47,"audio_tokens":189}},"metadata":null}}
+App.jsx:124 Parsed event: Object
+App.jsx:130 Non-transcription event: response.done
