@@ -118,16 +118,21 @@ export default function App() {
     if (dataChannel) {
       // Append new server events to the list
       dataChannel.addEventListener("message", (e) => {
-        const event = JSON.parse(e.data);
-        console.log("Received WebRTC event:", {
-          type: event.type,
-          event: event
-        });
-        if (event.type === "audio.transcription") {
-          console.log("Audio transcription event:", event);
-          setEvents(prev => [event, ...prev]);
-        } else {
-          setEvents(prev => [event, ...prev]);
+        try {
+          const event = JSON.parse(e.data);
+          console.log("Raw event data:", e.data);
+          console.log("Parsed event:", event);
+          
+          if (event.type === "audio.transcription") {
+            console.log("Audio transcription event:", event);
+            setEvents(prev => [event, ...prev]);
+          } else {
+            console.log("Non-transcription event:", event.type);
+            setEvents(prev => [event, ...prev]);
+          }
+        } catch (error) {
+          console.error("Error processing event:", error);
+          console.error("Raw event data:", e.data);
         }
       });
 
