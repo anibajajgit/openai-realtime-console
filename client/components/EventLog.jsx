@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 
 export default function EventLog({ events }) {
@@ -58,7 +57,7 @@ export default function EventLog({ events }) {
           }
 
           if (!text) return null;
-          
+
           return (
             <div 
               key={event.event_id} 
