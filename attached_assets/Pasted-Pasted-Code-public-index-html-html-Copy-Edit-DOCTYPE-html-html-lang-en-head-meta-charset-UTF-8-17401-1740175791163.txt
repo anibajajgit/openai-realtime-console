@@ -1,0 +1,192 @@
+Pasted-Code-public-index-html-html-Copy-Edit-DOCTYPE-html-html-lang-en-head-meta-charset-UTF-8-1740169944987.txt
+Code
+public/index.html
+html
+Copy
+Edit
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Realtime Conversation Transcript</title>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
+src/components/Transcript.js
+jsx
+Copy
+Edit
+// src/components/Transcript.js
+import React, { useEffect, useRef } from 'react';
+
+const Transcript = ({ messages }) => {
+  const transcriptRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to the bottom whenever messages change.
+    if (transcriptRef.current) {
+      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  return (
+    <div 
+      id="transcript" 
+      ref={transcriptRef}
+      style={{
+        border: '1px solid #ccc',
+        padding: '10px',
+        height: '300px',
+        overflowY: 'scroll',
+        fontFamily: 'Arial, sans-serif'
+      }}
+    >
+      {messages.map((msg, index) => (
+        <div key={index} style={{ marginBottom: '5px' }}>
+          {msg}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default Transcript;
+src/services/websocketService.js
+js
+Copy
+Edit
+// src/services/websocketService.js
+class WebSocketService {
+  constructor(url) {
+    this.ws = new WebSocket(url);
+    this.listeners = [];
+
+    this.ws.onopen = this.handleOpen.bind(this);
+    this.ws.onmessage = this.handleMessage.bind(this);
+    this.ws.onerror = this.handleError.bind(this);
+    this.ws.onclose = this.handleClose.bind(this);
+  }
+
+  handleOpen() {
+    console.log("WebSocket connection opened.");
+    // If required, send an initialization message with your ephemeral token:
+    // this.ws.send(JSON.stringify({ token: "YOUR_EPHEMERAL_API_TOKEN", type: "session.initialize" }));
+  }
+
+  handleMessage(event) {
+    try {
+      const data = JSON.parse(event.data);
+      if (!data.type) {
+        console.warn("Received event without a type:", data);
+        return;
+      }
+
+      let transcriptMessage = null;
+
+      // Process events according to the Realtime API documentation.
+      switch (data.type) {
+        // For transcribed audio input
+        case "conversation.item.input_audio_transcription.completed":
+          if (data.transcript) {
+            transcriptMessage = `User (transcribed): ${data.transcript}`;
+          }
+          break;
+
+        // For user text messages added via conversation.item.created
+        case "conversation.item.created":
+          if (data.item && Array.isArray(data.item.content)) {
+            data.item.content.forEach(contentPart => {
+              if ((contentPart.type === "input_text" || contentPart.type === "text") && contentPart.text) {
+                transcriptMessage = `User: ${contentPart.text}`;
+              }
+            });
+          }
+          break;
+
+        // For assistant responses
+        case "response.done":
+          if (data.response && Array.isArray(data.response.output)) {
+            data.response.output.forEach(item => {
+              if (item.role === "assistant" && Array.isArray(item.content)) {
+                item.content.forEach(contentPart => {
+                  if (contentPart.type === "text" && contentPart.text) {
+                    transcriptMessage = `Assistant: ${contentPart.text}`;
+                  }
+                });
+              }
+            });
+          }
+          break;
+
+        default:
+          console.log("Unhandled event type:", data.type);
+      }
+
+      // Notify all subscribers if a valid message was found.
+      if (transcriptMessage) {
+        this.listeners.forEach(listener => listener(transcriptMessage));
+      }
+    } catch (error) {
+      console.error("Error processing WebSocket message:", error);
+    }
+  }
+
+  handleError(error) {
+    console.error("WebSocket error:", error);
+  }
+
+  handleClose() {
+    console.log("WebSocket connection closed.");
+  }
+
+  subscribe(listener) {
+    this.listeners.push(listener);
+  }
+
+  unsubscribe(listener) {
+    this.listeners = this.listeners.filter(l => l !== listener);
+  }
+}
+
+export default WebSocketService;
+src/App.js
+jsx
+Copy
+Edit
+// src/App.js
+import React, { useState, useEffect } from 'react';
+import Transcript from './components/Transcript';
+import WebSocketService from './services/websocketService';
+
+function App() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    // Instantiate the WebSocket service with the Realtime API endpoint.
+    const wsService = new WebSocketService("wss://api.openai.com/v1/realtime");
+
+    // Listener to update transcript messages.
+    const listener = (newMessage) => {
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+    };
+
+    // Subscribe to WebSocket events.
+    wsService.subscribe(listener);
+
+    // Cleanup subscription on component unmount.
+    return () => {
+      wsService.unsubscribe(listener);
+    };
+  }, []);
+
+  return (
+    <div className="App" style={{ padding: '20px' }}>
+      <h2>Realtime Conversation Transcript</h2>
+      <Transcript messages={messages} />
+    </div>
+  );
+}
+
+export default A...
