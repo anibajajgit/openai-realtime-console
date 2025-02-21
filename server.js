@@ -12,18 +12,22 @@ const vite = await createViteServer({
   server: { 
     middlewareMode: true,
     hmr: {
-      clientPort: 443,
+      protocol: 'ws',
+      host: '0.0.0.0',
       port: 24678,
-      host: '0.0.0.0'
+      clientPort: 443
     }
   },
   appType: "custom",
 });
 
-// Enable CORS
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
+  if (req.headers.upgrade === 'websocket') {
+    res.header('Connection', 'Upgrade');
+    res.header('Upgrade', 'websocket');
+  }
   next();
 });
 app.use(vite.middlewares);
