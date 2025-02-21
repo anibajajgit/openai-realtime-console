@@ -30,11 +30,9 @@ export default function EventLog({ events }) {
           let isUser = false;
 
           switch (event.type) {
-            case "audio.transcription":
-              if (event.speech_final) {
-                text = event.text;
-                isUser = true;
-              }
+            case "conversation.item.input_audio_transcription.completed":
+              text = event.transcript;
+              isUser = true;
               break;
             case "response.text.done":
               text = event.text;
