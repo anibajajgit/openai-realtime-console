@@ -31,16 +31,21 @@ export default function EventLog({ events }) {
 
           switch (event.type) {
             case "conversation.item.created":
-              // Handle user text input
+              // Handle text input
               if (event.item?.content?.[0]?.type === "input_text") {
                 text = event.item.content[0].text;
                 isUser = event.item.role === "user";
               }
-              // Handle user audio input with transcript
-              else if (event.item?.content?.[0]?.type === "input_audio" && event.item?.content?.[0]?.transcript) {
-                text = event.item.content[0].transcript;
+              // Handle user audio input
+              else if (event.item?.content?.[0]?.type === "input_audio") {
+                text = "Recording audio...";
                 isUser = event.item.role === "user";
               }
+              break;
+
+            case "audio.transcription":
+              text = event.transcript;
+              isUser = true;
               break;
 
             case "response.text.done":
