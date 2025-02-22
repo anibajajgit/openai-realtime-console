@@ -53,7 +53,7 @@ export default function ScenarioSelector({ onRoleSelect }) {
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 h-full shadow-md w-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <div>
+        <div className="w-full">
           <h2 className="text-lg font-semibold mb-6">Choose a scenario</h2>
           <div className="space-y-4">
             <div className="relative">
