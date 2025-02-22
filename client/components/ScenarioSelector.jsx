@@ -17,8 +17,9 @@ export default function ScenarioSelector() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('selectedRole', JSON.stringify(selectedRole));
+      localStorage.setItem('selectedScenario', JSON.stringify(selectedScenario));
     }
-  }, [selectedRole]);
+  }, [selectedRole, selectedScenario]);
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 h-full shadow-md w-full">

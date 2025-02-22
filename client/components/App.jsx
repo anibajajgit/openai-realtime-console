@@ -13,8 +13,9 @@ export default function App() {
 
   async function startSession() {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
+    const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
     // Get an ephemeral key from the Fastify server
-    const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}`);
+    const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 
