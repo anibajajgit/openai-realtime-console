@@ -7,17 +7,9 @@ import ScenarioSelector from "./ScenarioSelector";
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
-  const [selectedRole, setSelectedRole] = useState(null);
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
-
-  useEffect(() => {
-    const saved = localStorage?.getItem('selectedRole');
-    if (saved) {
-      setSelectedRole(JSON.parse(saved));
-    }
-  }, []);
 
   async function startSession() {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
@@ -168,21 +160,7 @@ export default function App() {
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
           <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
-            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto relative">
-              {!isSessionActive && (
-                <div className="absolute left-4 top-4 flex items-center bg-white/80 backdrop-blur-sm rounded-lg p-2 h-[20%] w-[20%]">
-                  {selectedRole && (
-                    <>
-                      <img 
-                        src={selectedRole.photoUrl} 
-                        alt={selectedRole.name}
-                        className="h-12 w-12 rounded-full"
-                      />
-                      <span className="ml-2 font-medium text-sm">{selectedRole.name}</span>
-                    </>
-                  )}
-                </div>
-              )}
+            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
               <video 
                 ref={(video) => {
                   if (video) {
