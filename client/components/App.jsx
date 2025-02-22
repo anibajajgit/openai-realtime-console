@@ -157,29 +157,15 @@ export default function App() {
           <section className="w-2/5 p-4">
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
-          <section className="w-3/5 p-4 flex flex-col gap-4">
-            <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit">
-              <video 
-                ref={(video) => {
-                  if (video) {
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                      .then(stream => {
-                        video.srcObject = stream;
-                        video.onloadedmetadata = () => {
-                          video.play().catch(err => console.error("Error playing video:", err));
-                        };
-                      })
-                      .catch(err => console.error("Error accessing camera:", err));
-                  }
-                }}
-                className="h-full aspect-video object-cover rounded-lg"
-                playsInline
-                muted
-              />
-            </div>
-            <div className="h-32">
-              <SessionControls
-                startSession={startSession}
+          <section className="w-3/5 p-4">
+            <VideoCard 
+              startSession={startSession}
+              stopSession={stopSession}
+              sendClientEvent={sendClientEvent}
+              sendTextMessage={sendTextMessage}
+              serverEvents={serverEvents}
+              isSessionActive={isSessionActive}
+            />
                 stopSession={stopSession}
                 sendClientEvent={sendClientEvent}
                 sendTextMessage={sendTextMessage}
