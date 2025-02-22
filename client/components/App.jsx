@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-
+import { fetchRoles } from '../data/roles';
+import { fetchScenarios } from '../data/scenarios';
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
 import ScenarioSelector from "./ScenarioSelector";
@@ -8,8 +9,63 @@ export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [roles, setRoles] = useState([]);
+  const [scenarios, setScenarios] = useState([]);
+  const [error, setError] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [rolesData, scenariosData] = await Promise.all([
+          fetchRoles(),
+          fetchScenarios()
+        ]);
+
+        if (!rolesData.length || !scenariosData.length) {
+          throw new Error('Failed to load required data');
+        }
+
+        setRoles(rolesData);
+        setScenarios(scenariosData);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-800">Loading application data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-100">
+        <div className="text-center text-red-600">
+          <p>Failed to load application data.</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   async function startSession() {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
@@ -125,7 +181,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-          
+
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -157,7 +213,11 @@ export default function App() {
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex-row h-full bg-gray-50">
           <section className="w-full md:w-2/5 p-4">
-            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
+            {isSessionActive ? (
+              <EventLog events={events} />
+            ) : (
+              <ScenarioSelector initialRoles={roles} initialScenarios={scenarios} />
+            )}
           </section>
           <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
             <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
