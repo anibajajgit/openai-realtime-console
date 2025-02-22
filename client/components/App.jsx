@@ -159,8 +159,8 @@ export default function App() {
           <section className="w-full md:w-2/5 p-4">
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
-          <section className="w-full md:w-3/5 p-4 flex flex-col gap-4 bg-blue-50">
-            <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit">
+          <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
+            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-full">
               <video 
                 ref={(video) => {
                   if (video) {
@@ -174,12 +174,12 @@ export default function App() {
                       .catch(err => console.error("Error accessing camera:", err));
                   }
                 }}
-                className="h-full aspect-video object-cover rounded-lg"
+                className="h-full w-full aspect-video object-cover rounded-lg"
                 playsInline
                 muted
               />
             </div>
-            <div className="h-32">
+            <div className="h-24 md:h-32">
               <SessionControls
                 startSession={startSession}
                 stopSession={stopSession}
