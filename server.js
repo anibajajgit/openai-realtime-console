@@ -4,10 +4,6 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 
 const app = express();
-
-// Initialize database on server start
-import { initializeDb } from './client/utils/initDb.js';
-initializeDb().catch(console.error);
 const port = process.env.PORT || 3000;
 const hmrPort = process.env.HMR_PORT || 24678;
 const apiKey = process.env.OPENAI_API_KEY;
@@ -36,6 +32,27 @@ app.use((req, res, next) => {
   next();
 });
 app.use(vite.middlewares);
+
+// Initialize database with roles and scenarios
+import { initializeDb, getDbValue } from './client/utils/db.js';
+
+try {
+  await initializeDb();
+  console.log('Database initialized');
+} catch (error) {
+  console.error('Error initializing database:', error);
+}
+
+// API routes for roles and scenarios
+app.get("/api/roles", async (req, res) => {
+  const roles = await getDbValue('roles');
+  res.json(roles || []);
+});
+
+app.get("/api/scenarios", async (req, res) => {
+  const scenarios = await getDbValue('scenarios');
+  res.json(scenarios || []);
+});
 
 // API route for token generation and WebSocket upgrade
 app.get("/token", async (req, res) => {
@@ -101,14 +118,6 @@ app.use("*", async (req, res, next) => {
   }
 });
 
-import { initializeDb } from './client/utils/initDb.js';
-
-app.listen(port, async () => {
+app.listen(port, () => {
   console.log(`Express server running on *:${port}`);
-  try {
-    await initializeDb();
-    console.log('Database initialized');
-  } catch (error) {
-    console.error('Failed to initialize database:', error);
-  }
 });
