@@ -160,16 +160,18 @@ export default function App() {
           </section>
           <section className="w-3/5 p-4 flex flex-col gap-4">
             <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit relative">
-              <div className="absolute top-6 left-6 z-10 flex items-center bg-black/50 rounded-lg p-2">
-                <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-                  <img 
-                    src={selectedRole.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedRole.name)} 
-                    alt={selectedRole.name}
-                    className="w-full h-full object-cover"
-                  />
+              {selectedRole && (
+                <div className="absolute top-6 left-6 z-10 flex items-center bg-black/50 rounded-lg p-2">
+                  <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
+                    <img 
+                      src={selectedRole.photoUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedRole.name)} 
+                      alt={selectedRole.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="text-white font-medium">{selectedRole.name}</span>
                 </div>
-                <span className="text-white font-medium">{selectedRole.name}</span>
-              </div>
+              )}
               <div className="flex justify-center items-center h-full">
                 <video 
                   ref={(video) => {
