@@ -38,6 +38,18 @@ const roles = [
   }
 ];
 
+const VideoComponent = ({ selectedRole }) => {
+  return (
+    <div className="relative w-full h-[300px] bg-blue-100 rounded-lg overflow-hidden flex justify-center items-center">
+      <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-lg p-2">
+        {/* PersonComponent is assumed to exist */}
+        {/*<PersonComponent person={selectedRole} />*/}
+      </div>
+      <video className="h-full aspect-video object-contain" autoPlay playsInline muted />
+    </div>
+  );
+}
+
 export default function ScenarioSelector() {
   const [selectedScenario, setSelectedScenario] = useState(scenarios[0]);
   const [selectedRole, setSelectedRole] = useState(roles[0]);
