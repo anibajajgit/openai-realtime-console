@@ -8,31 +8,8 @@ export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-  const [roles, setRoles] = useState([]); // Add state for roles
-  const [scenarios, setScenarios] = useState([]); // Add state for scenarios
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const rolesResponse = await fetch('/api/roles'); // Fetch roles from API
-        const rolesData = await rolesResponse.json();
-        setRoles(rolesData);
-
-        const scenariosResponse = await fetch('/api/scenarios'); // Fetch scenarios from API
-        const scenariosData = await scenariosResponse.json();
-        setScenarios(scenariosData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false); // Set loading to false after data is fetched
-      }
-    };
-
-    fetchData();
-  }, []);
 
   async function startSession() {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
@@ -148,7 +125,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-
+          
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -170,14 +147,6 @@ export default function App() {
     }
   }, [dataChannel]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-white flex items-center justify-center">
-        <div className="text-xl font-semibold text-gray-700">Loading application...</div>
-      </div>
-    );
-  }
-
   return (
     <>
       <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
@@ -188,7 +157,7 @@ export default function App() {
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex-row h-full bg-gray-50">
           <section className="w-full md:w-2/5 p-4">
-            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector initialRoles={roles} initialScenarios={scenarios} />}
+            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
           <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
             <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
