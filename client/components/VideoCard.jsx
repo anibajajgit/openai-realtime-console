@@ -3,7 +3,7 @@ import SessionControls from './SessionControls';
 
 export default function VideoCard({ startSession, stopSession, sendClientEvent, sendTextMessage, serverEvents, isSessionActive }) {
   return (
-    <div className="bg-blue-50 rounded-lg p-6 h-full shadow-md flex flex-col gap-4">
+    <div className="bg-indigo-100 rounded-lg p-6 h-full shadow-md flex flex-col gap-4">
       <div className="flex-grow relative w-full bg-blue-100 rounded-lg overflow-hidden">
         <video 
           ref={(video) => {
