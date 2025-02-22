@@ -44,9 +44,6 @@ app.get("/token", async (req, res) => {
     const selectedRole = roles.find(r => r.id === Number(roleId));
     const selectedScenario = scenarios.find(s => s.id === Number(scenarioId));
     
-    const selectedRole = roles.find(r => r.id === Number(roleId));
-    const selectedScenario = scenarios.find(s => s.id === Number(scenarioId));
-    
     const combinedInstructions = selectedRole && selectedScenario ? 
       `${selectedRole.instructions}\n\nContext: ${selectedScenario.instructions}` : 
       (selectedRole?.instructions || '');
