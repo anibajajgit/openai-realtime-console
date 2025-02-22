@@ -110,9 +110,11 @@ export default function ScenarioSelector({ onRoleSelect }) {
 
 const VideoComponent = ({ selectedRole }) => {
   return (
-    <div className="relative w-full h-[300px] bg-gray-300 rounded-lg">
-      <PersonComponent person={selectedRole} className="absolute top-0 left-0" />
-      <video className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full object-contain" src="your-video-url.mp4" autoPlay loop muted/>
+    <div className="relative w-full h-[300px] bg-gray-100 rounded-lg overflow-hidden">
+      <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-lg p-2">
+        <PersonComponent person={selectedRole} />
+      </div>
+      <video className="w-full h-full object-cover" autoPlay playsInline muted />
     </div>
   );
 }
