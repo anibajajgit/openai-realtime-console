@@ -1,4 +1,8 @@
-const DB_URL = import.meta.env.VITE_REPLIT_DB_URL || '';
+
+// Get DB_URL from the appropriate environment source
+const DB_URL = typeof process !== 'undefined' ? 
+  process.env.REPLIT_DB_URL : 
+  import.meta.env.VITE_REPLIT_DB_URL || '';
 
 export async function setDbValue(key, value) {
   const response = await fetch(`${DB_URL}/${key}`, {
