@@ -124,7 +124,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-
+          
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -176,17 +176,38 @@ export default function App() {
                 <video 
                   ref={(video) => {
                     if (video) {
-                      navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(stream => {
-                          video.srcObject = stream;
-                          video.play();
-                        })
-                        .catch(err => console.error('Error:', err));
-                    }
-                  }}
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                      .then(stream => {
+                        video.srcObject = stream;
+                        video.onloadedmetadata = () => {
+                          video.play().catch(err => console.error("Error playing video:", err));
+                        };
+                      })
+                      .catch(err => console.error("Error accessing camera:", err));
+                  }
+                }}
+                className="h-full aspect-video object-cover rounded-lg"
+                playsInline
+                muted
+              />
               </div>
+            </div>
+            <div className="h-32">
+              <SessionControls
+                startSession={startSession}
+                stopSession={stopSession}
+                sendClientEvent={sendClientEvent}
+                sendTextMessage={sendTextMessage}
+                events={events}
+                isSessionActive={isSessionActive}
+                onAudioTranscript={(transcript) => {
+                  setEvents(prev => [{
+                    type: "audio.transcription",
+                    transcript,
+                    event_id: Date.now().toString()
+                  }, ...prev]);
+                }}
+              />
             </div>
           </section>
         </div>
