@@ -5,13 +5,19 @@ import { roles } from '../data/roles';
 
 export default function ScenarioSelector() {
   const [selectedScenario, setSelectedScenario] = useState(scenarios[0]);
-  const [selectedRole, setSelectedRole] = useState(() => {
-    const saved = localStorage.getItem('selectedRole');
-    return saved ? JSON.parse(saved) : roles[0];
-  });
+  const [selectedRole, setSelectedRole] = useState(roles[0]);
 
   useEffect(() => {
-    localStorage.setItem('selectedRole', JSON.stringify(selectedRole));
+    const saved = localStorage?.getItem('selectedRole');
+    if (saved) {
+      setSelectedRole(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedRole', JSON.stringify(selectedRole));
+    }
   }, [selectedRole]);
 
   return (
