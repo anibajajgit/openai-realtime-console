@@ -124,7 +124,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-          
+
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -159,56 +159,34 @@ export default function App() {
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector onRoleSelect={setSelectedRole} />}
           </section>
           <section className="w-3/5 p-4 flex flex-col gap-4">
-            <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit">
-              <div className="relative h-full">
-                {selectedRole && (
-                  <div className="absolute top-2 left-2 z-10 flex items-center bg-black/50 rounded-lg p-2">
-                    <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-                      <img 
-                        src={selectedRole.photoUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedRole.name)} 
-                        alt={selectedRole.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="text-white font-medium">{selectedRole.name}</span>
+            <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit relative">
+              {selectedRole && (
+                <div className="absolute top-6 left-6 z-10 flex items-center bg-black/50 rounded-lg p-2">
+                  <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
+                    <img 
+                      src={selectedRole.photoUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedRole.name)} 
+                      alt={selectedRole.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                )}
-                <div className="flex justify-center items-center h-full">
-                  <video 
+                  <span className="text-white font-medium">{selectedRole.name}</span>
+                </div>
+              )}
+              <div className="flex justify-center items-center h-full">
+                <video 
                   ref={(video) => {
                     if (video) {
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                      .then(stream => {
-                        video.srcObject = stream;
-                        video.onloadedmetadata = () => {
-                          video.play().catch(err => console.error("Error playing video:", err));
-                        };
-                      })
-                      .catch(err => console.error("Error accessing camera:", err));
-                  }
-                }}
-                className="h-full aspect-video object-cover rounded-lg"
-                playsInline
-                muted
-              />
+                      navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(stream => {
+                          video.srcObject = stream;
+                          video.play();
+                        })
+                        .catch(err => console.error('Error:', err));
+                    }
+                  }}
+                  className="w-full h-full object-cover rounded-lg"
+                />
               </div>
-            </div>
-            <div className="h-32">
-              <SessionControls
-                startSession={startSession}
-                stopSession={stopSession}
-                sendClientEvent={sendClientEvent}
-                sendTextMessage={sendTextMessage}
-                events={events}
-                isSessionActive={isSessionActive}
-                onAudioTranscript={(transcript) => {
-                  setEvents(prev => [{
-                    type: "audio.transcription",
-                    transcript,
-                    event_id: Date.now().toString()
-                  }, ...prev]);
-                }}
-              />
             </div>
           </section>
         </div>
