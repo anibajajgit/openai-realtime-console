@@ -37,8 +37,14 @@ app.use(vite.middlewares);
 app.get("/token", async (req, res) => {
   try {
     const roleId = req.query.roleId;
+    const scenarioId = req.query.scenarioId;
     const { roles } = await import('./client/data/roles.js');
+    const { scenarios } = await import('./client/data/scenarios.js');
+    
     const selectedRole = roles.find(r => r.id === Number(roleId));
+    const selectedScenario = scenarios.find(s => s.id === Number(scenarioId));
+    
+    const combinedInstructions = `${selectedRole?.instructions || ''}\n\nContext: ${selectedScenario?.instructions || ''}`;
     
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
@@ -51,7 +57,7 @@ app.get("/token", async (req, res) => {
         body: JSON.stringify({
           model: "gpt-4o-realtime-preview-2024-12-17",
           voice: selectedRole?.voice || "verse",
-          instructions: selectedRole?.instructions,
+          instructions: combinedInstructions,
           input_audio_transcription: {
             model: "whisper-1"
           }
