@@ -12,8 +12,9 @@ export default function App() {
   const audioElement = useRef(null);
 
   async function startSession() {
+    const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
     // Get an ephemeral key from the Fastify server
-    const tokenResponse = await fetch("/token");
+    const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 

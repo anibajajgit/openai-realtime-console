@@ -36,6 +36,10 @@ app.use(vite.middlewares);
 // API route for token generation and WebSocket upgrade
 app.get("/token", async (req, res) => {
   try {
+    const roleId = req.query.roleId;
+    const { roles } = await import('./client/data/roles.js');
+    const selectedRole = roles.find(r => r.id === Number(roleId));
+    
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
       {
@@ -47,6 +51,7 @@ app.get("/token", async (req, res) => {
         body: JSON.stringify({
           model: "gpt-4o-realtime-preview-2024-12-17",
           voice: "verse",
+          instructions: selectedRole?.instructions,
           input_audio_transcription: {
             model: "whisper-1"
           }
