@@ -101,6 +101,14 @@ app.use("*", async (req, res, next) => {
   }
 });
 
-app.listen(port, () => {
+import { initializeDb } from './client/utils/initDb.js';
+
+app.listen(port, async () => {
   console.log(`Express server running on *:${port}`);
+  try {
+    await initializeDb();
+    console.log('Database initialized');
+  } catch (error) {
+    console.error('Failed to initialize database:', error);
+  }
 });
