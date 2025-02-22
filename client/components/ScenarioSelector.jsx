@@ -1,41 +1,8 @@
-
 import { useState, useEffect } from 'react';
 
-export default function ScenarioSelector() {
-  const [scenarios, setScenarios] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [selectedScenario, setSelectedScenario] = useState(null);
-  const [selectedRole, setSelectedRole] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [rolesRes, scenariosRes] = await Promise.all([
-          fetch('/api/roles'),
-          fetch('/api/scenarios')
-        ]);
-        
-        const rolesData = await rolesRes.json();
-        const scenariosData = await scenariosRes.json();
-        
-        setRoles(rolesData);
-        setScenarios(scenariosData);
-        setSelectedScenario(scenariosData[0]);
-        setSelectedRole(rolesData[0]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-    
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage?.getItem('selectedRole');
-    if (saved) {
-      setSelectedRole(JSON.parse(saved));
-    }
-  }, []);
+export default function ScenarioSelector({ initialRoles, initialScenarios }) {
+  const [selectedScenario, setSelectedScenario] = useState(initialScenarios[0]);
+  const [selectedRole, setSelectedRole] = useState(initialRoles[0]);
 
   useEffect(() => {
     if (selectedRole && selectedScenario && typeof window !== 'undefined') {
@@ -43,10 +10,6 @@ export default function ScenarioSelector() {
       localStorage.setItem('selectedScenario', JSON.stringify(selectedScenario));
     }
   }, [selectedRole, selectedScenario]);
-
-  if (!scenarios.length || !roles.length || !selectedScenario || !selectedRole) {
-    return <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-md w-full mb-4 md:mb-0">Loading...</div>;
-  }
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-md w-full mb-4 md:mb-0">
@@ -56,24 +19,22 @@ export default function ScenarioSelector() {
           <select 
             className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
             value={selectedScenario.id}
-            onChange={(e) => setSelectedScenario(scenarios.find(s => s.id === Number(e.target.value)))}
+            onChange={(e) => setSelectedScenario(initialScenarios.find(s => s.id === Number(e.target.value)))}
           >
-            {scenarios.map(scenario => (
+            {initialScenarios.map(scenario => (
               <option key={scenario.id} value={scenario.id}>{scenario.name}</option>
             ))}
           </select>
         </div>
 
         <div className="relative">
-          <select 
+          <select
             className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
             value={selectedRole.id}
-            onChange={(e) => setSelectedRole(roles.find(r => r.id === Number(e.target.value)))}
+            onChange={(e) => setSelectedRole(initialRoles.find(r => r.id === Number(e.target.value)))}
           >
-            {roles.map(role => (
-              <option key={role.id} value={role.id}>
-                {role.name} - {role.title} ({role.style})
-              </option>
+            {initialRoles.map(role => (
+              <option key={role.id} value={role.id}>{role.name}</option>
             ))}
           </select>
         </div>
