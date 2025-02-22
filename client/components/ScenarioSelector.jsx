@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 
 export default function ScenarioSelector() {
@@ -8,18 +9,22 @@ export default function ScenarioSelector() {
 
   useEffect(() => {
     async function fetchData() {
-      const [rolesRes, scenariosRes] = await Promise.all([
-        fetch('/api/roles'),
-        fetch('/api/scenarios')
-      ]);
-      
-      const rolesData = await rolesRes.json();
-      const scenariosData = await scenariosRes.json();
-      
-      setRoles(rolesData);
-      setScenarios(scenariosData);
-      setSelectedScenario(scenariosData[0]);
-      setSelectedRole(rolesData[0]);
+      try {
+        const [rolesRes, scenariosRes] = await Promise.all([
+          fetch('/api/roles'),
+          fetch('/api/scenarios')
+        ]);
+        
+        const rolesData = await rolesRes.json();
+        const scenariosData = await scenariosRes.json();
+        
+        setRoles(rolesData);
+        setScenarios(scenariosData);
+        setSelectedScenario(scenariosData[0]);
+        setSelectedRole(rolesData[0]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     }
     
     fetchData();
@@ -33,16 +38,19 @@ export default function ScenarioSelector() {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (selectedRole && selectedScenario && typeof window !== 'undefined') {
       localStorage.setItem('selectedRole', JSON.stringify(selectedRole));
       localStorage.setItem('selectedScenario', JSON.stringify(selectedScenario));
     }
   }, [selectedRole, selectedScenario]);
 
+  if (!scenarios.length || !roles.length || !selectedScenario || !selectedRole) {
+    return <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-md w-full mb-4 md:mb-0">Loading...</div>;
+  }
+
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-md w-full mb-4 md:mb-0">
       <h2 className="text-lg font-semibold mb-6">Choose a scenario</h2>
-
       <div className="space-y-4">
         <div className="relative">
           <select 
@@ -73,7 +81,6 @@ export default function ScenarioSelector() {
         <div className="mt-6">
           <h3 className="font-medium mb-2">DESCRIPTION</h3>
           <p className="text-gray-600 mb-4">{selectedScenario.description}</p>
-
           <h3 className="font-medium mb-2">RUBRIC</h3>
           <ul className="list-disc pl-4 space-y-2">
             {selectedScenario.rubric.map((item, index) => (
