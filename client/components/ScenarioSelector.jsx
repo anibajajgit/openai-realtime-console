@@ -1,11 +1,29 @@
 import { useState, useEffect } from 'react';
 
-import { scenarios } from '../data/scenarios';
-import { roles } from '../data/roles';
-
 export default function ScenarioSelector() {
-  const [selectedScenario, setSelectedScenario] = useState(scenarios[0]);
-  const [selectedRole, setSelectedRole] = useState(roles[0]);
+  const [scenarios, setScenarios] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const [rolesRes, scenariosRes] = await Promise.all([
+        fetch('/api/roles'),
+        fetch('/api/scenarios')
+      ]);
+      
+      const rolesData = await rolesRes.json();
+      const scenariosData = await scenariosRes.json();
+      
+      setRoles(rolesData);
+      setScenarios(scenariosData);
+      setSelectedScenario(scenariosData[0]);
+      setSelectedRole(rolesData[0]);
+    }
+    
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const saved = localStorage?.getItem('selectedRole');

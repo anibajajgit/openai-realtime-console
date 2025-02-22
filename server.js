@@ -33,6 +33,27 @@ app.use((req, res, next) => {
 });
 app.use(vite.middlewares);
 
+// Initialize database with roles and scenarios
+import { initializeDb, getDbValue } from './client/utils/db.js';
+
+try {
+  await initializeDb();
+  console.log('Database initialized');
+} catch (error) {
+  console.error('Error initializing database:', error);
+}
+
+// API routes for roles and scenarios
+app.get("/api/roles", async (req, res) => {
+  const roles = await getDbValue('roles');
+  res.json(roles || []);
+});
+
+app.get("/api/scenarios", async (req, res) => {
+  const scenarios = await getDbValue('scenarios');
+  res.json(scenarios || []);
+});
+
 // API route for token generation and WebSocket upgrade
 app.get("/token", async (req, res) => {
   try {
