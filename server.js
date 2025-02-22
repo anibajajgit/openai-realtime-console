@@ -47,6 +47,9 @@ app.get("/token", async (req, res) => {
     const combinedInstructions = selectedRole && selectedScenario ? 
       `${selectedRole.instructions}\n\nContext: ${selectedScenario.instructions}` : 
       (selectedRole?.instructions || '');
+    console.log("Selected role:", selectedRole?.id);
+    console.log("Selected scenario:", selectedScenario?.id);
+    console.log("Combined instructions:", combinedInstructions);
     
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
