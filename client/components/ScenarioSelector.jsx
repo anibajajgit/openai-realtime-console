@@ -46,7 +46,7 @@ const PersonComponent = ({ person }) => (
 );
 
 
-export default function ScenarioSelector() {
+export default function ScenarioSelector({ onRoleSelect }) {
   const [selectedScenario, setSelectedScenario] = useState(scenarios[0]);
   const [selectedRole, setSelectedRole] = useState(roles[0]);
 
@@ -72,7 +72,11 @@ export default function ScenarioSelector() {
               <select 
                 className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
                 value={selectedRole.id}
-                onChange={(e) => setSelectedRole(roles.find(r => r.id === Number(e.target.value)))}
+                onChange={(e) => {
+              const role = roles.find(r => r.id === Number(e.target.value));
+              setSelectedRole(role);
+              onRoleSelect(role);
+            }}
               >
                 {roles.map(role => (
                   <option key={role.id} value={role.id}>
