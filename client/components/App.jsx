@@ -154,12 +154,12 @@ export default function App() {
           <h1>Voice chat app</h1>
         </div>
       </nav>
-      <main className="fixed top-16 left-0 right-0 bottom-0 overflow-hidden">
-        <div className="flex h-full bg-gray-50">
-          <section className="w-2/5 p-4">
+      <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
+        <div className="flex flex-col md:flex-row h-full bg-gray-50">
+          <section className="w-full md:w-2/5 p-4">
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
-          <section className="w-3/5 p-4 flex flex-col gap-4">
+          <section className="w-full md:w-3/5 p-4 flex flex-col gap-4 bg-blue-50">
             <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit">
               <video 
                 ref={(video) => {
