@@ -160,7 +160,7 @@ export default function App() {
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
           <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
-            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-full">
+            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
               <video 
                 ref={(video) => {
                   if (video) {
