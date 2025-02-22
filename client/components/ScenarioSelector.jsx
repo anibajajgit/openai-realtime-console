@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 
 const scenarios = [
@@ -46,11 +45,11 @@ export default function ScenarioSelector() {
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 h-full shadow-md w-full">
       <h2 className="text-lg font-semibold mb-6">Choose a scenario</h2>
-      
+
       <div className="space-y-4">
         <div className="relative">
           <select 
-            className="w-full p-3 border rounded-lg appearance-none bg-white"
+            className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
             value={selectedScenario.id}
             onChange={(e) => setSelectedScenario(scenarios.find(s => s.id === Number(e.target.value)))}
           >
@@ -62,7 +61,7 @@ export default function ScenarioSelector() {
 
         <div className="relative">
           <select 
-            className="w-full p-3 border rounded-lg appearance-none bg-white"
+            className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
             value={selectedRole.id}
             onChange={(e) => setSelectedRole(roles.find(r => r.id === Number(e.target.value)))}
           >
@@ -77,7 +76,7 @@ export default function ScenarioSelector() {
         <div className="mt-6">
           <h3 className="font-medium mb-2">DESCRIPTION</h3>
           <p className="text-gray-600 mb-4">{selectedScenario.description}</p>
-          
+
           <h3 className="font-medium mb-2">RUBRIC</h3>
           <ul className="list-disc pl-4 space-y-2">
             {selectedScenario.rubric.map((item, index) => (
