@@ -7,7 +7,6 @@ import ScenarioSelector from "./ScenarioSelector";
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
-  const [selectedRole, setSelectedRole] = useState(null);
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
@@ -124,7 +123,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-
+          
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -156,40 +155,27 @@ export default function App() {
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-hidden">
         <div className="flex h-full bg-gray-50">
           <section className="w-2/5 p-4">
-            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector onRoleSelect={setSelectedRole} />}
+            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
           <section className="w-3/5 p-4 flex flex-col gap-4">
-            <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-full relative">
-              {selectedRole && (
-                <div className="absolute top-4 left-4 z-10 flex items-center bg-black/50 rounded-lg p-2">
-                  <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-                    <img 
-                      src={selectedRole.photoUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedRole.name)} 
-                      alt={selectedRole.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span className="text-white font-medium">{selectedRole.name}</span>
-                </div>
-              )}
-              <div className="flex justify-center items-center h-full">
-                <video 
-                  ref={(video) => {
-                    if (video) {
-                      navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(stream => {
-                          video.srcObject = stream;
-                          video.onloadedmetadata = () => {
-                            video.play().catch(err => console.error("Error playing video:", err));
-                          };
-                        })
-                        .catch(err => console.error("Error accessing camera:", err));
-                    }
-                  }}
-                  className="w-full object-cover rounded-lg"
-                  style={{maxWidth: "800px"}}
-                />
-              </div>
+            <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit">
+              <video 
+                ref={(video) => {
+                  if (video) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                      .then(stream => {
+                        video.srcObject = stream;
+                        video.onloadedmetadata = () => {
+                          video.play().catch(err => console.error("Error playing video:", err));
+                        };
+                      })
+                      .catch(err => console.error("Error accessing camera:", err));
+                  }
+                }}
+                className="h-full aspect-video object-cover rounded-lg"
+                playsInline
+                muted
+              />
             </div>
             <div className="h-32">
               <SessionControls
