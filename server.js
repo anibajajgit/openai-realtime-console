@@ -4,6 +4,10 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 
 const app = express();
+
+// Initialize database on server start
+import { initializeDb } from './client/utils/initDb.js';
+initializeDb().catch(console.error);
 const port = process.env.PORT || 3000;
 const hmrPort = process.env.HMR_PORT || 24678;
 const apiKey = process.env.OPENAI_API_KEY;
