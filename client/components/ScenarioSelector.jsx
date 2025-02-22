@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { scenarios } from '../data/scenarios';
 import { roles } from '../data/roles';
