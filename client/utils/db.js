@@ -1,5 +1,5 @@
 
-const DB_URL = process.env.REPLIT_DB_URL;
+const DB_URL = import.meta.env.VITE_REPLIT_DB_URL || '';
 
 export async function setDbValue(key, value) {
   const response = await fetch(`${DB_URL}/${key}`, {
