@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
+import ScenarioSelector from "./ScenarioSelector";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -154,7 +155,7 @@ export default function App() {
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-hidden">
         <div className="flex h-full bg-gray-50">
           <section className="w-2/5 p-4">
-            {isSessionActive && <EventLog events={events} />}
+            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
           <section className="w-3/5 p-4 flex flex-col gap-4">
             <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit">
