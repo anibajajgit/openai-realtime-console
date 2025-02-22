@@ -157,7 +157,7 @@ export default function App() {
             {isSessionActive && <EventLog events={events} />}
           </section>
           <section className="w-3/5 p-4 flex flex-col gap-4">
-            <div className="bg-gray-100 rounded-lg p-4 flex-1">
+            <div className="bg-gray-100 rounded-lg p-4 h-1/2 w-fit">
               <video 
                 ref={(video) => {
                   if (video) {
@@ -171,7 +171,7 @@ export default function App() {
                       .catch(err => console.error("Error accessing camera:", err));
                   }
                 }}
-                className="w-full h-full object-cover rounded-lg"
+                className="h-full aspect-video object-cover rounded-lg"
                 playsInline
                 muted
               />
