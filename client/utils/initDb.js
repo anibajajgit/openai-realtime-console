@@ -1,5 +1,5 @@
 
-import { setDbValue } from './db';
+import { setDbValue } from './db.js';
 
 const initialRoles = [
   {
