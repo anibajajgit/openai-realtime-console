@@ -44,7 +44,12 @@ app.get("/token", async (req, res) => {
     const selectedRole = roles.find(r => r.id === Number(roleId));
     const selectedScenario = scenarios.find(s => s.id === Number(scenarioId));
     
-    const combinedInstructions = `${selectedRole?.instructions || ''}\n\nContext: ${selectedScenario?.instructions || ''}`;
+    const selectedRole = roles.find(r => r.id === Number(roleId));
+    const selectedScenario = scenarios.find(s => s.id === Number(scenarioId));
+    
+    const combinedInstructions = selectedRole && selectedScenario ? 
+      `${selectedRole.instructions}\n\nContext: ${selectedScenario.instructions}` : 
+      (selectedRole?.instructions || '');
     
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
