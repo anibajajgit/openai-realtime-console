@@ -2,20 +2,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from './index.js';
 
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  name: DataTypes.STRING,
-  email: {
-    type: DataTypes.STRING,
-    unique: true
-  },
-  password: DataTypes.STRING
-});
-
 const Role = sequelize.define('Role', {
   id: {
     type: DataTypes.INTEGER,
@@ -45,4 +31,4 @@ const Scenario = sequelize.define('Scenario', {
   }
 });
 
-export { Role, Scenario, User };
+export { Role, Scenario };

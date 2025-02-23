@@ -1,100 +1,43 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Auth from './Auth';
-import ScenarioSelector from './ScenarioSelector';
-import SessionControls from './SessionControls';
-import EventLog from './EventLog';
+import { useEffect, useRef, useState } from "react";
+
+import EventLog from "./EventLog";
+import SessionControls from "./SessionControls";
+import ScenarioSelector from "./ScenarioSelector";
 
 export default function App() {
-  // User state
-  const [user, setUser] = useState(null);
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [selectedScenario, setSelectedScenario] = useState(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
-
-  // Refs
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
-  const mediaRecorder = useRef(null);
-  const audioContext = useRef(null);
 
-  // Load user effect
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-      }
-    }
-  }, []);
-
-  // Cleanup effect
-  useEffect(() => {
-    return () => {
-      if (peerConnection.current) {
-        peerConnection.current.close();
-      }
-    };
-  }, []);
-
-  // Data channel effect
-  useEffect(() => {
-    if (!dataChannel) return;
-
-    const handleMessage = (e) => {
-      try {
-        const event = JSON.parse(e.data);
-        setEvents(prev => [event, ...prev]);
-      } catch (error) {
-        console.error("Error processing event:", error);
-      }
-    };
-
-    dataChannel.addEventListener("message", handleMessage);
-    dataChannel.addEventListener("open", () => {
-      setIsSessionActive(true);
-      setEvents([]);
-    });
-
-    return () => {
-      dataChannel.removeEventListener("message", handleMessage);
-    };
-  }, [dataChannel]);
-
-  const handleLogin = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    if (peerConnection.current) {
-      peerConnection.current.close();
-    }
-  };
-
-  const startSession = async () => {
+  async function startSession() {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
     const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
+    // Get an ephemeral key from the Fastify server
     const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 
+    // Create a peer connection
     const pc = new RTCPeerConnection();
+
+    // Set up to play remote audio from the model
     audioElement.current = document.createElement("audio");
     audioElement.current.autoplay = true;
     pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
-    const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Add local audio track for microphone input in the browser
+    const ms = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
     pc.addTrack(ms.getTracks()[0]);
 
+    // Set up data channel for sending and receiving events
     const dc = pc.createDataChannel("oai-events");
     setDataChannel(dc);
 
+    // Start the session using the Session Description Protocol (SDP)
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
 
@@ -118,12 +61,13 @@ export default function App() {
     peerConnection.current = pc;
   }
 
-  const stopSession = () => {
+  // Stop current session, clean up peer connection and data channel
+  function stopSession() {
     if (dataChannel) {
       dataChannel.close();
     }
 
-    peerConnection.current?.getSenders().forEach((sender) => {
+    peerConnection.current.getSenders().forEach((sender) => {
       if (sender.track) {
         sender.track.stop();
       }
@@ -138,7 +82,8 @@ export default function App() {
     peerConnection.current = null;
   }
 
-  const sendClientEvent = (message) => {
+  // Send a message to the model
+  function sendClientEvent(message) {
     if (dataChannel) {
       message.event_id = message.event_id || crypto.randomUUID();
       dataChannel.send(JSON.stringify(message));
@@ -151,7 +96,8 @@ export default function App() {
     }
   }
 
-  const sendTextMessage = (message) => {
+  // Send a text message to the model
+  function sendTextMessage(message) {
     const event = {
       type: "conversation.item.create",
       item: {
@@ -170,59 +116,89 @@ export default function App() {
     sendClientEvent({ type: "response.create" });
   }
 
+  // Attach event listeners to the data channel when a new one is created
+  useEffect(() => {
+    if (dataChannel) {
+      // Append new server events to the list
+      dataChannel.addEventListener("message", (e) => {
+        try {
+          const event = JSON.parse(e.data);
+          console.log("Raw event data:", e.data);
+          console.log("Parsed event:", event);
+          
+          if (event.type === "audio.transcription") {
+            console.log("Audio transcription event:", event);
+            setEvents(prev => [event, ...prev]);
+          } else {
+            console.log("Non-transcription event:", event.type);
+            setEvents(prev => [event, ...prev]);
+          }
+        } catch (error) {
+          console.error("Error processing event:", error);
+          console.error("Raw event data:", e.data);
+        }
+      });
+
+      // Set session active when the data channel is opened
+      dataChannel.addEventListener("open", () => {
+        setIsSessionActive(true);
+        setEvents([]);
+      });
+    }
+  }, [dataChannel]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow">
-        <div className="container mx-auto px-4 py-6">
-          {user ? (
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
-              <button onClick={handleLogout} className="text-red-600">
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Auth onLogin={handleLogin} />
-          )}
+    <>
+      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
+        <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
+          <h1>Voice chat app</h1>
         </div>
-      </header>
-
-      <main className="container mx-auto p-4">
-        {user && (
-          <>
-            <ScenarioSelector
-              selectedRole={selectedRole}
-              setSelectedRole={setSelectedRole}
-              selectedScenario={selectedScenario}
-              setSelectedScenario={setSelectedScenario}
-            />
-            {selectedRole && selectedScenario && (
-              <>
-                {isSessionActive && <EventLog events={events} />}
-                <SessionControls
-                  selectedRole={selectedRole}
-                  selectedScenario={selectedScenario}
-                  isSessionActive={isSessionActive}
-                  setIsSessionActive={setIsSessionActive}
-                  events={events}
-                  setEvents={setEvents}
-                  dataChannel={dataChannel}
-                  setDataChannel={setDataChannel}
-                  peerConnection={peerConnection}
-                  audioElement={audioElement}
-                  mediaRecorder={mediaRecorder}
-                  audioContext={audioContext}
-                  startSession={startSession}
-                  stopSession={stopSession}
-                  sendClientEvent={sendClientEvent}
-                  sendTextMessage={sendTextMessage}
-                />
-              </>
-            )}
-          </>
-        )}
+      </nav>
+      <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
+        <div className="flex flex-col md:flex-row h-full bg-gray-50">
+          <section className="w-full md:w-2/5 p-4">
+            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
+          </section>
+          <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
+            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
+              <video 
+                ref={(video) => {
+                  if (video) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                      .then(stream => {
+                        video.srcObject = stream;
+                        video.onloadedmetadata = () => {
+                          video.play().catch(err => console.error("Error playing video:", err));
+                        };
+                      })
+                      .catch(err => console.error("Error accessing camera:", err));
+                  }
+                }}
+                className="h-full w-full aspect-video object-cover rounded-lg"
+                playsInline
+                muted
+              />
+            </div>
+            <div className="h-24 md:h-32">
+              <SessionControls
+                startSession={startSession}
+                stopSession={stopSession}
+                sendClientEvent={sendClientEvent}
+                sendTextMessage={sendTextMessage}
+                events={events}
+                isSessionActive={isSessionActive}
+                onAudioTranscript={(transcript) => {
+                  setEvents(prev => [{
+                    type: "audio.transcription",
+                    transcript,
+                    event_id: Date.now().toString()
+                  }, ...prev]);
+                }}
+              />
+            </div>
+          </section>
+        </div>
       </main>
-    </div>
+    </>
   );
 }
