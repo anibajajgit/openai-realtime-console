@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Auth from './Auth';
 import ScenarioSelector from './ScenarioSelector';
 import SessionControls from './SessionControls';
-import EventLog from "./EventLog";
+import EventLog from './EventLog';
 
 export default function App() {
-  // All state declarations first
+  // User state
   const [user, setUser] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedScenario, setSelectedScenario] = useState(null);
@@ -13,24 +13,56 @@ export default function App() {
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
 
-  // All refs next
+  // Refs
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
   const mediaRecorder = useRef(null);
   const audioContext = useRef(null);
 
-  // All effects last, and they should always be present
+  // Load user effect
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse stored user:', e);
-        localStorage.removeItem('user');
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
       }
     }
   }, []);
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      if (peerConnection.current) {
+        peerConnection.current.close();
+      }
+    };
+  }, []);
+
+  // Data channel effect
+  useEffect(() => {
+    if (!dataChannel) return;
+
+    const handleMessage = (e) => {
+      try {
+        const event = JSON.parse(e.data);
+        setEvents(prev => [event, ...prev]);
+      } catch (error) {
+        console.error("Error processing event:", error);
+      }
+    };
+
+    dataChannel.addEventListener("message", handleMessage);
+    dataChannel.addEventListener("open", () => {
+      setIsSessionActive(true);
+      setEvents([]);
+    });
+
+    return () => {
+      dataChannel.removeEventListener("message", handleMessage);
+    };
+  }, [dataChannel]);
 
   const handleLogin = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
@@ -40,19 +72,12 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
-    setSelectedRole(null);
-    setSelectedScenario(null);
-    setIsSessionActive(false);
     if (peerConnection.current) {
       peerConnection.current.close();
     }
   };
 
-  if (!user) {
-    return <Auth onLogin={handleLogin} />;
-  }
-
-  async function startSession() { 
+  const startSession = async () => {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
     const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
     const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
@@ -93,7 +118,7 @@ export default function App() {
     peerConnection.current = pc;
   }
 
-  function stopSession() { 
+  const stopSession = () => {
     if (dataChannel) {
       dataChannel.close();
     }
@@ -113,7 +138,7 @@ export default function App() {
     peerConnection.current = null;
   }
 
-  function sendClientEvent(message) { 
+  const sendClientEvent = (message) => {
     if (dataChannel) {
       message.event_id = message.event_id || crypto.randomUUID();
       dataChannel.send(JSON.stringify(message));
@@ -126,7 +151,7 @@ export default function App() {
     }
   }
 
-  function sendTextMessage(message) { 
+  const sendTextMessage = (message) => {
     const event = {
       type: "conversation.item.create",
       item: {
@@ -145,76 +170,56 @@ export default function App() {
     sendClientEvent({ type: "response.create" });
   }
 
-  useEffect(() => {
-    if (dataChannel) {
-      dataChannel.addEventListener("message", (e) => {
-        try {
-          const event = JSON.parse(e.data);
-          if (event.type === "audio.transcription") {
-            setEvents(prev => [event, ...prev]);
-          } else {
-            setEvents(prev => [event, ...prev]);
-          }
-        } catch (error) {
-          console.error("Error processing event:", error);
-          console.error("Raw event data:", e.data);
-        }
-      });
-
-      dataChannel.addEventListener("open", () => {
-        setIsSessionActive(true);
-        setEvents([]);
-      });
-    }
-  }, [dataChannel]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Sales Training Simulator</h1>
-          <div className="flex items-center gap-4">
-            <span>{user.name}</span>
-            <button 
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </div>
+        <div className="container mx-auto px-4 py-6">
+          {user ? (
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
+              <button onClick={handleLogout} className="text-red-600">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Auth onLogin={handleLogin} />
+          )}
         </div>
       </header>
 
       <main className="container mx-auto p-4">
-        <ScenarioSelector
-          selectedRole={selectedRole}
-          setSelectedRole={setSelectedRole}
-          selectedScenario={selectedScenario}
-          setSelectedScenario={setSelectedScenario}
-        />
-        {selectedRole && selectedScenario && (
+        {user && (
           <>
-            <div className="mt-4">
-              {isSessionActive ? <EventLog events={events} /> : null}
-            </div>
-            <SessionControls
+            <ScenarioSelector
               selectedRole={selectedRole}
+              setSelectedRole={setSelectedRole}
               selectedScenario={selectedScenario}
-              isSessionActive={isSessionActive}
-              setIsSessionActive={setIsSessionActive}
-              events={events}
-              setEvents={setEvents}
-              dataChannel={dataChannel}
-              setDataChannel={setDataChannel}
-              peerConnection={peerConnection}
-              audioElement={audioElement}
-              mediaRecorder={mediaRecorder}
-              audioContext={audioContext}
-              startSession={startSession}
-              stopSession={stopSession}
-              sendClientEvent={sendClientEvent}
-              sendTextMessage={sendTextMessage}
+              setSelectedScenario={setSelectedScenario}
             />
+            {selectedRole && selectedScenario && (
+              <>
+                {isSessionActive && <EventLog events={events} />}
+                <SessionControls
+                  selectedRole={selectedRole}
+                  selectedScenario={selectedScenario}
+                  isSessionActive={isSessionActive}
+                  setIsSessionActive={setIsSessionActive}
+                  events={events}
+                  setEvents={setEvents}
+                  dataChannel={dataChannel}
+                  setDataChannel={setDataChannel}
+                  peerConnection={peerConnection}
+                  audioElement={audioElement}
+                  mediaRecorder={mediaRecorder}
+                  audioContext={audioContext}
+                  startSession={startSession}
+                  stopSession={stopSession}
+                  sendClientEvent={sendClientEvent}
+                  sendTextMessage={sendTextMessage}
+                />
+              </>
+            )}
           </>
         )}
       </main>
