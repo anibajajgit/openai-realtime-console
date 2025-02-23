@@ -1,11 +1,28 @@
 import { useState, useEffect } from 'react';
 
-import { scenarios } from '../data/scenarios';
-import { roles } from '../data/roles';
+import { useState, useEffect } from 'react';
 
 export default function ScenarioSelector() {
-  const [selectedScenario, setSelectedScenario] = useState(scenarios[0]);
-  const [selectedRole, setSelectedRole] = useState(roles[0]);
+  const [scenarios, setScenarios] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/scenarios')
+      .then(res => res.json())
+      .then(data => {
+        setScenarios(data);
+        setSelectedScenario(data[0]);
+      });
+    
+    fetch('/api/roles')
+      .then(res => res.json())
+      .then(data => {
+        setRoles(data);
+        setSelectedRole(data[0]);
+      });
+  }, []);
 
   useEffect(() => {
     const saved = localStorage?.getItem('selectedRole');

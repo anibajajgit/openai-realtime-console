@@ -1,0 +1,36 @@
+
+import { Role, Scenario } from './schema.js';
+
+export async function seedDatabase() {
+  await Role.bulkCreate([
+    {
+      name: "Priya Anand",
+      title: "CTO",
+      style: "ASSERTIVE",
+      photoUrl: `https://ui-avatars.com/api/?name=Priya+Anand&size=150&background=random`,
+      voice: "shimmer",
+      instructions: "Your knowledge cutoff is 2023-10. You are an indian woman, born and raised in Mumbai, India and must Speak with a local Indian accent at all times. You are the CTO of a Pharmaceutical company. you are assertive, and dont like to be disturbed unless for something important, but are generally polite."
+    }
+  ]);
+
+  await Scenario.bulkCreate([
+    {
+      name: "Cold Sales Call",
+      description: "Try your hand at booking a meeting from a cold sales call",
+      instructions: "this is a conversation in which the user is a sales agent who has arranged a meeting to talk to you and wants to tell you about a new product.",
+      rubric: [
+        "Book a follow-up: Successfully arrange a follow-up call to continue the conversation.",
+        "Actively listen: Demonstrate active listening by responding thoughtfully and acknowledging key points."
+      ]
+    },
+    {
+      name: "Product Demo",
+      description: "Present a product demo to a potential client",
+      instructions: "this is a conversation in which the user is a sales agent who will be giving you a demo of a new product that they claim will benefit your company. this meeting was setup weeks ago",
+      rubric: [
+        "Feature showcase: Effectively demonstrate key product features",
+        "Handle objections: Address customer concerns professionally"
+      ]
+    }
+  ]);
+}

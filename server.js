@@ -2,11 +2,26 @@ import express from "express";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import "dotenv/config";
+import { initDatabase } from './database/index.js';
+import { seedDatabase } from './database/seed.js';
+import { Role, Scenario } from './database/schema.js';
 
 const app = express();
+app.use(express.json());
 const port = process.env.PORT || 3000;
 const hmrPort = process.env.HMR_PORT || 24678;
 const apiKey = process.env.OPENAI_API_KEY;
+
+// Database routes
+app.get('/api/roles', async (req, res) => {
+  const roles = await Role.findAll();
+  res.json(roles);
+});
+
+app.get('/api/scenarios', async (req, res) => {
+  const scenarios = await Scenario.findAll();
+  res.json(scenarios);
+});
 
 // Configure Vite middleware for React client
 const vite = await createViteServer({
@@ -31,26 +46,33 @@ app.use((req, res, next) => {
   }
   next();
 });
+
 app.use(vite.middlewares);
+
+// Initialize database and seed data
+await initDatabase();
+await seedDatabase();
 
 // API route for token generation and WebSocket upgrade
 app.get("/token", async (req, res) => {
   try {
     const roleId = req.query.roleId;
     const scenarioId = req.query.scenarioId;
-    const { roles } = await import('./client/data/roles.js');
-    const { scenarios } = await import('./client/data/scenarios.js');
-    
-    const selectedRole = roles.find(r => r.id === Number(roleId));
-    const selectedScenario = scenarios.find(s => s.id === Number(scenarioId));
-    
+    const rolesResponse = await fetch('http://localhost:3000/api/roles');
+    const rolesData = await rolesResponse.json();
+    const scenariosResponse = await fetch('http://localhost:3000/api/scenarios');
+    const scenariosData = await scenariosResponse.json();
+
+    const selectedRole = rolesData.find(r => r.id === Number(roleId));
+    const selectedScenario = scenariosData.find(s => s.id === Number(scenarioId));
+
     const combinedInstructions = selectedRole && selectedScenario ? 
       `${selectedRole.instructions}\n\nContext: ${selectedScenario.instructions}` : 
       (selectedRole?.instructions || '');
     console.log("Selected role:", selectedRole?.id);
     console.log("Selected scenario:", selectedScenario?.id);
     console.log("Combined instructions:", combinedInstructions);
-    
+
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
       {
