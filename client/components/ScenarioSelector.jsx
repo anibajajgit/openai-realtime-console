@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 
-import { useState, useEffect } from 'react';
-
 export default function ScenarioSelector() {
   const [scenarios, setScenarios] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -15,7 +13,7 @@ export default function ScenarioSelector() {
         setScenarios(data);
         setSelectedScenario(data[0]);
       });
-    
+
     fetch('/api/roles')
       .then(res => res.json())
       .then(data => {
