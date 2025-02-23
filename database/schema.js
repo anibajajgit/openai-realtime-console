@@ -45,4 +45,4 @@ const Scenario = sequelize.define('Scenario', {
   }
 });
 
-export { Role, Scenario };
+export { Role, Scenario, User };
