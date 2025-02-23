@@ -1,41 +1,48 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from 'react';
+import Auth from './Auth';
+import ScenarioSelector from './ScenarioSelector';
+import SessionControls from './SessionControls';
 import EventLog from "./EventLog";
-import SessionControls from "./SessionControls";
-import ScenarioSelector from "./ScenarioSelector";
-import Auth from "./Auth";
+
 
 export default function App() {
-  const [isSessionActive, setIsSessionActive] = useState(false);
-  const [events, setEvents] = useState([]);
-  const [dataChannel, setDataChannel] = useState(null);
   const [user, setUser] = useState(null);
-  const peerConnection = useRef(null);
-  const audioElement = useRef(null);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [isSessionActive, setIsSessionActive] = useState(false); //Added from original
+  const [events, setEvents] = useState([]); //Added from original
+  const [dataChannel, setDataChannel] = useState(null); //Added from original
+  const peerConnection = useRef(null); //Added from original
+  const audioElement = useRef(null); //Added from original
+  const mediaRecorder = useRef(null);
+  const audioContext = useRef(null);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    // Check for stored user data on mount
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
   const handleLogin = (userData) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
-    setIsSessionActive(false);
-    stopSession(); //Added to ensure session is stopped on logout
+    setSelectedRole(null);
+    setSelectedScenario(null);
+    setIsSessionActive(false); //Added from original
+    stopSession(); //Added from original
   };
 
   if (!user) {
     return <Auth onLogin={handleLogin} />;
   }
 
-  async function startSession() {
+  async function startSession() { //Added from original
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
     const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
     // Get an ephemeral key from the Fastify server
@@ -86,7 +93,7 @@ export default function App() {
   }
 
   // Stop current session, clean up peer connection and data channel
-  function stopSession() {
+  function stopSession() { //Added from original
     if (dataChannel) {
       dataChannel.close();
     }
@@ -107,7 +114,7 @@ export default function App() {
   }
 
   // Send a message to the model
-  function sendClientEvent(message) {
+  function sendClientEvent(message) { //Added from original
     if (dataChannel) {
       message.event_id = message.event_id || crypto.randomUUID();
       dataChannel.send(JSON.stringify(message));
@@ -121,7 +128,7 @@ export default function App() {
   }
 
   // Send a text message to the model
-  function sendTextMessage(message) {
+  function sendTextMessage(message) { //Added from original
     const event = {
       type: "conversation.item.create",
       item: {
@@ -140,7 +147,7 @@ export default function App() {
     sendClientEvent({ type: "response.create" });
   }
 
-  // Attach event listeners to the data channel when a new one is created
+    // Attach event listeners to the data channel when a new one is created
   useEffect(() => {
     if (dataChannel) {
       // Append new server events to the list
@@ -171,67 +178,59 @@ export default function App() {
     }
   }, [dataChannel]);
 
+
   return (
-    <>
-      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4">
-        <div className="flex items-center gap-4 pb-2 border-0 border-b border-solid border-gray-200">
-          <h1>Voice chat app</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>{user.name}</span>
-          <button
-            onClick={handleLogout}
-            className="text-gray-600 hover:text-gray-800"
-          >
-            Logout
-          </button>
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white shadow-sm p-4">
+        <div className="flex justify-between items-center">
+          <h1 className="text-xl font-semibold">Interview Practice</h1>
+          <div className="flex items-center gap-4">
+            <span>{user.name}</span>
+            <button 
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-800"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </nav>
-      <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
-        <div className="flex flex-col md:flex-row h-full bg-gray-50">
-          <section className="w-full md:w-2/5 p-4">
-            {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
-          </section>
-          <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
-            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
-              <video 
-                ref={(video) => {
-                  if (video) {
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                      .then(stream => {
-                        video.srcObject = stream;
-                        video.onloadedmetadata = () => {
-                          video.play().catch(err => console.error("Error playing video:", err));
-                        };
-                      })
-                      .catch(err => console.error("Error accessing camera:", err));
-                  }
-                }}
-                className="h-full w-full aspect-video object-cover rounded-lg"
-                playsInline
-                muted
-              />
-            </div>
-            <div className="h-24 md:h-32">
-              <SessionControls
-                startSession={startSession}
-                stopSession={stopSession}
-                sendClientEvent={sendClientEvent}
-                sendTextMessage={sendTextMessage}
-                events={events}
-                isSessionActive={isSessionActive}
-                onAudioTranscript={(transcript) => {
-                  setEvents(prev => [{
-                    type: "audio.transcription",
-                    transcript,
-                    event_id: Date.now().toString()
-                  }, ...prev]);
-                }}
-              />
-            </div>
-          </section>
-        </div>
+
+      <main className="container mx-auto p-4">
+        <ScenarioSelector
+          selectedRole={selectedRole}
+          setSelectedRole={setSelectedRole}
+          selectedScenario={selectedScenario}
+          setSelectedScenario={setSelectedScenario}
+        />
+        {selectedRole && selectedScenario && (
+          <>
+            <div className="mt-4"> {/*Added to provide spacing*/}
+              {isSessionActive ? <EventLog events={events} /> : null} </div> {/* Conditionally render EventLog */}
+            <SessionControls
+              selectedRole={selectedRole}
+              selectedScenario={selectedScenario}
+              isRecording={isRecording}
+              setIsRecording={setIsRecording}
+              mediaRecorder={mediaRecorder}
+              audioContext={audioContext}
+              startSession={startSession} //Added from original
+              stopSession={stopSession} //Added from original
+              sendClientEvent={sendClientEvent} //Added from original
+              sendTextMessage={sendTextMessage} //Added from original
+              events={events} //Added from original
+              isSessionActive={isSessionActive} //Added from original
+              onAudioTranscript={(transcript) => { //Added from original
+                setEvents(prev => [{
+                  type: "audio.transcription",
+                  transcript,
+                  event_id: Date.now().toString()
+                }, ...prev]);
+              }}
+            />
+          </>
+        )}
       </main>
-    </>
+    </div>
   );
 }
