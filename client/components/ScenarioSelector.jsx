@@ -44,7 +44,7 @@ export default function ScenarioSelector() {
         <div className="relative">
           <select 
             className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
-            value={selectedScenario.id}
+            value={selectedScenario?.id || ''} //Added null check
             onChange={(e) => setSelectedScenario(scenarios.find(s => s.id === Number(e.target.value)))}
           >
             {scenarios.map(scenario => (
@@ -56,7 +56,7 @@ export default function ScenarioSelector() {
         <div className="relative">
           <select 
             className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
-            value={selectedRole.id}
+            value={selectedRole?.id || ''} //Added null check
             onChange={(e) => setSelectedRole(roles.find(r => r.id === Number(e.target.value)))}
           >
             {roles.map(role => (
@@ -69,11 +69,11 @@ export default function ScenarioSelector() {
 
         <div className="mt-6">
           <h3 className="font-medium mb-2">DESCRIPTION</h3>
-          <p className="text-gray-600 mb-4">{selectedScenario.description}</p>
+          <p className="text-gray-600 mb-4">{selectedScenario?.description}</p>
 
           <h3 className="font-medium mb-2">RUBRIC</h3>
           <ul className="list-disc pl-4 space-y-2">
-            {selectedScenario.rubric.map((item, index) => (
+            {selectedScenario?.rubric?.map((item, index) => (
               <li key={index} className="text-gray-600">{item}</li>
             ))}
           </ul>
