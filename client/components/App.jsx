@@ -5,28 +5,30 @@ import SessionControls from './SessionControls';
 import EventLog from "./EventLog";
 
 export default function App() {
-  // Auth state
+  // All state declarations first
   const [user, setUser] = useState(null);
-
-  // Scenario state
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedScenario, setSelectedScenario] = useState(null);
-
-  // Session state
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
 
-  // Refs
+  // All refs next
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
   const mediaRecorder = useRef(null);
   const audioContext = useRef(null);
 
+  // All effects last, and they should always be present
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Failed to parse stored user:', e);
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 
