@@ -2,7 +2,11 @@
 import { Role, Scenario } from './schema.js';
 
 export async function seedDatabase() {
-  await Role.bulkCreate([
+  const existingRoles = await Role.findAll();
+  const existingScenarios = await Scenario.findAll();
+  
+  if (existingRoles.length === 0) {
+    await Role.bulkCreate([
     {
       name: "Priya Anand",
       title: "CTO",
@@ -13,7 +17,10 @@ export async function seedDatabase() {
     }
   ]);
 
-  await Scenario.bulkCreate([
+  }
+
+  if (existingScenarios.length === 0) {
+    await Scenario.bulkCreate([
     {
       name: "Cold Sales Call",
       description: "Try your hand at booking a meeting from a cold sales call",
@@ -33,4 +40,5 @@ export async function seedDatabase() {
       ]
     }
   ]);
+  }
 }
