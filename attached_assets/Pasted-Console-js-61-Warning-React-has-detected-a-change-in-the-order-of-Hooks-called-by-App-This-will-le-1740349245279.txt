@@ -1,0 +1,53 @@
+Console.js:61 Warning: React has detected a change in the order of Hooks called by App. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+1. useState                   useState
+2. useState                   useState
+3. useState                   useState
+4. useState                   useState
+5. useState                   useState
+6. useState                   useState
+7. useRef                     useRef
+8. useRef                     useRef
+9. useRef                     useRef
+10. useRef                    useRef
+11. useEffect                 useEffect
+12. undefined                 useEffect
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    at App (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/App.jsx:25:27)
+Mt.forEach.n.<computed> @ Console.js:61Understand this errorAI
+2chunk-XPR23Y44.js?v=189e5c4a:11676 Uncaught Error: Rendered more hooks than during the previous render.
+    at updateWorkInProgressHook (chunk-XPR23Y44.js?v=189e5c4a:11676:21)
+    at updateEffectImpl (chunk-XPR23Y44.js?v=189e5c4a:12072:22)
+    at updateEffect (chunk-XPR23Y44.js?v=189e5c4a:12097:18)
+    at Object.useEffect (chunk-XPR23Y44.js?v=189e5c4a:12701:22)
+    at useEffect (chunk-I4MZPW7S.js?v=189e5c4a:1100:29)
+    at App (App.jsx:146:3)
+    at renderWithHooks (chunk-XPR23Y44.js?v=189e5c4a:11546:26)
+    at updateFunctionComponent (chunk-XPR23Y44.js?v=189e5c4a:14580:28)
+    at beginWork (chunk-XPR23Y44.js?v=189e5c4a:15922:22)
+    at HTMLUnknownElement.callCallback2 (chunk-XPR23Y44.js?v=189e5c4a:3672:22)Understand this errorAI
+Console.js:61 The above error occurred in the <App> component:
+
+    at App (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/App.jsx:25:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Mt.forEach.n.<computed> @ Console.js:61Understand this errorAI
+chunk-XPR23Y44.js?v=189e5c4a:19411 Uncaught Error: Rendered more hooks than during the previous render.
+    at updateWorkInProgressHook (chunk-XPR23Y44.js?v=189e5c4a:11676:21)
+    at updateEffectImpl (chunk-XPR23Y44.js?v=189e5c4a:12072:22)
+    at updateEffect (chunk-XPR23Y44.js?v=189e5c4a:12097:18)
+    at Object.useEffect (chunk-XPR23Y44.js?v=189e5c4a:12701:22)
+    at useEffect (chunk-I4MZPW7S.js?v=189e5c4a:1100:29)
+    at App (App.jsx:146:3)
+    at renderWithHooks (chunk-XPR23Y44.js?v=189e5c4a:11546:26)
+    at updateFunctionComponent (chunk-XPR23Y44.js?v=189e5c4a:14580:28)
+    at beginWork (chunk-XPR23Y44.js?v=189e5c4a:15922:22)
+    at beginWork$1 (chunk-XPR23Y44.js?v=189e5c4a:19751:22)Understand this errorAI
+gravatar.com/avatar/30756787d9683fef3731493d7c1d0972?d=404:1 
+        
+        
+       Failed to load resource: the server responded with a status of 404 ()
