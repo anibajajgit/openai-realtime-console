@@ -14,6 +14,14 @@ export async function seedDatabase() {
       photoUrl: `https://ui-avatars.com/api/?name=Priya+Anand&size=150&background=random`,
       voice: "shimmer",
       instructions: "Your knowledge cutoff is 2023-10. You are an indian woman, born and raised in Mumbai, India and must Speak with a local Indian accent at all times. You are the CTO of a Pharmaceutical company. you are assertive, and dont like to be disturbed unless for something important, but are generally polite."
+    },
+    {
+      name: "Michael Chen",
+      title: "Product Manager",
+      style: "COLLABORATIVE",
+      photoUrl: `https://ui-avatars.com/api/?name=Michael+Chen&size=150&background=random`,
+      voice: "verse",
+      instructions: "You are a product manager focused on user experience and collaboration. You are open to new ideas and appreciate detailed presentations."
     }
   ]);
 
