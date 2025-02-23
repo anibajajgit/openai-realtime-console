@@ -1,15 +1,39 @@
 import { useEffect, useRef, useState } from "react";
-
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
 import ScenarioSelector from "./ScenarioSelector";
+import Auth from "./Auth";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
+  const [user, setUser] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    setIsSessionActive(false);
+    stopSession(); //Added to ensure session is stopped on logout
+  };
+
+  if (!user) {
+    return <Auth onLogin={handleLogin} />;
+  }
 
   async function startSession() {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
@@ -67,7 +91,7 @@ export default function App() {
       dataChannel.close();
     }
 
-    peerConnection.current.getSenders().forEach((sender) => {
+    peerConnection.current?.getSenders().forEach((sender) => {
       if (sender.track) {
         sender.track.stop();
       }
@@ -125,7 +149,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-          
+
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -149,9 +173,18 @@ export default function App() {
 
   return (
     <>
-      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
-        <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
+      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4">
+        <div className="flex items-center gap-4 pb-2 border-0 border-b border-solid border-gray-200">
           <h1>Voice chat app</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <span>{user.name}</span>
+          <button
+            onClick={handleLogout}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            Logout
+          </button>
         </div>
       </nav>
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">

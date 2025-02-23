@@ -9,6 +9,37 @@ import { Role, Scenario } from './database/schema.js';
 const app = express();
 app.use(express.json());
 const port = process.env.PORT || 3000;
+
+import bcrypt from 'bcryptjs';
+import { User } from './database/schema.js';
+
+app.post('/api/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, password: hashedPassword });
+    res.json({ id: user.id, name: user.name, email: user.email });
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      throw new Error('Invalid password');
+    }
+    res.json({ id: user.id, name: user.name, email: user.email });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
 const hmrPort = process.env.HMR_PORT || 24678;
 const apiKey = process.env.OPENAI_API_KEY;
 
