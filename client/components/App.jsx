@@ -4,21 +4,26 @@ import ScenarioSelector from './ScenarioSelector';
 import SessionControls from './SessionControls';
 import EventLog from "./EventLog";
 
-
 export default function App() {
+  // Auth state
   const [user, setUser] = useState(null);
+
+  // Scenario state
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedScenario, setSelectedScenario] = useState(null);
-  const [isSessionActive, setIsSessionActive] = useState(false); //Added from original
-  const [events, setEvents] = useState([]); //Added from original
-  const [dataChannel, setDataChannel] = useState(null); //Added from original
-  const peerConnection = useRef(null); //Added from original
-  const audioElement = useRef(null); //Added from original
+
+  // Session state
+  const [isSessionActive, setIsSessionActive] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [dataChannel, setDataChannel] = useState(null);
+
+  // Refs
+  const peerConnection = useRef(null);
+  const audioElement = useRef(null);
   const mediaRecorder = useRef(null);
   const audioContext = useRef(null);
 
   useEffect(() => {
-    // Check for stored user data on mount
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -26,6 +31,7 @@ export default function App() {
   }, []);
 
   const handleLogin = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
@@ -34,41 +40,34 @@ export default function App() {
     setUser(null);
     setSelectedRole(null);
     setSelectedScenario(null);
-    setIsSessionActive(false); //Added from original
-    stopSession(); //Added from original
+    setIsSessionActive(false);
+    if (peerConnection.current) {
+      peerConnection.current.close();
+    }
   };
 
   if (!user) {
     return <Auth onLogin={handleLogin} />;
   }
 
-  async function startSession() { //Added from original
+  async function startSession() { 
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
     const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
-    // Get an ephemeral key from the Fastify server
     const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 
-    // Create a peer connection
     const pc = new RTCPeerConnection();
-
-    // Set up to play remote audio from the model
     audioElement.current = document.createElement("audio");
     audioElement.current.autoplay = true;
     pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
-    // Add local audio track for microphone input in the browser
-    const ms = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-    });
+    const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
     pc.addTrack(ms.getTracks()[0]);
 
-    // Set up data channel for sending and receiving events
     const dc = pc.createDataChannel("oai-events");
     setDataChannel(dc);
 
-    // Start the session using the Session Description Protocol (SDP)
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
 
@@ -92,8 +91,7 @@ export default function App() {
     peerConnection.current = pc;
   }
 
-  // Stop current session, clean up peer connection and data channel
-  function stopSession() { //Added from original
+  function stopSession() { 
     if (dataChannel) {
       dataChannel.close();
     }
@@ -113,8 +111,7 @@ export default function App() {
     peerConnection.current = null;
   }
 
-  // Send a message to the model
-  function sendClientEvent(message) { //Added from original
+  function sendClientEvent(message) { 
     if (dataChannel) {
       message.event_id = message.event_id || crypto.randomUUID();
       dataChannel.send(JSON.stringify(message));
@@ -127,8 +124,7 @@ export default function App() {
     }
   }
 
-  // Send a text message to the model
-  function sendTextMessage(message) { //Added from original
+  function sendTextMessage(message) { 
     const event = {
       type: "conversation.item.create",
       item: {
@@ -147,21 +143,14 @@ export default function App() {
     sendClientEvent({ type: "response.create" });
   }
 
-    // Attach event listeners to the data channel when a new one is created
   useEffect(() => {
     if (dataChannel) {
-      // Append new server events to the list
       dataChannel.addEventListener("message", (e) => {
         try {
           const event = JSON.parse(e.data);
-          console.log("Raw event data:", e.data);
-          console.log("Parsed event:", event);
-
           if (event.type === "audio.transcription") {
-            console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
           } else {
-            console.log("Non-transcription event:", event.type);
             setEvents(prev => [event, ...prev]);
           }
         } catch (error) {
@@ -170,7 +159,6 @@ export default function App() {
         }
       });
 
-      // Set session active when the data channel is opened
       dataChannel.addEventListener("open", () => {
         setIsSessionActive(true);
         setEvents([]);
@@ -178,23 +166,22 @@ export default function App() {
     }
   }, [dataChannel]);
 
-
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm p-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Interview Practice</h1>
+      <header className="bg-white shadow">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-xl font-semibold">Sales Training Simulator</h1>
           <div className="flex items-center gap-4">
             <span>{user.name}</span>
             <button 
               onClick={handleLogout}
-              className="text-red-600 hover:text-red-800"
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
             >
               Logout
             </button>
           </div>
         </div>
-      </nav>
+      </header>
 
       <main className="container mx-auto p-4">
         <ScenarioSelector
@@ -205,28 +192,26 @@ export default function App() {
         />
         {selectedRole && selectedScenario && (
           <>
-            <div className="mt-4"> {/*Added to provide spacing*/}
-              {isSessionActive ? <EventLog events={events} /> : null} </div> {/* Conditionally render EventLog */}
+            <div className="mt-4">
+              {isSessionActive ? <EventLog events={events} /> : null}
+            </div>
             <SessionControls
               selectedRole={selectedRole}
               selectedScenario={selectedScenario}
-              isRecording={isRecording}
-              setIsRecording={setIsRecording}
+              isSessionActive={isSessionActive}
+              setIsSessionActive={setIsSessionActive}
+              events={events}
+              setEvents={setEvents}
+              dataChannel={dataChannel}
+              setDataChannel={setDataChannel}
+              peerConnection={peerConnection}
+              audioElement={audioElement}
               mediaRecorder={mediaRecorder}
               audioContext={audioContext}
-              startSession={startSession} //Added from original
-              stopSession={stopSession} //Added from original
-              sendClientEvent={sendClientEvent} //Added from original
-              sendTextMessage={sendTextMessage} //Added from original
-              events={events} //Added from original
-              isSessionActive={isSessionActive} //Added from original
-              onAudioTranscript={(transcript) => { //Added from original
-                setEvents(prev => [{
-                  type: "audio.transcription",
-                  transcript,
-                  event_id: Date.now().toString()
-                }, ...prev]);
-              }}
+              startSession={startSession}
+              stopSession={stopSession}
+              sendClientEvent={sendClientEvent}
+              sendTextMessage={sendTextMessage}
             />
           </>
         )}
