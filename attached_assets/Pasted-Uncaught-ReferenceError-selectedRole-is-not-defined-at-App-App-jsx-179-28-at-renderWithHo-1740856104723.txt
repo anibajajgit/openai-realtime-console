@@ -1,0 +1,45 @@
+Uncaught ReferenceError: selectedRole is not defined
+    at App (App.jsx:179:28)
+    at renderWithHooks (chunk-XPR23Y44.js?v=89ce682c:11546:26)
+    at mountIndeterminateComponent (chunk-XPR23Y44.js?v=89ce682c:14924:21)
+    at beginWork (chunk-XPR23Y44.js?v=89ce682c:15912:22)
+    at HTMLUnknownElement.callCallback2 (chunk-XPR23Y44.js?v=89ce682c:3672:22)
+    at Object.invokeGuardedCallbackDev (chunk-XPR23Y44.js?v=89ce682c:3697:24)
+    at invokeGuardedCallback (chunk-XPR23Y44.js?v=89ce682c:3731:39)
+    at beginWork$1 (chunk-XPR23Y44.js?v=89ce682c:19763:15)
+    at performUnitOfWork (chunk-XPR23Y44.js?v=89ce682c:19196:20)
+    at workLoopSync (chunk-XPR23Y44.js?v=89ce682c:19135:13)Understand this errorAI
+chunk-XPR23Y44.js?v=89ce682c:14030 The above error occurred in the <App> component:
+
+    at App (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/App.jsx:24:49)
+    at RenderedRoute (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=89ce682c:4087:5)
+    at Routes (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=89ce682c:4557:5)
+    at Router (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=89ce682c:4500:15)
+    at BrowserRouter (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=89ce682c:5246:5)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-XPR23Y44.js?v=89ce682c:14030Understand this errorAI
+chunk-XPR23Y44.js?v=89ce682c:14758 Uncaught Error: There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root will switch to client rendering.
+    at updateHostRoot (chunk-XPR23Y44.js?v=89ce682c:14758:65)
+    at beginWork (chunk-XPR23Y44.js?v=89ce682c:15931:22)
+    at beginWork$1 (chunk-XPR23Y44.js?v=89ce682c:19751:22)
+    at performUnitOfWork (chunk-XPR23Y44.js?v=89ce682c:19196:20)
+    at workLoopSync (chunk-XPR23Y44.js?v=89ce682c:19135:13)
+    at renderRootSync (chunk-XPR23Y44.js?v=89ce682c:19114:15)
+    at recoverFromConcurrentError (chunk-XPR23Y44.js?v=89ce682c:18734:28)
+    at performConcurrentWorkOnRoot (chunk-XPR23Y44.js?v=89ce682c:18682:30)
+    at workLoop (chunk-XPR23Y44.js?v=89ce682c:195:42)
+    at flushWork (chunk-XPR23Y44.js?v=89ce682c:174:22)Understand this errorAI
+chunk-XPR23Y44.js?v=89ce682c:19411 Uncaught ReferenceError: selectedRole is not defined
+    at App (App.jsx:179:28)
+    at renderWithHooks (chunk-XPR23Y44.js?v=89ce682c:11546:26)
+    at mountIndeterminateComponent (chunk-XPR23Y44.js?v=89ce682c:14924:21)
+    at beginWork (chunk-XPR23Y44.js?v=89ce682c:15912:22)
+    at beginWork$1 (chunk-XPR23Y44.js?v=89ce682c:19751:22)
+    at performUnitOfWork (chunk-XPR23Y44.js?v=89ce682c:19196:20)
+    at workLoopSync (chunk-XPR23Y44.js?v=89ce682c:19135:13)
+    at renderRootSync (chunk-XPR23Y44.js?v=89ce682c:19114:15)
+    at recoverFromConcurrentError (chunk-XPR23Y44.js?v=89ce682c:18734:28)
+    at performConcurrentWorkOnRoot (chunk-XPR23Y44.js?v=89ce682c:18682:30)Understand this errorAI
+shopify-script.js:562 Marketplace not found, using fallback d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000
