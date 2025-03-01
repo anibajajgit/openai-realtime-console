@@ -144,8 +144,36 @@ export default function App() {
         setIsSessionActive(true);
         setEvents([]);
       });
+
+      // Save transcript when the data channel is closed
+      dataChannel.addEventListener("close", async () => {
+        if (events.length > 0 && selectedRole && selectedScenario) {
+          try {
+            const response = await fetch('/api/transcripts', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                roleId: selectedRole.id,
+                scenarioId: selectedScenario.id,
+                content: events,
+                sessionId: dataChannel.label // Use the dataChannel label as the session ID
+              }),
+            });
+            
+            if (response.ok) {
+              console.log('Transcript saved successfully');
+            } else {
+              console.error('Failed to save transcript');
+            }
+          } catch (error) {
+            console.error('Error saving transcript:', error);
+          }
+        }
+      });
     }
-  }, [dataChannel]);
+  }, [dataChannel, events, selectedRole, selectedScenario]);
 
   return (
     <>

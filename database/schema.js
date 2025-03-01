@@ -46,4 +46,33 @@ const User = sequelize.define('User', {
   timestamps: true
 });
 
-export { Role, Scenario, User };
+const Transcript = sequelize.define('Transcript', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  roleId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  scenarioId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  content: {
+    type: DataTypes.JSON,
+    allowNull: false
+  },
+  sessionId: {
+    type: DataTypes.STRING
+  }
+}, {
+  timestamps: true
+});
+
+// Define relationships
+Transcript.belongsTo(Role, { foreignKey: 'roleId' });
+Transcript.belongsTo(Scenario, { foreignKey: 'scenarioId' });
+
+export { Role, Scenario, User, Transcript };
