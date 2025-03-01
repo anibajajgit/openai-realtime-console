@@ -205,3 +205,30 @@ export default function App() {
     </>
   );
 }
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import AppSidebar from './AppSidebar';
+import HomePage from '../pages/HomePage';
+import ScenariosPage from '../pages/ScenariosPage';  
+import TranscriptsPage from '../pages/TranscriptsPage';
+import SettingsPage from '../pages/SettingsPage';
+import LandingPage from '../pages/LandingPage';
+import '../base.css';
+
+export default function App() {
+  return (
+    <div className="h-screen w-screen flex overflow-hidden">
+      <AppSidebar />
+      <main className="flex-1 overflow-auto bg-gray-50">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/scenarios" element={<ScenariosPage />} />
+          <Route path="/transcripts" element={<TranscriptsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          {/* Keep the landing page route if needed */}
+          <Route path="/landing" element={<LandingPage />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}

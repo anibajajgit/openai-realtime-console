@@ -1,9 +1,42 @@
 
 import React, { useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "./Sidebar";
+import { NavLink, useLocation } from "react-router-dom";
+import { Sidebar, SidebarBody } from "./Sidebar";
+
+// Custom SidebarLink that uses NavLink for routing
+const SidebarLink = ({ link, className, ...props }) => {
+  const { open, animate } = useSidebar();
+  const location = useLocation();
+  const isActive = location.pathname === link.href;
+  
+  return (
+    <NavLink
+      to={link.href}
+      className={({ isActive }) => `
+        flex items-center justify-start gap-2 group/sidebar py-2
+        ${isActive ? 'text-blue-600 font-medium' : 'text-neutral-700'}
+        ${className || ''}
+      `}
+      {...props}
+    >
+      {link.icon}
+      <span
+        style={{
+          display: animate ? (open ? "inline-block" : "none") : "inline-block",
+          opacity: animate ? (open ? 1 : 0) : 1,
+          transition: "opacity 0.3s ease"
+        }}
+        className="text-inherit dark:text-inherit text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+      >
+        {link.label}
+      </span>
+    </NavLink>
+  );
+};
 
 export default function AppSidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { useSidebar } = require("./Sidebar");
 
   const links = [
     {
