@@ -177,7 +177,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(vite.middlewares);
+// Only use vite middlewares in development mode
+if (process.argv.includes('--dev') && vite) {
+  // This middleware was already applied inside the development block
+  // But we keep this check here as a safety measure
+  console.log("Using Vite middlewares for development");
+}
 
 // Initialize database and seed data
 console.log("Initializing database...");
