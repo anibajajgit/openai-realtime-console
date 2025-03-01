@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Routes, Route, useLocation } from "react-router-dom"; // Importing useLocation for better example
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import ScenarioSelector from "./ScenarioSelector";
 import EventLog from "./EventLog";
-import Home from "./Home"; // Added Home component import
+import Home from "./Home";
 import "../base.css";
 
 
@@ -197,13 +197,13 @@ export default function App() {
             </main>
           </>
         } />
-        <Route path="/home" element={<Home />} /> {/* Home page route */}
+        <Route path="/home" element={<Home />} />
       </Routes>
     </>
   );
 }
 
-// Dummy Home component (replace with your actual Home component)
+// Home component is imported from "./Home"
 const Home = () => {
   return (
     <div>
