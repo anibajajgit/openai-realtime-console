@@ -48,7 +48,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  
+
   // Handle WebSocket upgrade requests
   if (req.headers.upgrade && req.headers.upgrade.toLowerCase() === 'websocket') {
     res.header('Connection', 'Upgrade');
@@ -127,7 +127,7 @@ app.use("*", async (req, res, next) => {
       fs.readFileSync("./client/index.html", "utf-8"),
     );
     const { render } = await vite.ssrLoadModule("./client/entry-server.jsx");
-    const appHtml = await render(url);
+    const appHtml = await render(url); // Pass the URL here
     const html = template.replace(`<!--ssr-outlet-->`, appHtml?.html);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
   } catch (e) {
