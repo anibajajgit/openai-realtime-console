@@ -9,13 +9,16 @@ import "./base.css";
 
 // Wait for DOM to be ready
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("app");
+  const container = document.getElementById("app") || document.getElementById("root");
   
-  // Use createRoot instead of hydrateRoot for more reliable rendering
-  // when there are SSR hydration errors
-  const root = createRoot(container);
-  
-  root.render(
+  if (!container) {
+    console.error("Target container not found. Using body as fallback.");
+    // Fallback to body if neither #app nor #root exist
+    const fallbackContainer = document.createElement("div");
+    fallbackContainer.id = "app";
+    document.body.appendChild(fallbackContainer);
+    const root = createRoot(fallbackContainer);
+    root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
@@ -24,4 +27,17 @@ document.addEventListener("DOMContentLoaded", () => {
       </Routes>
     </BrowserRouter>
   );
+  } else {
+    // Normal render path when container is found
+    const root = createRoot(container);
+    root.render(
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/transcripts" element={<TranscriptList />} />
+          <Route path="/transcripts/:id" element={<TranscriptView />} />
+        </Routes>
+      </BrowserRouter>
+    );
+  }
 });
