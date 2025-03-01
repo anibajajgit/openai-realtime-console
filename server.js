@@ -37,7 +37,8 @@ const vite = await createViteServer({
       protocol: 'ws',
       host: '0.0.0.0',
       port: 24678,
-      clientPort: 24678
+      clientPort: hmrPort,
+      path: '/ws'
     }
   },
   appType: "custom",
