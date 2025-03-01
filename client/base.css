@@ -1,35 +1,4 @@
 @tailwind base;
-
-/* Landing page styles */
-.min-h-screen {
-  min-height: 100vh;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.rounded-xl {
-  border-radius: 0.75rem;
-}
-
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* Button styling */
-.bg-blue-600 {
-  background-color: #2563eb;
-}
-
-.hover\:bg-blue-700:hover {
-  background-color: #1d4ed8;
-}
-
-.text-white {
-  color: white;
-}
-
 @tailwind components;
 @tailwind utilities;
 

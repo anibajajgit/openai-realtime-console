@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario, User } from './database/schema.js'; // Added User import
+import { Role, Scenario } from './database/schema.js';
 
 const app = express();
 app.use(express.json());
@@ -24,135 +24,12 @@ app.get('/api/roles', async (req, res) => {
   }
 });
 
-// Auth API routes
-app.post("/api/auth/register", async (req, res) => {
-  try {
-    const { username, password, email } = req.body;
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ where: { username } });
-    if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
-    }
-
-    // Create new user
-    const newUser = await User.create({
-      username,
-      password, // In a real app, you should hash this password
-      email
-    });
-
-    // Remove password from response
-    const userData = { ...newUser.toJSON() };
-    delete userData.password;
-
-    res.status(201).json({ 
-      user: userData,
-      message: "User registered successfully" 
-    });
-  } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ error: "Failed to register user" });
-  }
-});
-
-app.post("/api/auth/login", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    // Find user
-    const user = await User.findOne({ where: { username } });
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Check password (in a real app use proper password comparison with bcrypt)
-    if (user.password !== password) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Remove password from response
-    const userData = { ...user.toJSON() };
-    delete userData.password;
-
-    res.json({ 
-      user: userData,
-      message: "Login successful" 
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Failed to login" });
-  }
-});
-
-// Existing API routes
-app.get("/api/scenarios", async (req, res) => {
+app.get('/api/scenarios', async (req, res) => {
   const scenarios = await Scenario.findAll();
   res.json(scenarios);
 });
 
 // Configure Vite middleware for React client
-async function createViteDevServer() {
-  const vite = await createViteServer({
-    server: { middlewareMode: true },
-    appType: 'custom'
-  });
-  
-  return vite;
-}
-
-let vite;
-if (process.argv.includes('--dev')) {
-  createViteDevServer().then((devServer) => {
-    vite = devServer;
-    app.use(vite.middlewares);
-    
-    // Handle SPA routing for client-side routes
-    app.get('*', async (req, res, next) => {
-      const url = req.originalUrl;
-      
-      try {
-        // If the request is for an API route, skip rendering
-        if (url.startsWith('/api/')) {
-          return next();
-        }
-        
-        // Read index.html
-        let template = fs.readFileSync('./client/index.html', 'utf-8');
-        
-        // Apply Vite transformations
-        template = await vite.transformIndexHtml(url, template);
-        
-        // Load the server entry module
-        const { render } = await vite.ssrLoadModule('./client/entry-server.jsx');
-        
-        // Render the app HTML
-        const { html: appHtml } = render(url);
-        
-        // Inject the app-rendered HTML into the template
-        const finalHtml = template.replace('<!--ssr-outlet-->', appHtml);
-        
-        // Send the rendered HTML
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml);
-      } catch (e) {
-        // If an error occurs, let Vite fix the stack trace for better debugging
-        vite.ssrFixStacktrace(e);
-        console.error(e);
-        next(e);
-      }
-    });
-  });
-} else {
-  // Production mode
-  app.use(express.static('./dist/client'));
-  
-  // Handle SPA routing for client-side routes in production
-  app.get('*', (req, res) => {
-    res.sendFile(resolve('./dist/client/index.html'));
-  });
-}
-// This code is redundant as we already set up vite above
-/* 
 const vite = await createViteServer({
   server: { 
     middlewareMode: true,
@@ -163,9 +40,8 @@ const vite = await createViteServer({
       clientPort: 24678
     }
   },
-  appType: "custom"
+  appType: "custom",
 });
-*/
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -177,12 +53,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Only use vite middlewares in development mode
-if (process.argv.includes('--dev') && vite) {
-  // This middleware was already applied inside the development block
-  // But we keep this check here as a safety measure
-  console.log("Using Vite middlewares for development");
-}
+app.use(vite.middlewares);
 
 // Initialize database and seed data
 console.log("Initializing database...");
