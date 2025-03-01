@@ -203,11 +203,4 @@ export default function App() {
   );
 }
 
-// Home component is imported from "./Home"
-const Home = () => {
-  return (
-    <div>
-      <h1>Home</h1>
-    </div>
-  );
-};
+// Note: Home component is imported at the top of the file
