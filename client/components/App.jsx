@@ -5,19 +5,39 @@ import SessionControls from "./SessionControls";
 import ScenarioSelector from "./ScenarioSelector";
 
 export default function App() {
-  const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
+  const [isSessionActive, setIsSessionActive] = useState(false);
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [sessionStartTime, setSessionStartTime] = useState(null);
 
   async function startSession() {
-    const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
-    const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
-    // Get an ephemeral key from the Fastify server
-    const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
-    const data = await tokenResponse.json();
-    const EPHEMERAL_KEY = data.client_secret.value;
+    const elements = Array.from(document.querySelectorAll('input[name="role"]:checked, input[name="scenario"]:checked'));
+    const valueMap = elements.reduce((acc, el) => {
+      acc[el.name] = el.value;
+      return acc;
+    }, {});
+
+    // Fetch role and scenario details
+    const rolesResponse = await fetch('/api/roles');
+    const roles = await rolesResponse.json();
+    const selectedRole = roles.find(r => r.id === Number(valueMap.role));
+
+    const scenariosResponse = await fetch('/api/scenarios');
+    const scenarios = await scenariosResponse.json();
+    const selectedScenario = scenarios.find(s => s.id === Number(valueMap.scenario));
+
+    setSelectedRole(selectedRole);
+    setSelectedScenario(selectedScenario);
+    setSessionStartTime(Date.now());
+
+    // Get ephemeral token from the server
+    const tokenResponse = await fetch(`/token?roleId=${valueMap.role}&scenarioId=${valueMap.scenario}`);
+    const { token } = await tokenResponse.json();
+    const EPHEMERAL_KEY = token;
 
     // Create a peer connection
     const pc = new RTCPeerConnection();
@@ -125,7 +145,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-          
+
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);

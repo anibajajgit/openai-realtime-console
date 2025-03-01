@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario } from './database/schema.js';
+import { Role, Scenario, Transcript } from './database/schema.js';
 
 const app = express();
 app.use(express.json());
@@ -27,6 +27,53 @@ app.get('/api/roles', async (req, res) => {
 app.get('/api/scenarios', async (req, res) => {
   const scenarios = await Scenario.findAll();
   res.json(scenarios);
+});
+
+// Transcript endpoints
+app.post('/api/transcripts', async (req, res) => {
+  try {
+    const { roleId, scenarioId, content, duration } = req.body;
+    const transcript = await Transcript.create({
+      roleId,
+      scenarioId,
+      content,
+      duration
+    });
+    res.status(201).json(transcript);
+  } catch (error) {
+    console.error('Error saving transcript:', error);
+    res.status(500).json({ error: 'Failed to save transcript' });
+  }
+});
+
+app.get('/api/transcripts', async (req, res) => {
+  try {
+    const transcripts = await Transcript.findAll({
+      order: [['createdAt', 'DESC']]
+    });
+    res.json(transcripts);
+  } catch (error) {
+    console.error('Error fetching transcripts:', error);
+    res.status(500).json({ error: 'Failed to fetch transcripts' });
+  }
+});
+
+app.get('/api/transcripts/:id', async (req, res) => {
+  try {
+    const transcript = await Transcript.findByPk(req.params.id, {
+      include: [
+        { model: Role, as: 'role' },
+        { model: Scenario, as: 'scenario' }
+      ]
+    });
+    if (!transcript) {
+      return res.status(404).json({ error: 'Transcript not found' });
+    }
+    res.json(transcript);
+  } catch (error) {
+    console.error('Error fetching transcript:', error);
+    res.status(500).json({ error: 'Failed to fetch transcript' });
+  }
 });
 
 // Configure Vite middleware for React client
