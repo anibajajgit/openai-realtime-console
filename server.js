@@ -92,9 +92,6 @@ app.get("/api/scenarios", async (req, res) => {
 });
 
 // Configure Vite middleware for React client
-import { createServer as createViteServer } from 'vite';
-import fs from 'fs';
-
 async function createViteDevServer() {
   const vite = await createViteServer({
     server: { middlewareMode: true },
