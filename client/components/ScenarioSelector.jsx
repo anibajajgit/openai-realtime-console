@@ -17,8 +17,16 @@ export default function ScenarioSelector() {
     fetch('/api/roles')
       .then(res => res.json())
       .then(data => {
+        console.log('Fetched roles from API:', data);
         setRoles(data);
-        setSelectedRole(data[0]);
+        if (data && data.length > 0) {
+          setSelectedRole(data[0]);
+        } else {
+          console.warn('No roles received from API');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching roles:', error);
       });
   }, []);
 

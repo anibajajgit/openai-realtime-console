@@ -56,8 +56,16 @@ app.use((req, res, next) => {
 app.use(vite.middlewares);
 
 // Initialize database and seed data
+console.log("Initializing database...");
 await initDatabase();
+console.log("Seeding database...");
 await seedDatabase();
+console.log("Database setup complete");
+
+// Verify roles in database after seeding
+import { Role } from './database/schema.js';
+const rolesInDb = await Role.findAll();
+console.log(`Server startup: Found ${rolesInDb.length} roles in database:`, rolesInDb.map(r => r.name).join(', '));
 
 // API route for token generation and WebSocket upgrade
 app.get("/token", async (req, res) => {

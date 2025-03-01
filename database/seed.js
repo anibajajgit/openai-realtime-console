@@ -5,9 +5,11 @@ export async function seedDatabase() {
   const existingRoles = await Role.findAll();
   const existingScenarios = await Scenario.findAll();
   
+  console.log(`Found ${existingRoles.length} existing roles in the database`);
   if (existingRoles.length === 0) {
     console.log("Seeding roles...");
-    await Role.bulkCreate([
+    try {
+      const roles = await Role.bulkCreate([
       {
         name: "Priya Anand",
         title: "CTO",
@@ -33,9 +35,12 @@ export async function seedDatabase() {
         instructions: "You are an HR director with 15 years experience. You focus on people and company culture."
       }
     ]);
-    console.log("Roles seeded successfully");
+      console.log(`Created ${roles.length} roles successfully:`, roles.map(r => r.name).join(', '));
+    } catch (error) {
+      console.error("Error seeding roles:", error);
+    }
   } else {
-    console.log(`Found ${existingRoles.length} existing roles`);
+    console.log(`Found ${existingRoles.length} existing roles: ${existingRoles.map(r => r.name).join(', ')}`);
   }
 
   if (existingScenarios.length === 0) {
