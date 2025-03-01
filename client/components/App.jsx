@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import ScenarioSelector from "./ScenarioSelector";
@@ -203,4 +203,4 @@ export default function App() {
   );
 }
 
-// Note: Home component is imported at the top of the file
+// Note: SessionControls component is assumed to be defined elsewhere and handles session control elements.  This is not included in the original code.
