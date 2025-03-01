@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import AuthDialog from '../components/auth/AuthDialog';
@@ -7,8 +6,10 @@ import { Button } from '../components/ui/button';
 const LandingPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    const savedUser = typeof window !== 'undefined' && localStorage.getItem('user') 
+    ? JSON.parse(localStorage.getItem('user')) 
+    : null;
+    return savedUser;
   });
 
   // Redirect to home if user is logged in
@@ -29,7 +30,7 @@ const LandingPage = () => {
             Sign in to access real-time voice chat and scenarios
           </p>
         </div>
-        
+
         <div className="bg-white p-8 rounded-xl shadow-md">
           <Button 
             onClick={() => setIsDialogOpen(true)}
