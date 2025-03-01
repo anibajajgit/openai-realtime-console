@@ -63,7 +63,6 @@ await seedDatabase();
 console.log("Database setup complete");
 
 // Verify roles in database after seeding
-import { Role } from './database/schema.js';
 const rolesInDb = await Role.findAll();
 console.log(`Server startup: Found ${rolesInDb.length} roles in database:`, rolesInDb.map(r => r.name).join(', '));
 
