@@ -14,14 +14,22 @@ export function render(url) {
   } else if (url.startsWith('/transcripts/')) {
     component = <TranscriptView />;
   } else {
+    // For the main app, we need to make sure it's safe for SSR
     component = <App />;
   }
 
-  const html = renderToString(
-    <StaticRouter location={url}>
-      {component}
-    </StaticRouter>
-  );
-
-  return { html };
+  try {
+    const html = renderToString(
+      <StaticRouter location={url}>
+        {component}
+      </StaticRouter>
+    );
+    return { html };
+  } catch (error) {
+    console.error('Server rendering error:', error);
+    // Provide a fallback for server-side rendering errors
+    return { 
+      html: '<div id="app">Loading application...</div>'
+    };
+  }
 }
