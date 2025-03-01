@@ -14,8 +14,14 @@ const apiKey = process.env.OPENAI_API_KEY;
 
 // Database routes
 app.get('/api/roles', async (req, res) => {
-  const roles = await Role.findAll();
-  res.json(roles);
+  try {
+    const roles = await Role.findAll();
+    console.log(`Sending ${roles.length} roles to client`);
+    res.json(roles);
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    res.status(500).json({ error: 'Failed to fetch roles' });
+  }
 });
 
 app.get('/api/scenarios', async (req, res) => {
