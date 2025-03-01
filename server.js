@@ -92,6 +92,68 @@ app.get("/api/scenarios", async (req, res) => {
 });
 
 // Configure Vite middleware for React client
+import { createServer as createViteServer } from 'vite';
+import fs from 'fs';
+
+async function createViteDevServer() {
+  const vite = await createViteServer({
+    server: { middlewareMode: true },
+    appType: 'custom'
+  });
+  
+  return vite;
+}
+
+let vite;
+if (process.argv.includes('--dev')) {
+  createViteDevServer().then((devServer) => {
+    vite = devServer;
+    app.use(vite.middlewares);
+    
+    // Handle SPA routing for client-side routes
+    app.get('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      
+      try {
+        // If the request is for an API route, skip rendering
+        if (url.startsWith('/api/')) {
+          return next();
+        }
+        
+        // Read index.html
+        let template = fs.readFileSync('./client/index.html', 'utf-8');
+        
+        // Apply Vite transformations
+        template = await vite.transformIndexHtml(url, template);
+        
+        // Load the server entry module
+        const { render } = await vite.ssrLoadModule('./client/entry-server.jsx');
+        
+        // Render the app HTML
+        const { html: appHtml } = render(url);
+        
+        // Inject the app-rendered HTML into the template
+        const finalHtml = template.replace('<!--ssr-outlet-->', appHtml);
+        
+        // Send the rendered HTML
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml);
+      } catch (e) {
+        // If an error occurs, let Vite fix the stack trace for better debugging
+        vite.ssrFixStacktrace(e);
+        console.error(e);
+        next(e);
+      }
+    });
+  });
+} else {
+  // Production mode
+  app.use(express.static('./dist/client'));
+  
+  // Handle SPA routing for client-side routes in production
+  app.get('*', (req, res) => {
+    res.sendFile(resolve('./dist/client/index.html'));
+  });
+}
 const vite = await createViteServer({
   server: { 
     middlewareMode: true,

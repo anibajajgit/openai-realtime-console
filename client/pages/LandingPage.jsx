@@ -19,6 +19,10 @@ const LandingPage = () => {
 
   const handleAuthSuccess = (userData) => {
     setUser(userData);
+    // Store user data in localStorage (only in browser context)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(userData));
+    }
   };
 
   return (
@@ -33,7 +37,10 @@ const LandingPage = () => {
 
         <div className="bg-white p-8 rounded-xl shadow-md">
           <Button 
-            onClick={() => setIsDialogOpen(true)}
+            onClick={() => {
+              console.log("Opening dialog");
+              setIsDialogOpen(true);
+            }}
             className="w-full"
             size="lg"
           >
