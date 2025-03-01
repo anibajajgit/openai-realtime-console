@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { Input } from '../ui/input';
@@ -38,7 +37,7 @@ const AuthDialog = ({ isOpen, onOpenChange, onSuccess }) => {
 
       // Store token or user data
       localStorage.setItem('user', JSON.stringify(data.user));
-      
+
       // Notify parent component
       onSuccess(data.user);
       onOpenChange(false);
@@ -65,7 +64,7 @@ const AuthDialog = ({ isOpen, onOpenChange, onSuccess }) => {
               : 'Create a new account to get started'}
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           <div className="space-y-2">
             <Label htmlFor="username">Username</Label>
@@ -76,7 +75,7 @@ const AuthDialog = ({ isOpen, onOpenChange, onSuccess }) => {
               required 
             />
           </div>
-          
+
           {!isLogin && (
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -88,7 +87,7 @@ const AuthDialog = ({ isOpen, onOpenChange, onSuccess }) => {
               />
             </div>
           )}
-          
+
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input 
@@ -99,11 +98,11 @@ const AuthDialog = ({ isOpen, onOpenChange, onSuccess }) => {
               required 
             />
           </div>
-          
+
           {error && (
             <div className="text-red-500 text-sm">{error}</div>
           )}
-          
+
           <DialogFooter>
             <Button 
               type="button" 

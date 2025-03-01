@@ -3,14 +3,24 @@ import { Navigate } from 'react-router-dom';
 import AuthDialog from '../components/auth/AuthDialog';
 import { Button } from '../components/ui/button';
 
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import Button from '../components/Button';
+import AuthDialog from '../components/auth/AuthDialog';
+
 const LandingPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [user, setUser] = useState(() => {
-    const savedUser = typeof window !== 'undefined' && localStorage.getItem('user') 
-    ? JSON.parse(localStorage.getItem('user')) 
-    : null;
-    return savedUser;
-  });
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    // Only access localStorage in the browser
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    }
+  }, []);
 
   // Redirect to home if user is logged in
   if (user) {
@@ -41,7 +51,7 @@ const LandingPage = () => {
               console.log("Opening dialog");
               setIsDialogOpen(true);
             }}
-            className="w-full"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             size="lg"
           >
             Get Started
