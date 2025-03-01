@@ -34,7 +34,7 @@ const vite = await createViteServer({
   server: { 
     middlewareMode: true,
     hmr: {
-      protocol: 'ws',
+      protocol: 'wss', // Change to secure WebSocket for HTTPS
       host: '0.0.0.0',
       port: 24678,
       clientPort: hmrPort,
@@ -47,7 +47,10 @@ const vite = await createViteServer({
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
-  if (req.headers.upgrade === 'websocket') {
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  
+  // Handle WebSocket upgrade requests
+  if (req.headers.upgrade && req.headers.upgrade.toLowerCase() === 'websocket') {
     res.header('Connection', 'Upgrade');
     res.header('Upgrade', 'websocket');
   }
