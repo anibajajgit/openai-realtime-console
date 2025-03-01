@@ -151,9 +151,10 @@ if (process.argv.includes('--dev')) {
     res.sendFile(resolve('./dist/client/index.html'));
   });
 }
-const vite = await createViteServer({
-  server: { 
-    middlewareMode: true,
+// This code is redundant as we already set up vite above
+// const vite = await createViteServer({
+//   server: { 
+//     middlewareMode: true,
     hmr: {
       protocol: 'ws',
       host: '0.0.0.0',
