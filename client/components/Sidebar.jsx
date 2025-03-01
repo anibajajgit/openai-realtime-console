@@ -71,7 +71,7 @@ export const DesktopSidebar = ({
   return (
     <div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+        "h-full px-4 py-4 hidden md:flex md:flex-col bg-white dark:bg-white w-[300px] flex-shrink-0",
         className
       )}
       style={{
@@ -122,7 +122,7 @@ export const MobileSidebar = ({
               transition: "transform 0.3s ease, opacity 0.3s ease"
             }}
             className={cn(
-              "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between",
+              "fixed h-full w-full inset-0 bg-white dark:bg-white p-10 z-[100] flex flex-col justify-between",
               className
             )}
           >

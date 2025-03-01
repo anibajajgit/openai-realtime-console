@@ -56,7 +56,6 @@ export default function AppSidebar() {
     <Sidebar open={sidebarOpen} setOpen={setSidebarOpen}>
       <SidebarBody>
         <div className="flex flex-col gap-1 mt-4">
-          <h2 className="text-xl font-bold mb-4">Voice Chat App</h2>
           {links.map((link, index) => (
             <SidebarLink key={index} link={link} />
           ))}
