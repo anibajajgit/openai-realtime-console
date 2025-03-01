@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
 import EventLog from "./EventLog";
-import SessionControls from "./SessionControls";
 import ScenarioSelector from "./ScenarioSelector";
+import SessionControls from "./SessionControls";
+import Button from "./Button";
+import AppSidebar from "./AppSidebar";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -125,7 +127,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-          
+
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -156,6 +158,7 @@ export default function App() {
       </nav>
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex-row h-full bg-gray-50">
+          <AppSidebar /> {/* Added AppSidebar here */}
           <section className="w-full md:w-2/5 p-4">
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>
