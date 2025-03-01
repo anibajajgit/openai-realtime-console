@@ -6,41 +6,49 @@ export async function seedDatabase() {
   const existingScenarios = await Scenario.findAll();
   
   console.log(`Found ${existingRoles.length} existing roles in the database`);
-  if (existingRoles.length === 0) {
-    console.log("Seeding roles...");
+  
+  // Define all expected roles
+  const expectedRoles = [
+    {
+      name: "Priya Anand",
+      title: "CTO",
+      style: "ASSERTIVE",
+      photoUrl: `https://ui-avatars.com/api/?name=Priya+Anand&size=150&background=random`,
+      voice: "shimmer",
+      instructions: "Your knowledge cutoff is 2023-10. You are an indian woman, born and raised in Mumbai, India and must Speak with a local Indian accent at all times. You are the CTO of a Pharmaceutical company. you are assertive, and dont like to be disturbed unless for something important, but are generally polite."
+    },
+    {
+      name: "Michael Chen",
+      title: "Product Manager",
+      style: "COLLABORATIVE",
+      photoUrl: `https://ui-avatars.com/api/?name=Michael+Chen&size=150&background=random`,
+      voice: "verse",
+      instructions: "You are a product manager focused on user experience and collaboration. You are open to new ideas and appreciate detailed presentations."
+    },
+    {
+      name: "Sarah Johnson",
+      title: "HR Director",
+      style: "EMPATHETIC",
+      photoUrl: `https://ui-avatars.com/api/?name=Sarah+Johnson&size=150&background=random`,
+      voice: "nova",
+      instructions: "You are an HR director with 15 years experience. You focus on people and company culture."
+    }
+  ];
+  
+  // Check which roles are missing
+  const existingRoleNames = existingRoles.map(role => role.name);
+  const missingRoles = expectedRoles.filter(role => !existingRoleNames.includes(role.name));
+  
+  if (missingRoles.length > 0) {
+    console.log(`Adding ${missingRoles.length} missing roles...`);
     try {
-      const roles = await Role.bulkCreate([
-      {
-        name: "Priya Anand",
-        title: "CTO",
-        style: "ASSERTIVE",
-        photoUrl: `https://ui-avatars.com/api/?name=Priya+Anand&size=150&background=random`,
-        voice: "shimmer",
-        instructions: "Your knowledge cutoff is 2023-10. You are an indian woman, born and raised in Mumbai, India and must Speak with a local Indian accent at all times. You are the CTO of a Pharmaceutical company. you are assertive, and dont like to be disturbed unless for something important, but are generally polite."
-      },
-      {
-        name: "Michael Chen",
-        title: "Product Manager",
-        style: "COLLABORATIVE",
-        photoUrl: `https://ui-avatars.com/api/?name=Michael+Chen&size=150&background=random`,
-        voice: "verse",
-        instructions: "You are a product manager focused on user experience and collaboration. You are open to new ideas and appreciate detailed presentations."
-      },
-      {
-        name: "Sarah Johnson",
-        title: "HR Director",
-        style: "EMPATHETIC",
-        photoUrl: `https://ui-avatars.com/api/?name=Sarah+Johnson&size=150&background=random`,
-        voice: "nova",
-        instructions: "You are an HR director with 15 years experience. You focus on people and company culture."
-      }
-    ]);
+      const roles = await Role.bulkCreate(missingRoles);
       console.log(`Created ${roles.length} roles successfully:`, roles.map(r => r.name).join(', '));
     } catch (error) {
       console.error("Error seeding roles:", error);
     }
   } else {
-    console.log(`Found ${existingRoles.length} existing roles: ${existingRoles.map(r => r.name).join(', ')}`);
+    console.log(`All expected roles are already in the database: ${existingRoleNames.join(', ')}`);
   }
 
   if (existingScenarios.length === 0) {
