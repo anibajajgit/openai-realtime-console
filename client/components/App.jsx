@@ -5,7 +5,7 @@ import HomePage from '../pages/HomePage';
 import ScenariosPage from '../pages/ScenariosPage';  
 import TranscriptsPage from '../pages/TranscriptsPage';
 import SettingsPage from '../pages/SettingsPage';
-import LandingPage from '../pages/LandingPage';
+import LandingPage from '../pages/LandingPage.jsx';
 import ScenarioSelector from './ScenarioSelector';
 import EventLog from './EventLog';
 import SessionControls from './SessionControls';
