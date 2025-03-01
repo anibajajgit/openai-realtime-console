@@ -152,18 +152,20 @@ if (process.argv.includes('--dev')) {
   });
 }
 // This code is redundant as we already set up vite above
-// const vite = await createViteServer({
-//   server: { 
-//     middlewareMode: true,
+/* 
+const vite = await createViteServer({
+  server: { 
+    middlewareMode: true,
     hmr: {
       protocol: 'ws',
       host: '0.0.0.0',
       port: 24678,
       clientPort: 24678
     }
-  }
-  // appType is already defined in the earlier vite config
+  },
+  appType: "custom"
 });
+*/
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
