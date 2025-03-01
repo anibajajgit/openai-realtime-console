@@ -70,10 +70,8 @@ export default function SessionControls({
   stopSession,
   sendClientEvent,
   sendTextMessage,
-  events = [],
-  serverEvents = [],
+  serverEvents,
   isSessionActive,
-  onAudioTranscript = () => {},
 }) {
   return (
     <div className="flex gap-4 border-t-2 border-gray-200 h-full rounded-md">

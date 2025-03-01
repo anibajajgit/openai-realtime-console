@@ -5,27 +5,17 @@ import SessionControls from "./SessionControls";
 import ScenarioSelector from "./ScenarioSelector";
 
 export default function App() {
-  // Use React's useState with default initialization to prevent undefined errors
-  const [events, setEvents] = useState([]);
   const [isSessionActive, setIsSessionActive] = useState(false);
-  const [roles, setRoles] = useState([]);
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [scenarios, setScenarios] = useState([]);
-  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
-
-  // Check if we're rendering on the server
-  const isServer = typeof window === 'undefined';
-
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
 
   async function startSession() {
-    // Use the component state instead of re-declaring the variable
-    const roleToUse = selectedRole || { id: 1 };
-    const scenarioToUse = selectedScenario || { id: 1 };
+    const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
+    const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
     // Get an ephemeral key from the Fastify server
-    const tokenResponse = await fetch(`/token?roleId=${roleToUse.id}&scenarioId=${scenarioToUse.id}`);
+    const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 
@@ -126,39 +116,6 @@ export default function App() {
     sendClientEvent({ type: "response.create" });
   }
 
-  useEffect(() => {
-    // Skip API fetches during server-side rendering
-    if (isServer) return;
-
-    // Fetch roles from API
-    fetch('/api/roles')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Fetched roles from API:', data);
-        setRoles(data);
-        if (data.length > 0) {
-          setSelectedRole(data[0]);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching roles:', error);
-      });
-
-    // Fetch scenarios from API
-    fetch('/api/scenarios')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Fetched scenarios from API:', data);
-        setScenarios(data);
-        if (data.length > 0) {
-          setSelectedScenario(data[0]);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching scenarios:', error);
-      });
-  }, [isServer]); // Add isServer to dependency array
-
   // Attach event listeners to the data channel when a new one is created
   useEffect(() => {
     if (dataChannel) {
@@ -168,7 +125,7 @@ export default function App() {
           const event = JSON.parse(e.data);
           console.log("Raw event data:", e.data);
           console.log("Parsed event:", event);
-
+          
           if (event.type === "audio.transcription") {
             console.log("Audio transcription event:", event);
             setEvents(prev => [event, ...prev]);
@@ -187,46 +144,8 @@ export default function App() {
         setIsSessionActive(true);
         setEvents([]);
       });
-
-      // Save transcript when the data channel is closed
-      // Only add event listeners if dataChannel exists (client-side only)
-      if (dataChannel) {
-        dataChannel.addEventListener("close", async () => {
-          // Check if all required variables exist before proceeding
-          const canSaveTranscript = events.length > 0 && 
-                                   selectedRole && 
-                                   selectedRole.id && 
-                                   selectedScenario && 
-                                   selectedScenario.id;
-
-          if (canSaveTranscript) {
-            try {
-              const response = await fetch('/api/transcripts', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  roleId: selectedRole.id,
-                  scenarioId: selectedScenario.id,
-                  content: events,
-                  sessionId: dataChannel.label // Use the dataChannel label as the session ID
-                }),
-              });
-
-              if (response.ok) {
-                console.log('Transcript saved successfully');
-              } else {
-                console.error('Failed to save transcript');
-              }
-            } catch (error) {
-              console.error('Error saving transcript:', error);
-            }
-          }
-        });
-      }
     }
-  }, [dataChannel, events, selectedRole, selectedScenario]);
+  }, [dataChannel]);
 
   return (
     <>

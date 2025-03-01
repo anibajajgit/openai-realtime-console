@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function ScenarioSelector({ roles = [], scenarios = [], selectedRole, selectedScenario, setSelectedRole, setSelectedScenario }) {
+export default function ScenarioSelector() {
   const [scenarios, setScenarios] = useState([]);
   const [roles, setRoles] = useState([]);
   const [selectedScenario, setSelectedScenario] = useState(null);
@@ -52,7 +52,7 @@ export default function ScenarioSelector({ roles = [], scenarios = [], selectedR
         <div className="relative">
           <select 
             className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
-            value={selectedScenario?.id || ''} 
+            value={selectedScenario?.id || ''} //Added null check
             onChange={(e) => setSelectedScenario(scenarios.find(s => s.id === Number(e.target.value)))}
           >
             {scenarios.map(scenario => (
@@ -64,7 +64,7 @@ export default function ScenarioSelector({ roles = [], scenarios = [], selectedR
         <div className="relative">
           <select 
             className="w-full p-3 border border-gray-200 rounded-lg appearance-none bg-white hover:border-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
-            value={selectedRole?.id || ''} 
+            value={selectedRole?.id || ''} //Added null check
             onChange={(e) => setSelectedRole(roles.find(r => r.id === Number(e.target.value)))}
           >
             {roles.map(role => (
