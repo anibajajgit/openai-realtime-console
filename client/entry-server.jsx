@@ -1,3 +1,4 @@
+
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
@@ -27,9 +28,9 @@ export function render(url) {
     return { html };
   } catch (error) {
     console.error('Server rendering error:', error);
-    // Provide a fallback for server-side rendering errors
+    // Return a minimal HTML that will be replaced by client-side rendering
     return { 
-      html: '<div id="app">Loading application...</div>'
+      html: '<div id="app" class="loading">Loading application...</div>'
     };
   }
 }
