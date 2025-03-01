@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom"; // Updated import
 
 import EventLog from "./EventLog";
 import ScenarioSelector from "./ScenarioSelector";
 import SessionControls from "./SessionControls";
 import Button from "./Button";
 import AppSidebar from "./AppSidebar";
+// Placeholder imports for authentication components.  These need to be replaced with your actual components.
+import MainScreen from "./MainScreen";
+import Scenarios from "./Scenarios";
+import Transcripts from "./Transcripts";
+import Settings from "./Settings";
+
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -12,8 +19,68 @@ export default function App() {
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+  const [showSidebar, setShowSidebar] = useState(true); //Added state for sidebar visibility.
+  const navigate = useNavigate();
 
-  async function startSession() {
+  // Placeholder for authentication.  Replace this with your actual authentication logic.
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Added authentication state
+
+
+  useEffect(() => {
+    // Check for existing user in local storage on component mount
+    const user = localStorage.getItem('user');
+    setIsAuthenticated(!!user);
+  }, []);
+
+  const handleLogin = async (username, password) => {
+    //Replace this with your actual login logic.  This is a placeholder.
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('user', data.token); //Store token or user data.
+      setIsAuthenticated(true);
+      navigate('/scenarios'); // Redirect to scenarios after successful login
+
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Handle login error (e.g., display an error message)
+    }
+  };
+
+  // Check authentication
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
+    navigate('/');
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      {isAuthenticated && showSidebar && <AppSidebar onLogout={handleLogout} />} {/*Conditional rendering of sidebar based on authentication*/}
+      <div className="flex-1 flex flex-col">
+        <Routes>
+          <Route path="/" element={<MainScreen onLogin={handleLogin} />} /> {/* Pass onLogin function to MainScreen */}
+          <Route path="/scenarios" element={<Scenarios />} />
+          <Route path="/transcripts" element={<Transcripts />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
+
+async function startSession() {
     const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
     const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
     // Get an ephemeral key from the Fastify server
@@ -158,7 +225,7 @@ export default function App() {
       </nav>
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex-row h-full bg-gray-50">
-          <AppSidebar /> {/* Added AppSidebar here */}
+          {isAuthenticated && <AppSidebar />} {/* Added AppSidebar here */}
           <section className="w-full md:w-2/5 p-4">
             {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
           </section>

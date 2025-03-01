@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario } from './database/schema.js';
+import { Role, Scenario, User } from './database/schema.js'; // Added User import
 
 const app = express();
 app.use(express.json());
@@ -24,7 +24,69 @@ app.get('/api/roles', async (req, res) => {
   }
 });
 
-app.get('/api/scenarios', async (req, res) => {
+// Auth API routes
+app.post("/api/auth/register", async (req, res) => {
+  try {
+    const { username, password, email } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { username } });
+    if (existingUser) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    // Create new user
+    const newUser = await User.create({
+      username,
+      password, // In a real app, you should hash this password
+      email
+    });
+
+    // Remove password from response
+    const userData = { ...newUser.toJSON() };
+    delete userData.password;
+
+    res.status(201).json({ 
+      user: userData,
+      message: "User registered successfully" 
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ error: "Failed to register user" });
+  }
+});
+
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Find user
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Check password (in a real app use proper password comparison with bcrypt)
+    if (user.password !== password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Remove password from response
+    const userData = { ...user.toJSON() };
+    delete userData.password;
+
+    res.json({ 
+      user: userData,
+      message: "Login successful" 
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Failed to login" });
+  }
+});
+
+// Existing API routes
+app.get("/api/scenarios", async (req, res) => {
   const scenarios = await Scenario.findAll();
   res.json(scenarios);
 });

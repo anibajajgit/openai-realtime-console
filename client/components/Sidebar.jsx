@@ -1,4 +1,3 @@
-
 import React, { useState, createContext, useContext } from "react";
 
 // Create a context for the sidebar state
@@ -144,12 +143,16 @@ export const MobileSidebar = ({
 };
 
 // SidebarLink component
-export const SidebarLink = ({
-  link,
-  className,
-  ...props
-}) => {
+export const SidebarLink = ({ children, className, link, ...props }) => {
   const { open, animate } = useSidebar();
+
+  const handleClick = (e) => {
+    if (link.onClick) {
+      e.preventDefault();
+      link.onClick();
+    }
+  };
+
   return (
     <a
       href={link.href}
@@ -157,6 +160,7 @@ export const SidebarLink = ({
         "flex items-center justify-start gap-2 group/sidebar py-2",
         className
       )}
+      onClick={handleClick}
       {...props}
     >
       {link.icon}
