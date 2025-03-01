@@ -161,8 +161,8 @@ if (process.argv.includes('--dev')) {
       port: 24678,
       clientPort: 24678
     }
-  },
-  appType: "custom",
+  }
+  // appType is already defined in the earlier vite config
 });
 
 app.use((req, res, next) => {
