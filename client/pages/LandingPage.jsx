@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import AuthDialog from '../components/auth/AuthDialog';
+// Import the correct Button component
 import { Button } from '../components/ui/button';
 
 const LandingPage = () => {
@@ -54,6 +55,7 @@ const LandingPage = () => {
             }}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             size="lg"
+            type="button"
           >
             Get Started
           </Button>
