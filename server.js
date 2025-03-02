@@ -102,7 +102,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Transcript routes
-import { Client as ObjectStorageClient } from 'replit-object-storage';
+import { Client as ObjectStorageClient } from '@replit/object-storage';
 import { Transcript } from './database/schema.js';
 
 // Initialize object storage client
