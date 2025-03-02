@@ -1,0 +1,506 @@
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Everyt"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:64 Failed to fetch feedback: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+fetchFeedback @ Review.jsx:64
+await in fetchFeedback
+handleSelectTranscript @ Review.jsx:135
+await in handleSelectTranscript
+onClick @ Review.jsx:260
+callCallback2 @ chunk-BCXODTBQ.js?v=4194879c:3672
+invokeGuardedCallbackDev @ chunk-BCXODTBQ.js?v=4194879c:3697
+invokeGuardedCallback @ chunk-BCXODTBQ.js?v=4194879c:3731
+invokeGuardedCallbackAndCatchFirstError @ chunk-BCXODTBQ.js?v=4194879c:3734
+executeDispatch @ chunk-BCXODTBQ.js?v=4194879c:7012
+processDispatchQueueItemsInOrder @ chunk-BCXODTBQ.js?v=4194879c:7032
+processDispatchQueue @ chunk-BCXODTBQ.js?v=4194879c:7041
+dispatchEventsForPlugins @ chunk-BCXODTBQ.js?v=4194879c:7049
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:7172
+batchedUpdates$1 @ chunk-BCXODTBQ.js?v=4194879c:18911
+batchedUpdates @ chunk-BCXODTBQ.js?v=4194879c:3577
+dispatchEventForPluginEventSystem @ chunk-BCXODTBQ.js?v=4194879c:7171
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-BCXODTBQ.js?v=4194879c:5476
+dispatchEvent @ chunk-BCXODTBQ.js?v=4194879c:5470
+dispatchDiscreteEvent @ chunk-BCXODTBQ.js?v=4194879c:5447Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18872
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=4194879c:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:18625Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18872
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=4194879c:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:18625Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:64 Failed to fetch feedback: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+fetchFeedback @ Review.jsx:64
+await in fetchFeedback
+handleSelectTranscript @ Review.jsx:125
+await in handleSelectTranscript
+onClick @ Review.jsx:260
+callCallback2 @ chunk-BCXODTBQ.js?v=4194879c:3672
+invokeGuardedCallbackDev @ chunk-BCXODTBQ.js?v=4194879c:3697
+invokeGuardedCallback @ chunk-BCXODTBQ.js?v=4194879c:3731
+invokeGuardedCallbackAndCatchFirstError @ chunk-BCXODTBQ.js?v=4194879c:3734
+executeDispatch @ chunk-BCXODTBQ.js?v=4194879c:7012
+processDispatchQueueItemsInOrder @ chunk-BCXODTBQ.js?v=4194879c:7032
+processDispatchQueue @ chunk-BCXODTBQ.js?v=4194879c:7041
+dispatchEventsForPlugins @ chunk-BCXODTBQ.js?v=4194879c:7049
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:7172
+batchedUpdates$1 @ chunk-BCXODTBQ.js?v=4194879c:18911
+batchedUpdates @ chunk-BCXODTBQ.js?v=4194879c:3577
+dispatchEventForPluginEventSystem @ chunk-BCXODTBQ.js?v=4194879c:7171
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-BCXODTBQ.js?v=4194879c:5476
+dispatchEvent @ chunk-BCXODTBQ.js?v=4194879c:5470
+dispatchDiscreteEvent @ chunk-BCXODTBQ.js?v=4194879c:5447Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'A', "AI: Alrigh"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:64 Failed to fetch feedback: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+fetchFeedback @ Review.jsx:64
+await in fetchFeedback
+handleSelectTranscript @ Review.jsx:135
+await in handleSelectTranscript
+onClick @ Review.jsx:260
+callCallback2 @ chunk-BCXODTBQ.js?v=4194879c:3672
+invokeGuardedCallbackDev @ chunk-BCXODTBQ.js?v=4194879c:3697
+invokeGuardedCallback @ chunk-BCXODTBQ.js?v=4194879c:3731
+invokeGuardedCallbackAndCatchFirstError @ chunk-BCXODTBQ.js?v=4194879c:3734
+executeDispatch @ chunk-BCXODTBQ.js?v=4194879c:7012
+processDispatchQueueItemsInOrder @ chunk-BCXODTBQ.js?v=4194879c:7032
+processDispatchQueue @ chunk-BCXODTBQ.js?v=4194879c:7041
+dispatchEventsForPlugins @ chunk-BCXODTBQ.js?v=4194879c:7049
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:7172
+batchedUpdates$1 @ chunk-BCXODTBQ.js?v=4194879c:18911
+batchedUpdates @ chunk-BCXODTBQ.js?v=4194879c:3577
+dispatchEventForPluginEventSystem @ chunk-BCXODTBQ.js?v=4194879c:7171
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-BCXODTBQ.js?v=4194879c:5476
+dispatchEvent @ chunk-BCXODTBQ.js?v=4194879c:5470
+dispatchDiscreteEvent @ chunk-BCXODTBQ.js?v=4194879c:5447Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18872
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=4194879c:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:18625Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18872
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=4194879c:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:18625Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:64 Failed to fetch feedback: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+fetchFeedback @ Review.jsx:64
+await in fetchFeedback
+handleSelectTranscript @ Review.jsx:125
+await in handleSelectTranscript
+onClick @ Review.jsx:260
+callCallback2 @ chunk-BCXODTBQ.js?v=4194879c:3672
+invokeGuardedCallbackDev @ chunk-BCXODTBQ.js?v=4194879c:3697
+invokeGuardedCallback @ chunk-BCXODTBQ.js?v=4194879c:3731
+invokeGuardedCallbackAndCatchFirstError @ chunk-BCXODTBQ.js?v=4194879c:3734
+executeDispatch @ chunk-BCXODTBQ.js?v=4194879c:7012
+processDispatchQueueItemsInOrder @ chunk-BCXODTBQ.js?v=4194879c:7032
+processDispatchQueue @ chunk-BCXODTBQ.js?v=4194879c:7041
+dispatchEventsForPlugins @ chunk-BCXODTBQ.js?v=4194879c:7049
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:7172
+batchedUpdates$1 @ chunk-BCXODTBQ.js?v=4194879c:18911
+batchedUpdates @ chunk-BCXODTBQ.js?v=4194879c:3577
+dispatchEventForPluginEventSystem @ chunk-BCXODTBQ.js?v=4194879c:7171
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-BCXODTBQ.js?v=4194879c:5476
+dispatchEvent @ chunk-BCXODTBQ.js?v=4194879c:5470
+dispatchDiscreteEvent @ chunk-BCXODTBQ.js?v=4194879c:5447Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14580:28)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14580
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:150 Error parsing transcript content: SyntaxError: Unexpected token 'U', "User: Okay"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at formatContent (Review.jsx:147:19)
+    at renderTranscriptContent (Review.jsx:157:32)
+    at Review (Review.jsx:290:16)
+    at renderWithHooks (chunk-BCXODTBQ.js?v=4194879c:11546:26)
+    at updateFunctionComponent (chunk-BCXODTBQ.js?v=4194879c:14585:32)
+    at beginWork (chunk-BCXODTBQ.js?v=4194879c:15922:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=4194879c:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=4194879c:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=4194879c:19135:13)
+formatContent @ Review.jsx:150
+renderTranscriptContent @ Review.jsx:157
+Review @ Review.jsx:290
+renderWithHooks @ chunk-BCXODTBQ.js?v=4194879c:11546
+updateFunctionComponent @ chunk-BCXODTBQ.js?v=4194879c:14585
+beginWork @ chunk-BCXODTBQ.js?v=4194879c:15922
+beginWork$1 @ chunk-BCXODTBQ.js?v=4194879c:19751
+performUnitOfWork @ chunk-BCXODTBQ.js?v=4194879c:19196
+workLoopSync @ chunk-BCXODTBQ.js?v=4194879c:19135
+renderRootSync @ chunk-BCXODTBQ.js?v=4194879c:19114
+performConcurrentWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18676
+workLoop @ chunk-BCXODTBQ.js?v=4194879c:195
+flushWork @ chunk-BCXODTBQ.js?v=4194879c:174
+performWorkUntilDeadline @ chunk-BCXODTBQ.js?v=4194879c:382Understand this errorAI
+Review.jsx:64 Failed to fetch feedback: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
