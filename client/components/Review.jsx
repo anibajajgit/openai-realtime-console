@@ -63,7 +63,7 @@ export default function Review() {
 
   const fetchTranscriptFeedback = async (transcriptId) => {
     try {
-      const response = await fetch(`/api/feedback/${transcriptId}`); //New API endpoint
+      const response = await fetch(`/api/transcripts/${transcriptId}/feedback?userId=${user.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch feedback');
       }
@@ -162,9 +162,26 @@ export default function Review() {
                           ))}
                         </div>
                         {transcriptFeedback && ( // Display feedback if available
-                          <div>
-                            <h2>Transcript Feedback</h2>
-                            <pre>{JSON.stringify(transcriptFeedback, null, 2)}</pre> {/* Placeholder, needs proper formatting */}
+                          <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h3 className="text-lg font-medium mb-3">AI Feedback</h3>
+                            <div className="prose max-w-none">
+                              {transcriptFeedback.feedback.split('\n').map((line, index) => {
+                                // Check if line contains a section header
+                                if (line.includes('SCENARIO OBJECTIVE:') || 
+                                    line.includes('WAS OBJECTIVE ACHIEVED:') || 
+                                    line.includes('COMMUNICATION FEEDBACK:') ||
+                                    line.includes('IMPROVEMENT OPPORTUNITY:')) {
+                                  return <h4 key={index} className="font-bold mt-3">{line}</h4>;
+                                } else if (line.startsWith('- ')) {
+                                  // Format bullet points
+                                  return <li key={index} className="ml-5">{line.substring(2)}</li>;
+                                } else if (line.trim() === '') {
+                                  return <br key={index} />;
+                                } else {
+                                  return <p key={index}>{line}</p>;
+                                }
+                              })}
+                            </div>
                           </div>
                         )}
                       </div>
