@@ -7,7 +7,6 @@ import { seedDatabase } from './database/seed.js';
 import { Role, Scenario, User, Transcript, TranscriptFeedback } from './database/schema.js';
 
 import fetch from 'node-fetch';
-import { Role, Scenario, User, Transcript, TranscriptFeedback } from './database/schema.js';
 
 
 const app = express();
