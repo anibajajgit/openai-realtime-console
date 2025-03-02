@@ -118,6 +118,9 @@ async function generateFeedbackFromOpenAI(transcriptContent, scenarioInfo, roleI
 // Automatically generate and save feedback after transcript is saved
 app.post('/api/transcripts', async (req, res) => {
   try {
+    // Always set the content type for API responses
+    res.setHeader('Content-Type', 'application/json');
+    
     console.log('Received request to save transcript');
     console.log('Request body:', JSON.stringify(req.body));
     const { content, userId, roleId, scenarioId, title } = req.body;
@@ -396,10 +399,14 @@ app.use((req, res, next) => {
 
 // Apply Vite middleware for all non-API routes
 app.use((req, res, next) => {
-  if (!req.path.startsWith('/api/')) {
-    return vite.middlewares(req, res, next);
-  }
-  next();
+  // Make sure all API routes are handled before Vite middleware
+  if (req.path.startsWith('/api/')) {
+    // This is an API request - it should be handled by Express routes, not Vite
+    return next();
+  } 
+  
+  // For all non-API routes, use Vite middleware to serve the React app
+  return vite.middlewares(req, res, next);
 });
 
 // Initialize database and seed data

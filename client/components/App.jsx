@@ -120,7 +120,7 @@ export default function App() {
 
     // Log event types for debugging
     console.log("Event types to process:", events.map(e => e.type));
-    
+
     // Format the content as a readable conversation
     const formattedContent = events
       .slice()
@@ -171,16 +171,11 @@ export default function App() {
 
       // Try with absolute URL to avoid routing issues
       // Make sure we use the correct server URL - fallback to fixed 3000 port if needed
-      let apiUrl;
-      try {
-        apiUrl = new URL('/api/transcripts', window.location.origin).toString();
-        console.log("Using API URL:", apiUrl);
-      } catch (urlError) {
-        // Fallback in case of URL creation issues
-        apiUrl = 'http://0.0.0.0:3000/api/transcripts';
-        console.log("Using fallback API URL:", apiUrl);
-      }
-      
+      const apiBaseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}`;
+      const apiUrl = `${apiBaseUrl}/api/transcripts`;
+      console.log("Using API URL:", apiUrl);
+
+
       console.log("Sending payload:", JSON.stringify({
         ...payload,
         content_length: payload.content?.length || 0
@@ -201,7 +196,7 @@ export default function App() {
         // Check response type before trying to parse JSON
         const contentType = response.headers.get('content-type');
         console.log(`Response status: ${response.status}, content type: ${contentType}`);
-        
+
         // Log response headers for debugging
         const headers = {};
         response.headers.forEach((value, name) => {
@@ -222,7 +217,7 @@ export default function App() {
         } else {
           const text = await response.text();
           console.log('Transcript saved with non-JSON response. First 100 chars:', text.substring(0, 100));
-          
+
           if (text.includes('<!DOCTYPE html>')) {
             console.error("Received HTML instead of JSON - this indicates a routing issue");
           }
@@ -234,17 +229,17 @@ export default function App() {
         }
       } catch (error) {
         console.error("Initial transcript save failed:", error);
-        
+
         // Add a short delay before retry
         console.log("Waiting 1 second before retry...");
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         console.log("Attempting retry with explicit server port");
         try {
           // Try with explicit port in the URL as a fallback
           const backupUrl = `${window.location.protocol}//${window.location.hostname}:3000/api/transcripts`;
           console.log("Retry using URL:", backupUrl);
-          
+
           const retryResponse = await fetch(backupUrl, {
             method: 'POST',
             headers: {
@@ -253,7 +248,7 @@ export default function App() {
             },
             body: JSON.stringify(payload),
           });
-          
+
           console.log(`Retry response status: ${retryResponse.status}`);
           if (retryResponse.ok) {
             console.log("Transcript saved successfully on retry!");
@@ -307,7 +302,7 @@ export default function App() {
       dataChannel.close();
       setDataChannel(null);
     }
-    
+
     // Save transcript when session ends
     console.log("End session triggered. Events:", events.length);
     if (events && events.length > 0) {
@@ -315,39 +310,39 @@ export default function App() {
         // Get role and scenario from localStorage with proper error handling
         let roleId = null;
         let scenarioId = null;
-        
+
         try {
           const roleStr = localStorage.getItem('selectedRole');
           const scenarioStr = localStorage.getItem('selectedScenario');
           console.log("Raw values from localStorage:", { roleStr, scenarioStr });
-          
+
           if (roleStr) {
             const role = JSON.parse(roleStr);
             roleId = role?.id || null;
           }
-          
+
           if (scenarioStr) {
             const scenario = JSON.parse(scenarioStr);
             scenarioId = scenario?.id || null;
           }
-          
+
           console.log("Parsed values:", { roleId, scenarioId });
         } catch (parseErr) {
           console.error("Error parsing role/scenario from localStorage:", parseErr);
         }
-        
+
         if (!user || !user.id) {
           console.error("No valid user found when trying to save transcript");
           return;
         }
-        
+
         console.log("Calling saveTranscript with:", { 
           eventsCount: events.length, 
           userId: user.id, 
           roleId, 
           scenarioId 
         });
-        
+
         // Call the saveTranscript function with properly validated parameters
         saveTranscript(events, user, roleId, scenarioId);
       } catch (error) {
@@ -357,39 +352,7 @@ export default function App() {
       console.warn("No events to save in transcript");
     }
 
-    // Save transcript when session ends
-    console.log("End session triggered. Events:", events.length);
-    if (events.length > 0) {
-      try {
-        console.log("Getting role and scenario from localStorage");
-        const roleStr = localStorage.getItem('selectedRole');
-        const scenarioStr = localStorage.getItem('selectedScenario');
-        console.log("Raw values from localStorage:", { roleStr, scenarioStr });
-        
-        const role = JSON.parse(roleStr || '{"id":1}');
-        const scenario = JSON.parse(scenarioStr || '{"id":1}');
-        console.log("Parsed values:", { role, scenario });
-        
-        if (!user) {
-          console.error("No user found when trying to save transcript");
-          return;
-        }
-        
-        console.log("Calling saveTranscript with:", { 
-          eventsCount: events.length, 
-          userId: user.id, 
-          roleId: role.id, 
-          scenarioId: scenario.id 
-        });
-        saveTranscript(events, user, role.id, scenario.id);
-      } catch (error) {
-        console.error("Error preparing transcript save:", error);
-      }
-    } else {
-      console.warn("No events to save in transcript");
-    }
-
-    setEvents(prevEvents => [...prevEvents]);
+    //This section is duplicated.  Removing it.
   };
 
   function sendClientEvent(message) {
