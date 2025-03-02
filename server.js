@@ -108,21 +108,33 @@ import { Transcript } from './database/schema.js';
 // Initialize object storage client
 let objectStorage;
 try {
-  // First try to use the default bucket configuration
-  objectStorage = new ObjectStorageClient();
+  // Try to use the object storage client with a default bucket name
+  objectStorage = new ObjectStorageClient({ bucket: process.env.REPLIT_OBJECT_STORAGE_BUCKET || 'default-bucket' });
   console.log("Object storage client initialized successfully");
 } catch (error) {
   console.error("Error initializing object storage client:", error.message);
-  console.log("Please create a bucket in the Object Storage tool in the Replit UI");
-  // Provide fallback behavior
+  console.log("Using in-memory transcript storage as fallback");
+  
+  // Create an in-memory storage for transcripts as fallback
+  const inMemoryStorage = new Map();
+  
   objectStorage = {
-    upload_from_text: async () => { 
-      console.log("Object storage not configured - transcript not saved"); 
-      return null; 
+    upload_from_text: async (key, content) => { 
+      console.log(`Storing transcript with key: ${key} (in-memory fallback)`);
+      inMemoryStorage.set(key, content);
+      return key; 
     },
-    download_from_text: async () => { 
-      console.log("Object storage not configured - transcript not available"); 
-      return "{}"; 
+    download_from_text: async (key) => { 
+      console.log(`Retrieving transcript with key: ${key} (in-memory fallback)`);
+      return inMemoryStorage.get(key) || JSON.stringify({
+        transcript: [{
+          type: "message", 
+          content: "This is a fallback transcript. Object storage is not properly configured."
+        }],
+        scenarioName: "Default Scenario",
+        roleName: "Default Role",
+        timestamp: new Date().toISOString()
+      }); 
     }
   };
 }
@@ -187,23 +199,59 @@ app.get('/api/transcripts/user/:userId', async (req, res) => {
 app.get('/api/transcripts/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(`Fetching transcript with ID: ${id}`);
 
     const transcriptRecord = await Transcript.findByPk(id);
 
     if (!transcriptRecord) {
+      console.log(`Transcript with ID ${id} not found in database`);
       return res.status(404).json({ error: 'Transcript not found' });
     }
 
-    // Retrieve from object storage
-    const transcriptData = await objectStorage.download_from_text(transcriptRecord.storageKey);
+    console.log(`Found transcript record: ${transcriptRecord.id}, storageKey: ${transcriptRecord.storageKey}`);
 
-    res.json({
-      record: transcriptRecord,
-      data: JSON.parse(transcriptData)
-    });
+    try {
+      // Retrieve from object storage
+      const transcriptData = await objectStorage.download_from_text(transcriptRecord.storageKey);
+      
+      // Ensure we got valid JSON data
+      let parsedData;
+      try {
+        parsedData = JSON.parse(transcriptData);
+      } catch (jsonError) {
+        console.error('Error parsing transcript JSON:', jsonError);
+        console.log('Raw transcript data:', transcriptData);
+        return res.status(500).json({ 
+          error: 'Invalid transcript data format',
+          record: transcriptRecord,
+          rawData: transcriptData.substring(0, 100) + '...' // Send partial raw data for debugging
+        });
+      }
+
+      res.json({
+        record: transcriptRecord,
+        data: parsedData
+      });
+    } catch (storageError) {
+      console.error('Error retrieving from object storage:', storageError);
+      // Return a partial response with the record but no data
+      res.status(207).json({
+        record: transcriptRecord,
+        error: 'Storage retrieval failed',
+        data: {
+          transcript: [{
+            type: "response.text.done",
+            text: "The transcript content could not be retrieved from storage."
+          }],
+          scenarioName: transcriptRecord.scenarioName || "Unknown",
+          roleName: transcriptRecord.roleName || "Unknown",
+          timestamp: transcriptRecord.createdAt
+        }
+      });
+    }
   } catch (error) {
     console.error('Error fetching transcript:', error);
-    res.status(500).json({ error: 'Failed to fetch transcript' });
+    res.status(500).json({ error: `Failed to fetch transcript: ${error.message}` });
   }
 });
 

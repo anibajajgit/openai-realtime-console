@@ -37,16 +37,25 @@ export default function Review() {
   async function fetchTranscriptContent(transcriptId) {
     try {
       setLoading(true);
+      setError(null); // Clear any previous errors
+      
       const response = await fetch(`/api/transcripts/${transcriptId}`);
-      if (!response.ok) throw new Error('Failed to fetch transcript content');
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Failed to fetch transcript (${response.status}):`, errorText);
+        throw new Error(`Failed to fetch transcript: ${response.status} ${response.statusText}`);
+      }
       
       const data = await response.json();
+      console.log("Received transcript data:", data);
       setTranscriptContent(data);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching transcript content:', err);
-      setError('Failed to load transcript content. Please try again later.');
+      setError(`Failed to load transcript content: ${err.message}`);
       setLoading(false);
+      setTranscriptContent(null);
     }
   }
 
@@ -66,11 +75,26 @@ export default function Review() {
   }
 
   function renderTranscriptMessages(transcript) {
-    if (!transcript || !transcript.data || !transcript.data.transcript) {
+    if (!transcript) {
+      return <p>No transcript data available</p>;
+    }
+    
+    if (!transcript.data) {
+      return <p>Transcript data is missing</p>;
+    }
+    
+    if (!transcript.data.transcript || !Array.isArray(transcript.data.transcript) || transcript.data.transcript.length === 0) {
       return <p>No messages in this transcript</p>;
     }
 
+    console.log("Rendering transcript:", transcript.data.transcript.length, "messages");
+    
     return transcript.data.transcript.map((event, index) => {
+      // Skip events with no useful content
+      if (!event || typeof event !== 'object') {
+        return null;
+      }
+      
       let text = '';
       let isUser = false;
 
