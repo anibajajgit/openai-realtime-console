@@ -12,7 +12,7 @@ import { AuthContext, AuthProvider } from "../utils/AuthContext"; // Assuming Au
 
 
 export default function App() {
-  const { user } = useContext(AuthContext);
+  const { user, login, logout } = useContext(AuthContext);
   const [events, setEvents] = useState([]);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [dataChannel, setDataChannel] = useState(null);
@@ -23,22 +23,20 @@ export default function App() {
   const [selectedScenario, setSelectedScenario] = useState(null); // Add state for selected scenario
 
 
-  const login = (userData) => {
+  const loginApp = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+    login(userData);
   };
 
-  const logout = () => {
+  const logoutApp = () => {
     localStorage.removeItem('user');
-    setUser(null);
+    logout();
   };
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
-    }
-  }, []);
+    // Optional: Add any additional initialization logic here
+    console.log("App component mounted with user:", user);
+  }, [user]);
 
   async function startSession() {
     try {
@@ -93,7 +91,7 @@ export default function App() {
       console.error('Cannot save transcript: No authenticated user');
       return;
     }
-    
+
     // Format the transcript content
     const formattedContent = events
       .filter(event => {
@@ -104,7 +102,7 @@ export default function App() {
       .map(event => {
         let prefix = "";
         let text = "";
-        
+
         if (event.type === "conversation.item.input_audio_transcription.completed") {
           prefix = "User:";
           text = event.transcript;
@@ -112,11 +110,11 @@ export default function App() {
           prefix = "AI:";
           text = event.type === "response.text.done" ? event.text : event.transcript;
         }
-        
+
         return `${prefix} ${text}`;
       })
       .join('\n\n');
-      
+
     try {
       const response = await fetch('/api/transcripts', {
         method: 'POST',
@@ -219,7 +217,7 @@ export default function App() {
   }, [dataChannel]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login: loginApp, logout: logoutApp }}>
       {console.log("AuthContext Provider rendering with user:", user)}
       <Routes>
         <Route path="/" element={<Home />} />

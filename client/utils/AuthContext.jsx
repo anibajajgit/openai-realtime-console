@@ -34,6 +34,10 @@ export const AuthProvider = ({ children }) => {
   // For debugging
   useEffect(() => {
     console.log('AuthContext Provider rendering with user:', user);
+    // Log to verify localStorage is being used correctly
+    if (typeof window !== 'undefined') {
+      console.log('Current localStorage user:', localStorage.getItem('user'));
+    }
   }, [user]);
 
   return (
