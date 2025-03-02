@@ -4,10 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario, User, Transcript, TranscriptFeedback } from './database/schema.js';
-
-import fetch from 'node-fetch';
-
+import { Role, Scenario, User, Transcript } from './database/schema.js';
 
 const app = express();
 app.use(express.json());
@@ -33,6 +30,35 @@ app.get('/api/scenarios', async (req, res) => {
 });
 
 // Transcript routes
+app.post('/api/transcripts', async (req, res) => {
+  try {
+    const { content, userId, roleId, scenarioId, title } = req.body;
+    
+    if (!content || !userId) {
+      return res.status(400).json({ error: 'Content and userId are required' });
+    }
+    
+    const transcript = await Transcript.create({
+      content,
+      userId,
+      roleId,
+      scenarioId,
+      title: title || 'Conversation'
+    });
+    
+    res.status(201).json({
+      message: 'Transcript saved successfully',
+      transcript: {
+        id: transcript.id,
+        title: transcript.title,
+        createdAt: transcript.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Error saving transcript:', error);
+    res.status(500).json({ error: 'Failed to save transcript' });
+  }
+});
 
 app.get('/api/transcripts/user/:userId', async (req, res) => {
   try {
@@ -72,181 +98,6 @@ app.get('/api/transcripts/user/:userId', async (req, res) => {
       order: [['createdAt', 'DESC']],
       include: includeOptions
     });
-
-// Generate feedback from OpenAI
-async function generateFeedbackFromOpenAI(transcriptContent, scenarioInfo, roleInfo) {
-  try {
-    // Construct the system prompt
-    const baseSystemPrompt = "You are a communications coach for executives with a decade of experience. Review the conversation transcript between the user and an AI and give feedback on the user's communication. You need to evaluate their grammar, clarity, and communication quality. Also make suggestions on what they could have done better - but be nice and you can say you did a good job if they fulfilled the objectives. Evaluate the quality of the conversation against the context of the scenario and the rubric given.\n\nYou response should be in the following format:\nSCENARIO OBJECTIVE: <to be based on the scenario>\nWAS OBJECTIVE ACHIEVED: <select between Achieved, Not achieved or partially achieved>\nCOMMUNICATION FEEDBACK: <give feedback on communication in bullets>\nIMPROVEMENT OPPORTUNITY: <give feedback on what they could have done better to achieve the objective and have better communication>\n/end";
-    
-    // Combine with scenario and role context
-    const contextInfo = `Context: Role - ${roleInfo?.name || 'Unknown'}: ${roleInfo?.instructions || 'No role instructions'}\nScenario - ${scenarioInfo?.name || 'Unknown'}: ${scenarioInfo?.instructions || 'No scenario instructions'}\nRubric: ${JSON.stringify(scenarioInfo?.rubric || [])}`;
-    const fullSystemPrompt = `${baseSystemPrompt}\n\n${contextInfo}`;
-    
-    // Make the API call to OpenAI
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4-turbo',
-        messages: [
-          { role: 'system', content: fullSystemPrompt },
-          { role: 'user', content: transcriptContent }
-        ],
-        temperature: 0.7,
-        max_tokens: 800
-      })
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    return data.choices[0].message.content;
-  } catch (error) {
-    console.error('Error generating feedback:', error);
-    return 'Error generating feedback. Please try again later.';
-  }
-}
-
-// Automatically generate and save feedback after transcript is saved
-app.post('/api/transcripts', async (req, res) => {
-  try {
-    // Force content type to be JSON for this specific endpoint
-    res.setHeader('Content-Type', 'application/json');
-    res.type('json');
-    
-    console.log('Received request to save transcript');
-    console.log('Request body:', JSON.stringify(req.body));
-    const { content, userId, roleId, scenarioId, title } = req.body;
-    
-    console.log(`Transcript details - userId: ${userId}, roleId: ${roleId}, scenarioId: ${scenarioId}`);
-    console.log(`Content length: ${content?.length || 0} characters`);
-    
-    // Validate required fields and log detailed information
-    const missingFields = [];
-    if (!content) missingFields.push('content');
-    if (!userId) missingFields.push('userId');
-    
-    if (missingFields.length > 0) {
-      console.error(`Missing required fields for transcript: ${missingFields.join(', ')}`);
-    }
-    
-    if (!content || !userId) {
-      console.error('Missing required fields:', { content: !!content, userId: !!userId });
-      return res.status(400).json({ error: 'Content and userId are required' });
-    }
-    
-    console.log('Creating transcript in database...');
-    const transcript = await Transcript.create({
-      content,
-      userId,
-      roleId,
-      scenarioId,
-      title: title || 'Conversation'
-    });
-    
-    console.log(`Transcript created with ID: ${transcript.id}`);
-    
-    // Generate feedback asynchronously - don't wait for it to complete
-    // to avoid blocking the response
-    (async () => {
-      try {
-        console.log(`Starting async feedback generation for transcript ${transcript.id}`);
-        
-        // Get role and scenario details for context
-        const role = roleId ? await Role.findByPk(roleId) : null;
-        const scenario = scenarioId ? await Scenario.findByPk(scenarioId) : null;
-        
-        console.log(`Found role: ${role?.name || 'None'}, scenario: ${scenario?.name || 'None'}`);
-        
-        // Generate feedback from OpenAI
-        console.log('Calling OpenAI API for feedback generation...');
-        const feedback = await generateFeedbackFromOpenAI(content, scenario, role);
-        
-        console.log('OpenAI feedback generated, saving to database...');
-        // Save the feedback to the database
-        const savedFeedback = await TranscriptFeedback.create({
-          transcriptId: transcript.id,
-          feedback
-        });
-        
-        console.log(`Feedback saved with ID: ${savedFeedback.id} for transcript ${transcript.id}`);
-      } catch (error) {
-        console.error('Error in async feedback generation:', error);
-        console.error('Error details:', error.stack);
-      }
-    })();
-    
-    console.log('Sending successful response to client');
-    res.status(201).json({
-      message: 'Transcript saved successfully',
-      transcript: {
-        id: transcript.id,
-        title: transcript.title,
-        createdAt: transcript.createdAt
-      }
-    });
-  } catch (error) {
-    console.error('Error saving transcript:', error);
-    console.error('Error details:', error.message, error.stack);
-    res.status(500).json({ error: `Failed to save transcript: ${error.message}` });
-  }
-});
-
-// Get feedback for a specific transcript
-app.get('/api/transcripts/:id/feedback', async (req, res) => {
-  try {
-    const transcriptId = req.params.id;
-    const userId = req.query.userId;
-    
-    if (!userId) {
-      return res.status(400).json({ error: 'userId query parameter is required' });
-    }
-    
-    // First check if transcript exists and belongs to user
-    const transcript = await Transcript.findOne({
-      where: { 
-        id: transcriptId,
-        userId: userId 
-      }
-    });
-    
-    if (!transcript) {
-      return res.status(404).json({ error: 'Transcript not found or access denied' });
-    }
-    
-    // Get feedback for this transcript
-    let feedback = await TranscriptFeedback.findOne({
-      where: { transcriptId }
-    });
-    
-    // If no feedback exists yet, generate it
-    if (!feedback) {
-      const role = transcript.roleId ? await Role.findByPk(transcript.roleId) : null;
-      const scenario = transcript.scenarioId ? await Scenario.findByPk(transcript.scenarioId) : null;
-      
-      const feedbackContent = await generateFeedbackFromOpenAI(transcript.content, scenario, role);
-      
-      feedback = await TranscriptFeedback.create({
-        transcriptId,
-        feedback: feedbackContent
-      });
-    }
-    
-    res.json({ feedback: feedback.feedback });
-  } catch (error) {
-    console.error('Error fetching feedback:', error);
-    res.status(500).json({ error: 'Failed to fetch feedback' });
-  }
-});
-
     
     console.log(`Found ${transcripts.length} transcripts for user ${userId}`);
     res.json(transcripts);
@@ -374,21 +225,7 @@ const vite = await createViteServer({
   appType: "custom",
 });
 
-// Add API preflight handling
 app.use((req, res, next) => {
-  // Check if this is an API request
-  if (req.path.startsWith('/api/')) {
-    console.log(`Processing API request: ${req.method} ${req.path}`);
-    // If it's a preflight request
-    if (req.method === 'OPTIONS') {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
-      return res.status(200).send();
-    }
-  }
-  
-  // For non-API requests, just set CORS headers
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
   if (req.headers.upgrade === 'websocket') {
@@ -398,42 +235,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Add a specific check for Content-Type based on request path
-app.use((req, res, next) => {
-  // Set appropriate content type for API responses
-  if (req.path.startsWith('/api/')) {
-    // Force content type for API responses to be JSON
-    res.type('json');
-  }
-  next();
-});
-
-// Define API routes first, before any middleware that might catch them
-// Apply Vite middleware ONLY for non-API routes
-app.use((req, res, next) => {
-  // Skip Vite middleware for API routes
-  if (req.path.startsWith('/api/')) {
-    return next();
-  }
-  
-  // For non-API routes, use Vite middleware to serve the React app
-  return vite.middlewares(req, res, next);
-});
-</old_str>
-<new_str>
-// Define API routes first, before any middleware that might catch them
-// Apply Vite middleware ONLY for non-API routes
-app.use((req, res, next) => {
-  // Skip Vite middleware for API routes
-  if (req.path.startsWith('/api/')) {
-    // Force content type for API responses to be JSON
-    res.type('json');
-    return next();
-  }
-  
-  // For non-API routes, use Vite middleware to serve the React app
-  return vite.middlewares(req, res, next);
-});
+app.use(vite.middlewares);
 
 // Initialize database and seed data
 console.log("Initializing database...");

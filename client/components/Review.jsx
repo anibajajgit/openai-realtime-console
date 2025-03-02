@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useContext } from "react";
 import AppSidebar from "./AppSidebar";
 import { AuthContext } from "../utils/AuthContext";
@@ -8,7 +9,6 @@ export default function Review() {
   const [selectedTranscript, setSelectedTranscript] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [transcriptFeedback, setTranscriptFeedback] = useState(null); // Add state for feedback
 
   useEffect(() => {
     if (user) {
@@ -24,16 +24,16 @@ export default function Review() {
         setLoading(false);
         return;
       }
-
+      
       console.log(`Fetching transcripts for user ID: ${user.id}`);
       const response = await fetch(`/api/transcripts/user/${user.id}`);
-
+      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('Server response:', response.status, errorData);
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
-
+      
       const data = await response.json();
       console.log(`Received ${data.length} transcripts`);
       setTranscripts(data);
@@ -47,79 +47,21 @@ export default function Review() {
 
   const fetchTranscriptDetails = async (transcriptId) => {
     try {
-      console.log(`Fetching transcript details for ID: ${transcriptId}`);
       const response = await fetch(`/api/transcripts/${transcriptId}?userId=${user.id}`);
-      
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response text:', errorText);
-        throw new Error(`Failed to fetch transcript details: ${response.status} ${response.statusText}`);
+        throw new Error('Failed to fetch transcript details');
       }
       const data = await response.json();
       setSelectedTranscript(data);
-      // Fetch feedback after fetching transcript details
-      fetchTranscriptFeedback(transcriptId);
     } catch (error) {
       console.error('Error fetching transcript details:', error);
       setError('Failed to load transcript details. Please try again later.');
     }
   };
 
-  const fetchTranscriptFeedback = async (transcriptId) => {
-    try {
-      console.log(`Fetching feedback for transcript ID: ${transcriptId}, user ID: ${user.id}`);
-      
-      const response = await fetch(`/api/transcripts/${transcriptId}/feedback?userId=${user.id}`);
-      
-      // Check if response is OK and log response status
-      console.log(`Feedback API response status: ${response.status}`);
-      
-      if (!response.ok) {
-        // Try to get error details from response
-        const errorText = await response.text();
-        console.error('Error response text:', errorText);
-        
-        // If it's a 404, set a friendly message for missing feedback
-        if (response.status === 404) {
-          setTranscriptFeedback({ feedback: "Feedback is not available for this transcript yet. It may be processing or was created before feedback was implemented." });
-          return;
-        }
-        
-        throw new Error(`Failed to fetch feedback: ${response.status} ${response.statusText}`);
-      }
-      
-      // Log successful response
-      const contentType = response.headers.get('content-type');
-      console.log(`Response content type: ${contentType}`);
-      
-      if (!contentType || !contentType.includes('application/json')) {
-        console.error('Unexpected content type:', contentType);
-        // Handle non-JSON responses gracefully
-        setTranscriptFeedback({ feedback: "Feedback is being processed. Please check back later." });
-        return;
-      }
-      
-      const feedback = await response.json();
-      setTranscriptFeedback(feedback);
-    } catch (error) {
-      console.error('Error fetching feedback:', error);
-      // Set a more user-friendly error message
-      setTranscriptFeedback({ feedback: "Unable to load feedback at this time. The feedback may not be available for this transcript." });
-      setError(null); // Clear the error state to avoid showing error message
-    }
-  };
-
-
   const handleTranscriptSelect = (transcript) => {
-    // Check if transcript is undefined or null
-    if (!transcript) {
-      console.error("Transcript is undefined in handleTranscriptSelect");
-      return;
-    }
-    
     if (transcript.id === selectedTranscript?.id) {
       setSelectedTranscript(null);
-      setTranscriptFeedback(null); // Clear feedback when deselecting
     } else {
       fetchTranscriptDetails(transcript.id);
     }
@@ -163,7 +105,7 @@ export default function Review() {
             ) : (
               <div className="bg-white shadow-md rounded-xl p-5">
                 <h2 className="text-xl font-semibold mb-4">Your Conversation History</h2>
-
+                
                 {transcripts.length === 0 ? (
                   <p>You don't have any saved conversations yet.</p>
                 ) : (
@@ -175,17 +117,7 @@ export default function Review() {
                       <select
                         id="transcript-select"
                         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === "") {
-                            // Handle empty selection
-                            setSelectedTranscript(null);
-                            setTranscriptFeedback(null);
-                            return;
-                          }
-                          const transcript = transcripts.find(t => t.id.toString() === value);
-                          handleTranscriptSelect(transcript);
-                        }}
+                        onChange={(e) => handleTranscriptSelect(transcripts.find(t => t.id.toString() === e.target.value))}
                         value={selectedTranscript?.id || ""}
                       >
                         <option value="">-- Select a conversation --</option>
@@ -196,14 +128,14 @@ export default function Review() {
                         ))}
                       </select>
                     </div>
-
+                    
                     {selectedTranscript && (
                       <div className="bg-gray-50 p-4 rounded-lg mt-4">
                         <div className="flex justify-between items-center mb-4">
                           <h3 className="text-lg font-medium">{selectedTranscript.title}</h3>
                           <span className="text-sm text-gray-500">{formatDate(selectedTranscript.createdAt)}</span>
                         </div>
-
+                        
                         <div className="bg-white p-4 rounded-lg shadow-sm">
                           {selectedTranscript.content.split('\n\n').map((paragraph, index) => (
                             <p key={index} className={`mb-4 ${paragraph.startsWith('AI:') ? 'text-blue-600' : 'text-gray-800'}`}>
@@ -211,29 +143,6 @@ export default function Review() {
                             </p>
                           ))}
                         </div>
-                        {transcriptFeedback && ( // Display feedback if available
-                          <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                            <h3 className="text-lg font-medium mb-3">AI Feedback</h3>
-                            <div className="prose max-w-none">
-                              {transcriptFeedback.feedback.split('\n').map((line, index) => {
-                                // Check if line contains a section header
-                                if (line.includes('SCENARIO OBJECTIVE:') || 
-                                    line.includes('WAS OBJECTIVE ACHIEVED:') || 
-                                    line.includes('COMMUNICATION FEEDBACK:') ||
-                                    line.includes('IMPROVEMENT OPPORTUNITY:')) {
-                                  return <h4 key={index} className="font-bold mt-3">{line}</h4>;
-                                } else if (line.startsWith('- ')) {
-                                  // Format bullet points
-                                  return <li key={index} className="ml-5">{line.substring(2)}</li>;
-                                } else if (line.trim() === '') {
-                                  return <br key={index} />;
-                                } else {
-                                  return <p key={index}>{line}</p>;
-                                }
-                              })}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>

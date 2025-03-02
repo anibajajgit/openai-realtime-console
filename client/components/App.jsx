@@ -100,198 +100,56 @@ export default function App() {
   }
 
   async function saveTranscript(events, user, roleId, scenarioId) {
-    // Verify all parameters are properly defined
-    console.log("saveTranscript called with:", {
-      eventsCount: events.length,
-      user: user?.id ? `User ID: ${user.id}` : "Missing user",
-      roleId: roleId || "null",
-      scenarioId: scenarioId || "null"
-    });
-
-    if (!user?.id) {
-      console.error("Cannot save transcript: User ID is missing");
+    if (!user || !user.id) {
+      console.error('Cannot save transcript: No authenticated user');
       return;
     }
 
-    if (events.length === 0) {
-      console.error("Cannot save transcript: No events to save");
-      return;
-    }
-
-    // Log event types for debugging
-    console.log("Event types to process:", events.map(e => e.type));
-
-    // Format the content as a readable conversation
+    // Format the transcript content
     const formattedContent = events
-      .slice()
-      .reverse()
       .filter(event => {
-        const isValidType = event.type === "conversation.item.input_audio_transcription.completed" ||
-                          event.type === "response.text.done" ||
-                          event.type === "response.audio_transcript.done";
-        if (!isValidType) {
-          console.log("Filtering out event type:", event.type);
-        }
-        return isValidType;
+        return event.type === "conversation.item.input_audio_transcription.completed" || 
+               event.type === "response.text.done" ||
+               event.type === "response.audio_transcript.done";
       })
       .map(event => {
-        let prefix = "", text = "";
+        let prefix = "";
+        let text = "";
 
         if (event.type === "conversation.item.input_audio_transcription.completed") {
           prefix = "User:";
-          text = event.transcript || "[No transcript]";
+          text = event.transcript;
         } else if (event.type === "response.text.done" || event.type === "response.audio_transcript.done") {
           prefix = "AI:";
-          text = event.type === "response.text.done" ? (event.text || "[No text]") : (event.transcript || "[No transcript]");
+          text = event.type === "response.text.done" ? event.text : event.transcript;
         }
 
-        console.log(`Processing ${event.type} event, text length: ${text?.length || 0}`);
         return `${prefix} ${text}`;
       })
       .join('\n\n');
 
-    console.log("Formatted content length:", formattedContent.length);
-
-    if (formattedContent.length === 0) {
-      console.error("Cannot save transcript: No valid conversation content to save");
-      console.log("All events:", JSON.stringify(events.slice(0, 3), null, 2)); // Log first 3 events for debugging
-      return;
-    }
-
     try {
-      const payload = { 
-        content: formattedContent,
-        userId: user.id,
-        roleId: roleId || null,
-        scenarioId: scenarioId || null,
-        title: `Conversation on ${new Date().toLocaleDateString()}`
-      };
+      const response = await fetch('/api/transcripts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          content: formattedContent,
+          userId: user.id,
+          roleId: roleId || null,
+          scenarioId: scenarioId || null,
+          title: `Conversation on ${new Date().toLocaleDateString()}`
+        }),
+      });
 
-      console.log("Saving transcript with payload:", payload);
-
-      // Try with absolute URL to avoid routing issues
-      // Make sure we use the correct server URL - fallback to fixed 3000 port if needed
-      const apiBaseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}`;
-      const apiUrl = `${apiBaseUrl}/api/transcripts`;
-      console.log("Using API URL:", apiUrl);
-
-
-      console.log("Sending payload:", JSON.stringify({
-        ...payload,
-        content_length: payload.content?.length || 0
-      }));
-
-      try {
-        console.log("Making initial API request");
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache'
-          },
-          body: JSON.stringify(payload),
-        });
-
-        // Check response type before trying to parse JSON
-        const contentType = response.headers.get('content-type');
-        console.log(`Response status: ${response.status}, content type: ${contentType}`);
-
-        // Log response headers for debugging
-        const headers = {};
-        response.headers.forEach((value, name) => {
-          headers[name] = value;
-        });
-        console.log("Response headers:", headers);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`Server error (${response.status}):`, errorText);
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // Only try to parse as JSON if content type is JSON
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json();
-          console.log('Transcript saved successfully!', data);
-        } else {
-          const text = await response.text();
-          console.log('Transcript saved with non-JSON response. First 100 chars:', text.substring(0, 100));
-
-          if (text.includes('<!DOCTYPE html>')) {
-            console.error("Received HTML instead of JSON - this indicates a routing issue");
-          }
-        }
-
-        // Force refresh the transcripts list if we're on the review page
-        if (window.location.pathname.includes('/review')) {
-          window.location.reload();
-        }
-      } catch (error) {
-        console.error("Initial transcript save failed:", error);
-
-        // Add a short delay before retry
-        console.log("Waiting 1 second before retry...");
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        console.log("Attempting retry with explicit server port");
-        try {
-          // Try with explicit port in the URL as a fallback
-          const backupUrl = `${window.location.protocol}//${window.location.hostname}:3000/api/transcripts`;
-          console.log("Retry using URL:", backupUrl);
-
-          const retryResponse = await fetch(backupUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify(payload),
-          });
-
-          console.log(`Retry response status: ${retryResponse.status}`);
-          if (retryResponse.ok) {
-            console.log("Transcript saved successfully on retry!");
-          } else {
-            console.error("Retry also failed with status:", retryResponse.status);
-          }
-        } catch (retryError) {
-          console.error("Retry also failed with error:", retryError);
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      console.log('Transcript saved successfully!');
     } catch (error) {
       console.error('Error saving transcript:', error);
-      console.error('Error details:', error.message);
-
-      // Retry once with a delay - sometimes server issues are temporary
-      setTimeout(async () => {
-        try {
-          console.log("Retrying transcript save after failure...");
-          // Create a simplified payload for retry
-          const retryPayload = { 
-            content: formattedContent,
-            userId: user.id,
-            roleId: roleId || null,
-            scenarioId: scenarioId || null,
-            title: `Conversation on ${new Date().toLocaleDateString()} (Retry)`
-          };
-
-          const retryResponse = await fetch('/api/transcripts', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify(retryPayload),
-          });
-
-          if (retryResponse.ok) {
-            console.log('Transcript saved successfully on retry!');
-          }
-        } catch (retryError) {
-          console.error('Retry also failed:', retryError);
-        }
-      }, 1000);
     }
   }
 
@@ -304,55 +162,13 @@ export default function App() {
     }
 
     // Save transcript when session ends
-    console.log("End session triggered. Events:", events.length);
-    if (events && events.length > 0) {
-      try {
-        // Get role and scenario from localStorage with proper error handling
-        let roleId = null;
-        let scenarioId = null;
-
-        try {
-          const roleStr = localStorage.getItem('selectedRole');
-          const scenarioStr = localStorage.getItem('selectedScenario');
-          console.log("Raw values from localStorage:", { roleStr, scenarioStr });
-
-          if (roleStr) {
-            const role = JSON.parse(roleStr);
-            roleId = role?.id || null;
-          }
-
-          if (scenarioStr) {
-            const scenario = JSON.parse(scenarioStr);
-            scenarioId = scenario?.id || null;
-          }
-
-          console.log("Parsed values:", { roleId, scenarioId });
-        } catch (parseErr) {
-          console.error("Error parsing role/scenario from localStorage:", parseErr);
-        }
-
-        if (!user || !user.id) {
-          console.error("No valid user found when trying to save transcript");
-          return;
-        }
-
-        console.log("Calling saveTranscript with:", { 
-          eventsCount: events.length, 
-          userId: user.id, 
-          roleId, 
-          scenarioId 
-        });
-
-        // Call the saveTranscript function with properly validated parameters
-        saveTranscript(events, user, roleId, scenarioId);
-      } catch (error) {
-        console.error("Error in transcript save process:", error);
-      }
-    } else {
-      console.warn("No events to save in transcript");
+    if (events.length > 0) {
+      const role = JSON.parse(localStorage.getItem('selectedRole') || '{"id":1}');
+      const scenario = JSON.parse(localStorage.getItem('selectedScenario') || '{"id":1}');
+      saveTranscript(events, user, role.id, scenario.id);
     }
 
-    //This section is duplicated.  Removing it.
+    setEvents(prevEvents => [...prevEvents]);
   };
 
   function sendClientEvent(message) {

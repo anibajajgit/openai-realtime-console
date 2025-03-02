@@ -97,32 +97,6 @@ const Transcript = sequelize.define('Transcript', {
   timestamps: true
 });
 
-// TranscriptFeedback model for storing AI feedback
-const TranscriptFeedback = sequelize.define('TranscriptFeedback', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  transcriptId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Transcripts',
-      key: 'id'
-    }
-  },
-  feedback: {
-    type: DataTypes.TEXT('long'),
-    allowNull: false
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
-  }
-});
-
 // Define associations
 User.hasMany(Transcript, { foreignKey: 'userId' });
 Transcript.belongsTo(User, { foreignKey: 'userId' });
@@ -134,8 +108,4 @@ Transcript.belongsTo(Role, { foreignKey: 'roleId' });
 Scenario.hasMany(Transcript, { foreignKey: 'scenarioId' });
 Transcript.belongsTo(Scenario, { foreignKey: 'scenarioId' });
 
-// TranscriptFeedback association
-Transcript.hasOne(TranscriptFeedback, { foreignKey: 'transcriptId' });
-TranscriptFeedback.belongsTo(Transcript, { foreignKey: 'transcriptId' });
-
-export { Role, Scenario, User, Transcript, TranscriptFeedback };
+export { Role, Scenario, User, Transcript };

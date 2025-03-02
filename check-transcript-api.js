@@ -61,72 +61,9 @@ app.get('/api/transcripts', async (req, res) => {
 });
 
 // Start the server
-const PORT = 3002;
+const PORT = 3001;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`API test server running on port ${PORT}`);
 });
 
 console.log('API test script loaded. Run this to test your transcript endpoints.');
-import fetch from 'node-fetch';
-// All imports are already handled at the top of the file
-
-async function testTranscriptAPI() {
-  try {
-    console.log("Initializing database connection...");
-    await initDatabase();
-    
-    // Get a test user
-    const testUser = await User.findOne({ where: { username: 'testuser' } });
-    if (!testUser) {
-      console.error("Test user not found!");
-      return;
-    }
-    
-    console.log(`Found test user: ${testUser.username} (ID: ${testUser.id})`);
-    
-    // Create a test transcript payload
-    const testPayload = {
-      content: "User: This is a test transcript\n\nAI: This is a test response",
-      userId: testUser.id,
-      roleId: 1,
-      scenarioId: 1,
-      title: "Test Transcript"
-    };
-    
-    console.log("Test payload:", testPayload);
-    
-    // Make the API request
-    console.log("Making request to /api/transcripts...");
-    console.log("Current server URL:", `http://0.0.0.0:3000`);
-    const response = await fetch('http://0.0.0.0:3000/api/transcripts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(testPayload)
-    });
-    
-    console.log(`Response status: ${response.status}`);
-    const responseBody = await response.text();
-    
-    try {
-      // Try to parse as JSON
-      const jsonResponse = JSON.parse(responseBody);
-      console.log("Response (JSON):", jsonResponse);
-    } catch (e) {
-      // If not JSON, show as text
-      console.log("Response (text):", responseBody);
-    }
-    
-    if (response.ok) {
-      console.log("✅ Transcript API is working correctly!");
-    } else {
-      console.log("❌ Transcript API returned an error!");
-    }
-  } catch (error) {
-    console.error("Test failed with error:", error);
-  }
-}
-
-testTranscriptAPI();
