@@ -32,6 +32,7 @@ export default function Home() {
   };
 
   const handleGetStarted = () => {
+    console.log("Get Started button clicked, navigating to /scenarios");
     navigate("/scenarios");
   };
 
