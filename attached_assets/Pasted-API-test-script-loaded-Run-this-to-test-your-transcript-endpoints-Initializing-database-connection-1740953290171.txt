@@ -1,0 +1,119 @@
+API test script loaded. Run this to test your transcript endpoints.
+Initializing database connection...
+API test server running on port 3002
+Database initialization failed: Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.changeColumn (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query-interface.js:43:7)
+    at async Role.sync (/home/runner/workspace/node_modules/sequelize/lib/model.js:984:11)
+    at async Sequelize.sync (/home/runner/workspace/node_modules/sequelize/lib/sequelize.js:377:9)
+    at async initDatabase (file:///home/runner/workspace/database/index.js:14:5)
+    at async testTranscriptAPI (file:///home/runner/workspace/check-transcript-api.js:76:5) {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'id must be unique',
+      type: 'unique violation',
+      path: 'id',
+      value: null,
+      origin: 'DB',
+      instance: null,
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Roles_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+  },
+  original: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Roles_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+  },
+  fields: [ 'id' ],
+  sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+}
+Database initialization failed: Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.changeColumn (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query-interface.js:43:7)
+    at async Role.sync (/home/runner/workspace/node_modules/sequelize/lib/model.js:984:11)
+    at async Sequelize.sync (/home/runner/workspace/node_modules/sequelize/lib/sequelize.js:377:9)
+    at async initDatabase (file:///home/runner/workspace/database/index.js:14:5) {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'id must be unique',
+      type: 'unique violation',
+      path: 'id',
+      value: null,
+      origin: 'DB',
+      instance: null,
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Roles_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+  },
+  original: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Roles_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+  },
+  fields: [ 'id' ],
+  sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+}
+Database initialized successfully for API testing
+Found test user: testuser (ID: 1)
+Test payload: {
+  content: 'User: This is a test transcript\n\nAI: This is a test response',
+  userId: 1,
+  roleId: 1,
+  scenarioId: 1,
+  title: 'Test Transcript'
+}
+Making request to /api/transcripts...
+Response status: 200
+Response (text): <!DOCTYPE html>
+<html>
+  <head>
+    <script type="module">
+import RefreshRuntime from "/@react-refresh"
+RefreshRuntime.injectIntoGlobalHook(window)
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => (type) => type
+window.__vite_plugin_react_preamble_installed__ = true
+</script>
+
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="utf-8" />
+    <title>OpenAI Realtime Console</title>
+    <meta name="description" content="OpenAI Realtime Console" />
+    <meta name="author" content="OpenAI" />
+    <link rel="icon" href="/assets/openai-logomark.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/base.css" />
+    <!-- head -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- hydration -->
+    <script type="module" src="./entry-client.jsx"></script>
+  </body>
+</html>
+
+✅ Transcript API is working correctly!

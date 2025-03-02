@@ -97,7 +97,7 @@ async function testTranscriptAPI() {
     
     // Make the API request
     console.log("Making request to /api/transcripts...");
-    const response = await fetch('http://localhost:3000/api/transcripts', {
+    const response = await fetch('http://0.0.0.0:3000/api/transcripts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
