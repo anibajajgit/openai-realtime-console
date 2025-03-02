@@ -119,10 +119,20 @@ async function generateFeedbackFromOpenAI(transcriptContent, scenarioInfo, roleI
 app.post('/api/transcripts', async (req, res) => {
   try {
     console.log('Received request to save transcript');
+    console.log('Request body:', JSON.stringify(req.body));
     const { content, userId, roleId, scenarioId, title } = req.body;
     
     console.log(`Transcript details - userId: ${userId}, roleId: ${roleId}, scenarioId: ${scenarioId}`);
     console.log(`Content length: ${content?.length || 0} characters`);
+    
+    // Validate required fields and log detailed information
+    const missingFields = [];
+    if (!content) missingFields.push('content');
+    if (!userId) missingFields.push('userId');
+    
+    if (missingFields.length > 0) {
+      console.error(`Missing required fields for transcript: ${missingFields.join(', ')}`);
+    }
     
     if (!content || !userId) {
       console.error('Missing required fields:', { content: !!content, userId: !!userId });
