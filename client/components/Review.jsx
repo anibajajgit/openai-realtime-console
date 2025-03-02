@@ -78,6 +78,13 @@ export default function Review() {
         // Try to get error details from response
         const errorText = await response.text();
         console.error('Error response text:', errorText);
+        
+        // If it's a 404, set a friendly message for missing feedback
+        if (response.status === 404) {
+          setTranscriptFeedback({ feedback: "Feedback is not available for this transcript yet. It may be processing or was created before feedback was implemented." });
+          return;
+        }
+        
         throw new Error(`Failed to fetch feedback: ${response.status} ${response.statusText}`);
       }
       
@@ -87,13 +94,18 @@ export default function Review() {
       
       if (!contentType || !contentType.includes('application/json')) {
         console.error('Unexpected content type:', contentType);
-        throw new Error(`Expected JSON response but got ${contentType}`);
+        // Handle non-JSON responses gracefully
+        setTranscriptFeedback({ feedback: "Feedback is being processed. Please check back later." });
+        return;
       }
+      
       const feedback = await response.json();
       setTranscriptFeedback(feedback);
     } catch (error) {
       console.error('Error fetching feedback:', error);
-      setError('Failed to load feedback. Please try again later.');
+      // Set a more user-friendly error message
+      setTranscriptFeedback({ feedback: "Unable to load feedback at this time. The feedback may not be available for this transcript." });
+      setError(null); // Clear the error state to avoid showing error message
     }
   };
 
