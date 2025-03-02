@@ -8,7 +8,7 @@ import Login from "./Login"; //New Component
 import "../base.css";
 import SessionControls from "./SessionControls";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export default function App() {
   const [user, setUser] = useState(null); // Add user state
