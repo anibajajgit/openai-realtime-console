@@ -160,21 +160,36 @@ export default function App() {
 
       console.log("Saving transcript with payload:", payload);
 
-      const response = await fetch('/api/transcripts', {
+      // Try with absolute URL to avoid routing issues
+      const apiUrl = window.location.origin + '/api/transcripts';
+      console.log("Using API URL:", apiUrl);
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(payload),
       });
 
+      // Check response type before trying to parse JSON
+      const contentType = response.headers.get('content-type');
+      console.log("Response content type:", contentType);
+
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, response: ${errorText}`);
+        console.error(`Server error (${response.status}):`, errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('Transcript saved successfully!', data);
+      // Only try to parse as JSON if content type is JSON
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        console.log('Transcript saved successfully!', data);
+      } else {
+        console.log('Transcript saved (non-JSON response)');
+      }
 
       // Force refresh the transcripts list if we're on the review page
       if (window.location.pathname.includes('/review')) {
@@ -182,6 +197,37 @@ export default function App() {
       }
     } catch (error) {
       console.error('Error saving transcript:', error);
+      console.error('Error details:', error.message);
+
+      // Retry once with a delay - sometimes server issues are temporary
+      setTimeout(async () => {
+        try {
+          console.log("Retrying transcript save after failure...");
+          // Create a simplified payload for retry
+          const retryPayload = { 
+            content: formattedContent,
+            userId: user.id,
+            roleId: roleId || null,
+            scenarioId: scenarioId || null,
+            title: `Conversation on ${new Date().toLocaleDateString()} (Retry)`
+          };
+
+          const retryResponse = await fetch('/api/transcripts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(retryPayload),
+          });
+
+          if (retryResponse.ok) {
+            console.log('Transcript saved successfully on retry!');
+          }
+        } catch (retryError) {
+          console.error('Retry also failed:', retryError);
+        }
+      }, 1000);
     }
   }
 
