@@ -10,8 +10,9 @@ const sequelize = new Sequelize({
 export async function initDatabase() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync();
-    console.log('Database initialized successfully');
+    // Force sync to update schema - this will drop and recreate tables!
+    await sequelize.sync({ force: true });
+    console.log('Database initialized successfully with updated schema');
   } catch (error) {
     console.error('Database initialization failed:', error);
   }
