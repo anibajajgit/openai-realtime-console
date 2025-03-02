@@ -47,9 +47,13 @@ export default function Review() {
 
   const fetchTranscriptDetails = async (transcriptId) => {
     try {
+      console.log(`Fetching transcript details for ID: ${transcriptId}`);
       const response = await fetch(`/api/transcripts/${transcriptId}?userId=${user.id}`);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch transcript details');
+        const errorText = await response.text();
+        console.error('Error response text:', errorText);
+        throw new Error(`Failed to fetch transcript details: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
       setSelectedTranscript(data);
@@ -63,9 +67,27 @@ export default function Review() {
 
   const fetchTranscriptFeedback = async (transcriptId) => {
     try {
+      console.log(`Fetching feedback for transcript ID: ${transcriptId}, user ID: ${user.id}`);
+      
       const response = await fetch(`/api/transcripts/${transcriptId}/feedback?userId=${user.id}`);
+      
+      // Check if response is OK and log response status
+      console.log(`Feedback API response status: ${response.status}`);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch feedback');
+        // Try to get error details from response
+        const errorText = await response.text();
+        console.error('Error response text:', errorText);
+        throw new Error(`Failed to fetch feedback: ${response.status} ${response.statusText}`);
+      }
+      
+      // Log successful response
+      const contentType = response.headers.get('content-type');
+      console.log(`Response content type: ${contentType}`);
+      
+      if (!contentType || !contentType.includes('application/json')) {
+        console.error('Unexpected content type:', contentType);
+        throw new Error(`Expected JSON response but got ${contentType}`);
       }
       const feedback = await response.json();
       setTranscriptFeedback(feedback);
