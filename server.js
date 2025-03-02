@@ -118,8 +118,9 @@ async function generateFeedbackFromOpenAI(transcriptContent, scenarioInfo, roleI
 // Automatically generate and save feedback after transcript is saved
 app.post('/api/transcripts', async (req, res) => {
   try {
-    // Always set the content type for API responses
+    // Force content type to be JSON for this specific endpoint
     res.setHeader('Content-Type', 'application/json');
+    res.type('json');
     
     console.log('Received request to save transcript');
     console.log('Request body:', JSON.stringify(req.body));
@@ -397,15 +398,40 @@ app.use((req, res, next) => {
   next();
 });
 
-// Apply Vite middleware for all non-API routes
+// Add a specific check for Content-Type based on request path
 app.use((req, res, next) => {
-  // Make sure all API routes are handled before Vite middleware
+  // Set appropriate content type for API responses
   if (req.path.startsWith('/api/')) {
-    // This is an API request - it should be handled by Express routes, not Vite
+    // Force content type for API responses to be JSON
+    res.type('json');
+  }
+  next();
+});
+
+// Define API routes first, before any middleware that might catch them
+// Apply Vite middleware ONLY for non-API routes
+app.use((req, res, next) => {
+  // Skip Vite middleware for API routes
+  if (req.path.startsWith('/api/')) {
     return next();
-  } 
+  }
   
-  // For all non-API routes, use Vite middleware to serve the React app
+  // For non-API routes, use Vite middleware to serve the React app
+  return vite.middlewares(req, res, next);
+});
+</old_str>
+<new_str>
+// Define API routes first, before any middleware that might catch them
+// Apply Vite middleware ONLY for non-API routes
+app.use((req, res, next) => {
+  // Skip Vite middleware for API routes
+  if (req.path.startsWith('/api/')) {
+    // Force content type for API responses to be JSON
+    res.type('json');
+    return next();
+  }
+  
+  // For non-API routes, use Vite middleware to serve the React app
   return vite.middlewares(req, res, next);
 });
 
