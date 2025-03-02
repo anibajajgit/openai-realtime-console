@@ -1,5 +1,93 @@
 
-import { Role, Scenario } from './schema.js';
+import { Role, Scenario, User } from './schema.js';
+
+export async function seedDatabase() {
+  // Seed roles
+  const roles = [
+    {
+      name: "Priya Anand",
+      title: "CTO",
+      style: "ASSERTIVE",
+      photoUrl: "https://ui-avatars.com/api/?name=Priya+Anand&size=150&background=random",
+      voice: "shimmer",
+      instructions: "Your knowledge cutoff is 2023-10. You are an indian woman, born and raised in Mumbai, India and must Speak with a local Indian accent at all times. You are the CTO of a Pharmaceutical company. you are assertive, and dont like to be disturbed unless for something important, but are generally polite."
+    },
+    {
+      name: "Michael Chen",
+      title: "Product Manager",
+      style: "COLLABORATIVE",
+      photoUrl: "https://ui-avatars.com/api/?name=Michael+Chen&size=150&background=random",
+      voice: "verse",
+      instructions: "You are a product manager focused on user experience and collaboration. You are open to new ideas and appreciate detailed presentations."
+    }
+  ];
+
+  // Seed scenarios
+  const scenarios = [
+    {
+      name: "Pitch Meeting",
+      description: "Present your product idea to the executive team",
+      instructions: "You're about to pitch your new product idea to the executive team. Be prepared to explain the concept, market opportunity, and revenue potential.",
+      rubric: JSON.stringify([
+        "Clear explanation of the product concept",
+        "Market analysis",
+        "Revenue projections",
+        "Implementation timeline"
+      ])
+    },
+    {
+      name: "Performance Review",
+      description: "Annual performance evaluation discussion",
+      instructions: "This is your annual performance review. Be prepared to discuss your achievements, areas for improvement, and career goals.",
+      rubric: JSON.stringify([
+        "Highlight key achievements",
+        "Acknowledge areas for growth",
+        "Present professional development plans",
+        "Ask meaningful questions"
+      ])
+    }
+  ];
+
+  // Seed test user
+  const users = [
+    {
+      username: "testuser",
+      password: "password123",
+      email: "test@example.com"
+    }
+  ];
+
+  try {
+    // Check if roles already exist
+    const existingRolesCount = await Role.count();
+    if (existingRolesCount === 0) {
+      await Role.bulkCreate(roles);
+      console.log('Roles seeded successfully');
+    } else {
+      console.log('Roles already exist, skipping seed');
+    }
+
+    // Check if scenarios already exist
+    const existingScenariosCount = await Scenario.count();
+    if (existingScenariosCount === 0) {
+      await Scenario.bulkCreate(scenarios);
+      console.log('Scenarios seeded successfully');
+    } else {
+      console.log('Scenarios already exist, skipping seed');
+    }
+
+    // Check if users already exist
+    const existingUsersCount = await User.count();
+    if (existingUsersCount === 0) {
+      await User.bulkCreate(users);
+      console.log('Test user seeded successfully');
+    } else {
+      console.log('Users already exist, skipping seed');
+    }
+  } catch (error) {
+    console.error('Error seeding database:', error);
+  }
+}
 
 export async function seedDatabase() {
   const existingRoles = await Role.findAll();

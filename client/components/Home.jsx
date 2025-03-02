@@ -1,30 +1,84 @@
-import React from "react";
-import { Link } from "react-router-dom";
+
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/Button";
+import LoginDialog from "./LoginDialog";
 
 export default function Home() {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+        localStorage.removeItem("user");
+      }
+    }
+  }, []);
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+  };
+
+  const handleGetStarted = () => {
+    navigate("/scenarios");
+  };
+
   return (
-    <>
-      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
-        <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
-          <h1>Home</h1>
-        </div>
-      </nav>
-      <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
-        <div className="flex flex-col md:flex-row h-full bg-gray-50">
-          <section className="w-full p-6">
-            <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5">
-              <h2 className="text-xl font-semibold mb-4">Welcome to the Voice Chat App</h2>
-              <p className="mb-3">This is your home page where you can see an overview of your application.</p>
-              <Link 
-                to="/scenarios" 
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
+      <div className="max-w-2xl w-full text-center">
+        <h1 className="text-4xl font-bold mb-4">Welcome to the Scenario Simulator</h1>
+        <p className="text-xl mb-8">
+          Practice real-world scenarios with AI-powered role-playing
+        </p>
+        
+        {user ? (
+          <div className="space-y-4">
+            <p className="text-gray-700">Logged in as: {user.username}</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg" 
+                onClick={handleGetStarted} 
+                className="w-full sm:w-auto"
               >
-                Back to Scenarios
-              </Link>
+                Get Started
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleLogout} 
+                className="w-full sm:w-auto"
+              >
+                Logout
+              </Button>
             </div>
-          </section>
-        </div>
-      </main>
-    </>
+          </div>
+        ) : (
+          <Button 
+            size="lg" 
+            onClick={() => setIsLoginOpen(true)}
+            className="px-8"
+          >
+            Login to Get Started
+          </Button>
+        )}
+      </div>
+
+      <LoginDialog 
+        isOpen={isLoginOpen} 
+        onClose={() => setIsLoginOpen(false)} 
+        onLoginSuccess={handleLoginSuccess} 
+      />
+    </div>
   );
 }

@@ -1,21 +1,43 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, createContext, useContext } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import ScenarioSelector from "./ScenarioSelector";
 import EventLog from "./EventLog";
 import Home from "./Home";
+import Login from "./Login"; //New Component
 import "../base.css";
-
 import SessionControls from "./SessionControls";
 
+const AuthContext = createContext();
 
 export default function App() {
+  const [user, setUser] = useState(null); // Add user state
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
-  const location = useLocation(); // Using useLocation to conditionally render header
+  const location = useLocation();
+
+  const login = (userData) => {
+    // Simulate login - replace with actual authentication logic
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
 
   async function startSession() {
     try {
@@ -146,61 +168,95 @@ export default function App() {
   }, [dataChannel]);
 
   return (
-    <>
+    <AuthContext.Provider value={{ user, login, logout }}> {/* AuthContext Provider */}
       <Routes>
-        <Route path="/" element={<Navigate to="/scenarios" replace />} /> {/* Redirect to scenarios page by default */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} /> {/*Login Route*/}
         <Route path="/scenarios" element={
-          <>
-            {location.pathname !== "/home" && ( // Conditionally render header based on route
+          user ? (
+            <>
               <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
                 <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
                   <h1>Scenarios</h1>
                 </div>
               </nav>
-            )}
-            <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
-              <div className="flex flex-col md:flex-row h-full bg-gray-50">
-                <AppSidebar />
-                <section className="w-full md:w-2/5 p-4">
-                  {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
-                </section>
-                <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
-                  <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
-                    <video
-                      ref={(video) => {
-                        if (video) {
-                          navigator.mediaDevices.getUserMedia({ video: true })
-                            .then(stream => {
-                              video.srcObject = stream;
-                              video.onloadedmetadata = () => {
-                                video.play().catch(err => console.error("Error playing video:", err));
-                              };
-                            })
-                            .catch(err => console.error("Error accessing camera:", err));
-                        }
-                      }}
-                      className="h-full w-full aspect-video object-cover rounded-lg"
-                      playsInline
-                      muted
-                    />
-                  </div>
-                  <div className="h-24 md:h-32">
-                    <SessionControls
-                      startSession={startSession}
-                      stopSession={stopSession}
-                      sendClientEvent={sendClientEvent}
-                      sendTextMessage={sendTextMessage}
-                      serverEvents={events}
-                      isSessionActive={isSessionActive}
-                    />
-                  </div>
-                </section>
-              </div>
-            </main>
-          </>
+              <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
+                <div className="flex flex-col md:flex-row h-full bg-gray-50">
+                  <AppSidebar />
+                  <section className="w-full md:w-2/5 p-4">
+                    {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
+                  </section>
+                  <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
+                    <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
+                      <video
+                        ref={(video) => {
+                          if (video) {
+                            navigator.mediaDevices.getUserMedia({ video: true })
+                              .then(stream => {
+                                video.srcObject = stream;
+                                video.onloadedmetadata = () => {
+                                  video.play().catch(err => console.error("Error playing video:", err));
+                                };
+                              })
+                              .catch(err => console.error("Error accessing camera:", err));
+                          }
+                        }}
+                        className="h-full w-full aspect-video object-cover rounded-lg"
+                        playsInline
+                        muted
+                      />
+                    </div>
+                    <div className="h-24 md:h-32">
+                      <SessionControls
+                        startSession={startSession}
+                        stopSession={stopSession}
+                        sendClientEvent={sendClientEvent}
+                        sendTextMessage={sendTextMessage}
+                        serverEvents={events}
+                        isSessionActive={isSessionActive}
+                      />
+                    </div>
+                  </section>
+                </div>
+              </main>
+            </>
+          ) : (
+            <Navigate to="/" replace />
+          )
         } />
-        <Route path="/home" element={<Home />} />
       </Routes>
-    </>
+    </AuthContext.Provider>
+  );
+}
+
+//Login Component
+function Login() {
+  const { login } = useContext(AuthContext);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //Simulate DB lookup - replace with actual DB interaction
+    const simulatedUsers = {
+      "user1": "pass1",
+      "user2": "pass2"
+    };
+    if (simulatedUsers[username] === password) {
+      login({ username });
+    } else {
+      alert('Invalid credentials');
+    }
+  };
+
+  return (
+    <div>
+      <h1>Login</h1>
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 }
