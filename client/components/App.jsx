@@ -16,6 +16,8 @@ export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null); // Add state for selected role
+  const [selectedScenario, setSelectedScenario] = useState(null); // Add state for selected scenario
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
   const location = useLocation();
@@ -42,11 +44,32 @@ export default function App() {
 
   async function startSession() {
     try {
-      const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
-      const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
-      const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
-      const data = await tokenResponse.json();
-      const EPHEMERAL_KEY = data.client_secret.value;
+      const urlParams = new URLSearchParams(window.location.search);
+      const roleId = urlParams.get("roleId");
+      const scenarioId = urlParams.get("scenarioId");
+
+      console.log(`Starting session with roleId=${roleId}, scenarioId=${scenarioId}`);
+
+      // Get role and scenario details for transcript record
+      if (roleId) {
+        const rolesResponse = await fetch('/api/roles');
+        const roles = await rolesResponse.json();
+        const role = roles.find(r => r.id === Number(roleId));
+        setSelectedRole(role);
+      }
+
+      if (scenarioId) {
+        const scenariosResponse = await fetch('/api/scenarios');
+        const scenarios = await scenariosResponse.json();
+        const scenario = scenarios.find(s => s.id === Number(scenarioId));
+        setSelectedScenario(scenario);
+      }
+
+      const tokenResponse = await fetch(
+        `/token?roleId=${roleId}&scenarioId=${scenarioId}`,
+      );
+      const tokenData = await tokenResponse.json();
+      const EPHEMERAL_KEY = tokenData.client_secret.value;
 
       const pc = new RTCPeerConnection();
       audioElement.current = document.createElement("audio");
@@ -226,6 +249,9 @@ export default function App() {
                         sendTextMessage={sendTextMessage}
                         serverEvents={events}
                         isSessionActive={isSessionActive}
+                        user={user}
+                        selectedScenario={selectedScenario}
+                        selectedRole={selectedRole}
                       />
                     </div>
                   </section>

@@ -101,6 +101,93 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Transcript routes
+import { Client as ObjectStorageClient } from 'replit-object-storage';
+import { Transcript } from './database/schema.js';
+
+// Initialize object storage client
+const objectStorage = new ObjectStorageClient();
+
+// Save transcript to object storage and record in database
+app.post('/api/transcripts', async (req, res) => {
+  try {
+    const { userId, transcript, scenarioName, roleName } = req.body;
+    
+    if (!userId || !transcript) {
+      return res.status(400).json({ error: 'User ID and transcript are required' });
+    }
+    
+    // Generate a unique key for the transcript
+    const timestamp = new Date().toISOString();
+    const storageKey = `transcripts/${userId}/${timestamp}.json`;
+    
+    // Store transcript in object storage
+    await objectStorage.upload_from_text(storageKey, JSON.stringify({
+      transcript,
+      scenarioName,
+      roleName,
+      timestamp
+    }));
+    
+    // Record in database
+    const transcriptRecord = await Transcript.create({
+      userId,
+      storageKey,
+      scenarioName,
+      roleName
+    });
+    
+    res.status(201).json({
+      message: 'Transcript saved successfully',
+      transcriptId: transcriptRecord.id
+    });
+  } catch (error) {
+    console.error('Error saving transcript:', error);
+    res.status(500).json({ error: 'Failed to save transcript' });
+  }
+});
+
+// Get all transcripts for a user
+app.get('/api/transcripts/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    const transcripts = await Transcript.findAll({
+      where: { userId: parseInt(userId) },
+      order: [['createdAt', 'DESC']]
+    });
+    
+    res.json(transcripts);
+  } catch (error) {
+    console.error('Error fetching transcripts:', error);
+    res.status(500).json({ error: 'Failed to fetch transcripts' });
+  }
+});
+
+// Get a specific transcript by ID
+app.get('/api/transcripts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const transcriptRecord = await Transcript.findByPk(id);
+    
+    if (!transcriptRecord) {
+      return res.status(404).json({ error: 'Transcript not found' });
+    }
+    
+    // Retrieve from object storage
+    const transcriptData = await objectStorage.download_from_text(transcriptRecord.storageKey);
+    
+    res.json({
+      record: transcriptRecord,
+      data: JSON.parse(transcriptData)
+    });
+  } catch (error) {
+    console.error('Error fetching transcript:', error);
+    res.status(500).json({ error: 'Failed to fetch transcript' });
+  }
+});
+
 // Configure Vite middleware for React client
 const vite = await createViteServer({
   server: { 

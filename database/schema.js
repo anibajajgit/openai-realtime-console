@@ -55,4 +55,40 @@ const User = sequelize.define('User', {
   timestamps: true
 });
 
-export { Role, Scenario, User };
+const Transcript = sequelize.define('Transcript', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  storageKey: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  scenarioName: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  roleName: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  }
+});
+
+// Set up associations
+User.hasMany(Transcript, { foreignKey: 'userId' });
+Transcript.belongsTo(User, { foreignKey: 'userId' });
+
+export { Role, Scenario, User, Transcript };
