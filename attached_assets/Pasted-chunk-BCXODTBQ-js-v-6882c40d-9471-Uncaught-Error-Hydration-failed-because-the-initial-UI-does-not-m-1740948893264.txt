@@ -1,0 +1,73 @@
+chunk-BCXODTBQ.js?v=6882c40d:9471 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+    at throwOnHydrationMismatch (chunk-BCXODTBQ.js?v=6882c40d:9471:17)
+    at tryToClaimNextHydratableInstance (chunk-BCXODTBQ.js?v=6882c40d:9492:15)
+    at updateHostComponent (chunk-BCXODTBQ.js?v=6882c40d:14792:13)
+    at beginWork (chunk-BCXODTBQ.js?v=6882c40d:15933:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=6882c40d:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=6882c40d:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=6882c40d:19135:13)
+    at renderRootSync (chunk-BCXODTBQ.js?v=6882c40d:19114:15)
+    at performConcurrentWorkOnRoot (chunk-BCXODTBQ.js?v=6882c40d:18676:83)
+    at workLoop (chunk-BCXODTBQ.js?v=6882c40d:195:42)Understand this errorAI
+chunk-BCXODTBQ.js?v=6882c40d:14758 Uncaught Error: There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root will switch to client rendering.
+    at updateHostRoot (chunk-BCXODTBQ.js?v=6882c40d:14758:65)
+    at beginWork (chunk-BCXODTBQ.js?v=6882c40d:15931:22)
+    at beginWork$1 (chunk-BCXODTBQ.js?v=6882c40d:19751:22)
+    at performUnitOfWork (chunk-BCXODTBQ.js?v=6882c40d:19196:20)
+    at workLoopSync (chunk-BCXODTBQ.js?v=6882c40d:19135:13)
+    at renderRootSync (chunk-BCXODTBQ.js?v=6882c40d:19114:15)
+    at recoverFromConcurrentError (chunk-BCXODTBQ.js?v=6882c40d:18734:28)
+    at performConcurrentWorkOnRoot (chunk-BCXODTBQ.js?v=6882c40d:18682:30)
+    at workLoop (chunk-BCXODTBQ.js?v=6882c40d:195:42)
+    at flushWork (chunk-BCXODTBQ.js?v=6882c40d:174:22)Understand this errorAI
+chunk-BCXODTBQ.js?v=6882c40d:16668 Uncaught ReferenceError: setUser is not defined
+    at App.jsx:39:7
+    at commitHookEffectListMount (chunk-BCXODTBQ.js?v=6882c40d:16913:34)
+    at commitPassiveMountOnFiber (chunk-BCXODTBQ.js?v=6882c40d:18154:19)
+    at commitPassiveMountEffects_complete (chunk-BCXODTBQ.js?v=6882c40d:18127:17)
+    at commitPassiveMountEffects_begin (chunk-BCXODTBQ.js?v=6882c40d:18117:15)
+    at commitPassiveMountEffects (chunk-BCXODTBQ.js?v=6882c40d:18107:11)
+    at flushPassiveEffectsImpl (chunk-BCXODTBQ.js?v=6882c40d:19488:11)
+    at flushPassiveEffects (chunk-BCXODTBQ.js?v=6882c40d:19445:22)
+    at performSyncWorkOnRoot (chunk-BCXODTBQ.js?v=6882c40d:18866:11)
+    at flushSyncCallbacks (chunk-BCXODTBQ.js?v=6882c40d:9117:30)Understand this errorAI
+AuthContext.jsx:36 AuthContext Provider rendering with user: null
+react-router-dom.js?v=6882c40d:4372 ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+warnOnce @ react-router-dom.js?v=6882c40d:4372Understand this warningAI
+react-router-dom.js?v=6882c40d:4372 ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+warnOnce @ react-router-dom.js?v=6882c40d:4372Understand this warningAI
+chunk-BCXODTBQ.js?v=6882c40d:16668 Uncaught ReferenceError: setUser is not defined
+    at App.jsx:39:7
+    at commitHookEffectListMount (chunk-BCXODTBQ.js?v=6882c40d:16913:34)
+    at invokePassiveEffectMountInDEV (chunk-BCXODTBQ.js?v=6882c40d:18322:19)
+    at invokeEffectsInDev (chunk-BCXODTBQ.js?v=6882c40d:19699:19)
+    at commitDoubleInvokeEffectsInDEV (chunk-BCXODTBQ.js?v=6882c40d:19684:15)
+    at flushPassiveEffectsImpl (chunk-BCXODTBQ.js?v=6882c40d:19501:13)
+    at flushPassiveEffects (chunk-BCXODTBQ.js?v=6882c40d:19445:22)
+    at performSyncWorkOnRoot (chunk-BCXODTBQ.js?v=6882c40d:18866:11)
+    at flushSyncCallbacks (chunk-BCXODTBQ.js?v=6882c40d:9117:30)
+    at commitRootImpl (chunk-BCXODTBQ.js?v=6882c40d:19430:11)Understand this errorAI
+AuthContext.jsx:36 AuthContext Provider rendering with user: null
+2chunk-BCXODTBQ.js?v=6882c40d:14030 The above error occurred in the <App> component:
+
+    at App (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/App.jsx:31:20)
+    at AuthProvider (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/utils/AuthContext.jsx:20:32)
+    at Router (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=6882c40d:4480:15)
+    at BrowserRouter (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=6882c40d:5226:5)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-BCXODTBQ.js?v=6882c40d:14030Understand this errorAI
+chunk-BCXODTBQ.js?v=6882c40d:9127 Uncaught ReferenceError: setUser is not defined
+    at App.jsx:39:7
+    at commitHookEffectListMount (chunk-BCXODTBQ.js?v=6882c40d:16913:34)
+    at commitPassiveMountOnFiber (chunk-BCXODTBQ.js?v=6882c40d:18154:19)
+    at commitPassiveMountEffects_complete (chunk-BCXODTBQ.js?v=6882c40d:18127:17)
+    at commitPassiveMountEffects_begin (chunk-BCXODTBQ.js?v=6882c40d:18117:15)
+    at commitPassiveMountEffects (chunk-BCXODTBQ.js?v=6882c40d:18107:11)
+    at flushPassiveEffectsImpl (chunk-BCXODTBQ.js?v=6882c40d:19488:11)
+    at flushPassiveEffects (chunk-BCXODTBQ.js?v=6882c40d:19445:22)
+    at performSyncWorkOnRoot (chunk-BCXODTBQ.js?v=6882c40d:18866:11)
+    at flushSyncCallbacks (chunk-BCXODTBQ.js?v=6882c40d:9117:30)Understand this errorAI
+shopify-script.js:562 Marketplace not found, using fallback d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000
+o @ shopify-script.js:562Understand this errorAI
