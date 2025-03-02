@@ -82,24 +82,12 @@ export default function ScenarioSelector() {
           <h3 className="font-medium mb-2">RUBRIC</h3>
           <ul className="list-disc pl-4 space-y-2">
             {selectedScenario?.rubric ? 
-              (() => {
-                try {
-                  // Convert rubric to array if it's a string
-                  const rubricArray = typeof selectedScenario.rubric === 'string' 
-                    ? JSON.parse(selectedScenario.rubric) 
-                    : selectedScenario.rubric;
-                  
-                  // Ensure it's an array before mapping
-                  return Array.isArray(rubricArray) 
-                    ? rubricArray.map((item, index) => (
-                        <li key={index} className="text-gray-600">{item}</li>
-                      ))
-                    : <li className="text-gray-600">Rubric not available</li>;
-                } catch (e) {
-                  console.error("Error parsing rubric:", e);
-                  return <li className="text-gray-600">Error loading rubric</li>;
-                }
-              })()
+              (typeof selectedScenario.rubric === 'string' 
+                ? JSON.parse(selectedScenario.rubric)
+                : selectedScenario.rubric
+              ).map((item, index) => (
+                <li key={index} className="text-gray-600">{item}</li>
+              ))
               : null
             }
           </ul>
