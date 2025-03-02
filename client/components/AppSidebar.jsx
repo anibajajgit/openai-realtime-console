@@ -176,12 +176,12 @@ export default function AppSidebar() {
 
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const handleLogout = () => {
     logout();
     navigate('/');
   };
-  
+
   return (
     <SidebarProvider open={open} setOpen={setOpen} animate={true}>
       <MobileSidebar>
@@ -197,7 +197,7 @@ export default function AppSidebar() {
                 <div className="bg-gray-700 p-2 rounded-full">
                   <User size={18} />
                 </div>
-                <span className="text-sm font-medium">{user.username}</span>
+                <span className="text-sm font-medium text-white">{user.username}</span>
               </div>
               <button 
                 onClick={handleLogout}
@@ -222,7 +222,7 @@ export default function AppSidebar() {
                 <div className="bg-gray-700 p-2 rounded-full">
                   <User size={18} />
                 </div>
-                <span className="text-sm font-medium">{user.username}</span>
+                <span className="text-sm font-medium text-white">{user.username}</span>
               </div>
               <button 
                 onClick={handleLogout}
