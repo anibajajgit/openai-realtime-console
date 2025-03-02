@@ -118,26 +118,34 @@ export default function App() {
       return;
     }
 
+    // Log event types for debugging
+    console.log("Event types to process:", events.map(e => e.type));
+    
     // Format the content as a readable conversation
     const formattedContent = events
       .slice()
       .reverse()
-      .filter(event => 
-        event.type === "conversation.item.input_audio_transcription.completed" ||
-        event.type === "response.text.done" ||
-        event.type === "response.audio_transcript.done"
-      )
+      .filter(event => {
+        const isValidType = event.type === "conversation.item.input_audio_transcription.completed" ||
+                          event.type === "response.text.done" ||
+                          event.type === "response.audio_transcript.done";
+        if (!isValidType) {
+          console.log("Filtering out event type:", event.type);
+        }
+        return isValidType;
+      })
       .map(event => {
         let prefix = "", text = "";
 
         if (event.type === "conversation.item.input_audio_transcription.completed") {
           prefix = "User:";
-          text = event.transcript;
+          text = event.transcript || "[No transcript]";
         } else if (event.type === "response.text.done" || event.type === "response.audio_transcript.done") {
           prefix = "AI:";
-          text = event.type === "response.text.done" ? event.text : event.transcript;
+          text = event.type === "response.text.done" ? (event.text || "[No text]") : (event.transcript || "[No transcript]");
         }
 
+        console.log(`Processing ${event.type} event, text length: ${text?.length || 0}`);
         return `${prefix} ${text}`;
       })
       .join('\n\n');
@@ -146,6 +154,7 @@ export default function App() {
 
     if (formattedContent.length === 0) {
       console.error("Cannot save transcript: No valid conversation content to save");
+      console.log("All events:", JSON.stringify(events.slice(0, 3), null, 2)); // Log first 3 events for debugging
       return;
     }
 
@@ -163,37 +172,77 @@ export default function App() {
       // Try with absolute URL to avoid routing issues
       const apiUrl = window.location.origin + '/api/transcripts';
       console.log("Using API URL:", apiUrl);
+      console.log("Sending payload:", JSON.stringify(payload, null, 2));
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload),
-      });
+      try {
+        console.log("Making initial API request");
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload),
+        });
 
-      // Check response type before trying to parse JSON
-      const contentType = response.headers.get('content-type');
-      console.log("Response content type:", contentType);
+        // Check response type before trying to parse JSON
+        const contentType = response.headers.get('content-type');
+        console.log(`Response status: ${response.status}, content type: ${contentType}`);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Server error (${response.status}):`, errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Server error (${response.status}):`, errorText);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-      // Only try to parse as JSON if content type is JSON
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        console.log('Transcript saved successfully!', data);
-      } else {
-        console.log('Transcript saved (non-JSON response)');
-      }
+        // Only try to parse as JSON if content type is JSON
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          console.log('Transcript saved successfully!', data);
+        } else {
+          const text = await response.text();
+          console.log('Transcript saved with non-JSON response. First 100 chars:', text.substring(0, 100));
+          
+          if (text.includes('<!DOCTYPE html>')) {
+            console.error("Received HTML instead of JSON - this indicates a routing issue");
+          }
+        }
 
-      // Force refresh the transcripts list if we're on the review page
-      if (window.location.pathname.includes('/review')) {
-        window.location.reload();
+        // Force refresh the transcripts list if we're on the review page
+        if (window.location.pathname.includes('/review')) {
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Initial transcript save failed:", error);
+        
+        // Add a short delay before retry
+        console.log("Waiting 1 second before retry...");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        console.log("Attempting retry with explicit server port");
+        try {
+          // Try with explicit port in the URL as a fallback
+          const backupUrl = `${window.location.protocol}//${window.location.hostname}:3000/api/transcripts`;
+          console.log("Retry using URL:", backupUrl);
+          
+          const retryResponse = await fetch(backupUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload),
+          });
+          
+          console.log(`Retry response status: ${retryResponse.status}`);
+          if (retryResponse.ok) {
+            console.log("Transcript saved successfully on retry!");
+          } else {
+            console.error("Retry also failed with status:", retryResponse.status);
+          }
+        } catch (retryError) {
+          console.error("Retry also failed with error:", retryError);
+        }
       }
     } catch (error) {
       console.error('Error saving transcript:', error);
@@ -240,10 +289,35 @@ export default function App() {
     }
 
     // Save transcript when session ends
+    console.log("End session triggered. Events:", events.length);
     if (events.length > 0) {
-      const role = JSON.parse(localStorage.getItem('selectedRole') || '{"id":1}');
-      const scenario = JSON.parse(localStorage.getItem('selectedScenario') || '{"id":1}');
-      saveTranscript(events, user, role.id, scenario.id);
+      try {
+        console.log("Getting role and scenario from localStorage");
+        const roleStr = localStorage.getItem('selectedRole');
+        const scenarioStr = localStorage.getItem('selectedScenario');
+        console.log("Raw values from localStorage:", { roleStr, scenarioStr });
+        
+        const role = JSON.parse(roleStr || '{"id":1}');
+        const scenario = JSON.parse(scenarioStr || '{"id":1}');
+        console.log("Parsed values:", { role, scenario });
+        
+        if (!user) {
+          console.error("No user found when trying to save transcript");
+          return;
+        }
+        
+        console.log("Calling saveTranscript with:", { 
+          eventsCount: events.length, 
+          userId: user.id, 
+          roleId: role.id, 
+          scenarioId: scenario.id 
+        });
+        saveTranscript(events, user, role.id, scenario.id);
+      } catch (error) {
+        console.error("Error preparing transcript save:", error);
+      }
+    } else {
+      console.warn("No events to save in transcript");
     }
 
     setEvents(prevEvents => [...prevEvents]);
