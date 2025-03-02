@@ -1,0 +1,55 @@
+Initializing database...
+Error:   Failed to scan for dependencies from entries:
+  /home/runner/workspace/client/index.html
+
+  ✘ [ERROR] No matching export in "client/components/App.jsx" for import "AuthContext"
+
+    client/components/AppSidebar.jsx:5:9:
+      5 │ import { AuthContext } from "./App"; // Import AuthContext
+        ╵          ~~~~~~~~~~~
+
+
+    at failureErrorWithLog (/home/runner/workspace/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/home/runner/workspace/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/home/runner/workspace/node_modules/esbuild/lib/main.js:943:7)
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/home/runner/workspace/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/home/runner/workspace/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/esbuild/lib/main.js:600:7)
+(sequelize) Warning: SQLite does not support TEXT with options. Plain `TEXT` will be used instead. 
+>> Check: https://www.sqlite.org/datatype3.html
+Database initialized successfully with updated schema
+Seeding database...
+Found 3 existing roles in the database
+All expected roles are already in the database: Priya Anand, Michael Chen, Sarah Johnson
+Users already exist, skipping seed
+Database setup complete
+Server startup: Found 3 roles in database: Priya Anand, Michael Chen, Sarah Johnson
+Express server running on *:3000
+8:52:43 PM [vite] Pre-transform error: Failed to resolve import "../utils/AuthContext" from "client/components/App.jsx". Does the file exist?
+8:52:43 PM [vite] Pre-transform error: Failed to resolve import "../utils/AuthContext" from "client/components/Review.jsx". Does the file exist?
+8:52:43 PM [vite] Pre-transform error: Failed to load url ../utils/AuthContext (resolved id: ../utils/AuthContext) in /home/runner/workspace/client/components/App.jsx. Does the file exist?
+8:52:43 PM [vite] Pre-transform error: Failed to resolve import "../utils/AuthContext" from "client/components/App.jsx". Does the file exist?
+8:52:44 PM [vite] Pre-transform error: Failed to load url ../utils/AuthContext (resolved id: ../utils/AuthContext) in /home/runner/workspace/client/components/App.jsx. Does the file exist?
+8:52:44 PM [vite] Pre-transform error: Failed to resolve import "../utils/AuthContext" from "client/components/Review.jsx". Does the file exist?
+8:52:44 PM [vite] Error when evaluating SSR module /components/Review.jsx:
+|- Error: Failed to load url ../utils/AuthContext (resolved id: ../utils/AuthContext) in /home/runner/workspace/client/components/App.jsx. Does the file exist?
+    at loadAndTransform (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:51920:17)
+    at async instantiateModule (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:52874:44)
+
+8:52:44 PM [vite] Error when evaluating SSR module /components/App.jsx:
+|- Error: Failed to load url ../utils/AuthContext (resolved id: ../utils/AuthContext) in /home/runner/workspace/client/components/App.jsx. Does the file exist?
+    at loadAndTransform (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:51920:17)
+    at async instantiateModule (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:52874:44)
+
+8:52:44 PM [vite] Error when evaluating SSR module ./client/entry-server.jsx:
+|- Error: Failed to load url ../utils/AuthContext (resolved id: ../utils/AuthContext) in /home/runner/workspace/client/components/App.jsx. Does the file exist?
+    at loadAndTransform (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:51920:17)
+    at async instantiateModule (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:52874:44)
+
+Error: Failed to load url ../utils/AuthContext (resolved id: ../utils/AuthContext) in /home/runner/workspace/client/components/App.jsx. Does the file exist?
+    at loadAndTransform (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:51920:17)
+    at async instantiateModule (file:///home/runner/workspace/node_modules/vite/dist/node/chunks/dep-CB_7IfJ-.js:52874:44)
