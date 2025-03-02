@@ -34,8 +34,9 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Optional: Add any additional initialization logic here
     console.log("App component mounted with user:", user);
+    // No need to check localStorage here since AuthContext already does this
+    // This prevents potential duplicate or conflicting user state
   }, [user]);
 
   async function startSession() {
@@ -43,14 +44,14 @@ export default function App() {
       // Get role and scenario from localStorage or use defaults
       const roleFromStorage = localStorage.getItem('selectedRole');
       const scenarioFromStorage = localStorage.getItem('selectedScenario');
-      
+
       const role = roleFromStorage ? JSON.parse(roleFromStorage) : { id: 1 };
       const scenario = scenarioFromStorage ? JSON.parse(scenarioFromStorage) : { id: 1 };
-      
+
       // Update state with these values
       setSelectedRole(role);
       setSelectedScenario(scenario);
-      
+
       // Use the local variables instead of state since state updates are asynchronous
       const tokenResponse = await fetch(`/token?roleId=${role.id}&scenarioId=${scenario.id}`);
       const data = await tokenResponse.json();

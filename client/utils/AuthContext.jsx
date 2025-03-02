@@ -1,48 +1,50 @@
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-import React, { createContext, useState, useEffect } from 'react';
+const AuthContext = createContext();
 
-export const AuthContext = createContext(null);
+export function useAuth() {
+  return useContext(AuthContext);
+}
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Check if user is stored in localStorage
+    // Mark that we're on the client side
+    setIsClient(true);
+
+    // Check localStorage for existing user (only on client)
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
+      } catch (e) {
+        console.error("Error parsing stored user:", e);
         localStorage.removeItem('user');
       }
     }
-    setLoading(false);
   }, []);
+
+  console.log("AuthContext Provider rendering with user:", user);
 
   const login = (userData) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(userData));
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user');
+    }
   };
 
-  // For debugging
-  useEffect(() => {
-    console.log('AuthContext Provider rendering with user:', user);
-    // Log to verify localStorage is being used correctly
-    if (typeof window !== 'undefined') {
-      console.log('Current localStorage user:', localStorage.getItem('user'));
-    }
-  }, [user]);
-
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, isClient }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}

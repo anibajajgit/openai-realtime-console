@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/Button";
@@ -8,19 +7,21 @@ export default function Home() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const isClient = typeof window !== 'undefined'; // Check if running in browser
 
   useEffect(() => {
-    // Check if user is already logged in
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Error parsing user from localStorage:", error);
-        localStorage.removeItem("user");
+    if (isClient) { // Only run this on the client-side
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Error parsing user from localStorage:", error);
+          localStorage.removeItem("user");
+        }
       }
     }
-  }, []);
+  }, [isClient]);
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
@@ -43,36 +44,41 @@ export default function Home() {
         <p className="text-xl mb-8">
           Practice real-world scenarios with AI-powered role-playing
         </p>
-        
-        {user ? (
-          <div className="space-y-4">
-            <p className="text-gray-700">Logged in as: {user.username}</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+        {isClient && ( // Conditionally render based on client-side environment
+          <>
+            {user ? (
+              <div className="space-y-4">
+                <p className="text-gray-700">Logged in as: {user.username}</p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button 
+                    size="lg" 
+                    onClick={handleGetStarted} 
+                    className="w-full sm:w-auto"
+                  >
+                    Get Started
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleLogout} 
+                    className="w-full sm:w-auto"
+                  >
+                    Logout
+                  </Button>
+                </div>
+              </div>
+            ) : (
               <Button 
                 size="lg" 
-                onClick={handleGetStarted} 
-                className="w-full sm:w-auto"
+                onClick={() => setIsLoginOpen(true)}
+                className="px-8"
               >
-                Get Started
+                Login to Get Started
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleLogout} 
-                className="w-full sm:w-auto"
-              >
-                Logout
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button 
-            size="lg" 
-            onClick={() => setIsLoginOpen(true)}
-            className="px-8"
-          >
-            Login to Get Started
-          </Button>
+            )}
+          </>
         )}
+
       </div>
 
       <LoginDialog 
