@@ -1,7 +1,8 @@
 import React, { useState, createContext, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Home, List } from "react-feather";
+import { Home, List, User } from "react-feather";
+import { AuthContext } from "./App"; // Import AuthContext
 
 // Create a context for sidebar
 const SidebarContext = createContext(undefined);
@@ -173,20 +174,46 @@ export default function AppSidebar() {
     }
   ];
 
+  const { user } = useContext(AuthContext);
+  
   return (
     <SidebarProvider open={open} setOpen={setOpen} animate={true}>
       <MobileSidebar>
-        <div className="flex flex-col gap-4">
-          {links.map((link, index) => (
-            <SidebarLink key={index} link={link} />
-          ))}
+        <div className="flex flex-col gap-4 h-full">
+          <div className="flex-grow">
+            {links.map((link, index) => (
+              <SidebarLink key={index} link={link} />
+            ))}
+          </div>
+          {user && (
+            <div className="mt-auto p-2 border-t border-gray-700">
+              <div className="flex items-center gap-2 px-2 py-3">
+                <div className="bg-gray-700 p-2 rounded-full">
+                  <User size={18} />
+                </div>
+                <span className="text-sm font-medium">{user.username}</span>
+              </div>
+            </div>
+          )}
         </div>
       </MobileSidebar>
       <DesktopSidebar className="bg-gray-800 text-white">
-        <div className="flex flex-col gap-4">
-          {links.map((link, index) => (
-            <SidebarLink key={index} link={link} />
-          ))}
+        <div className="flex flex-col gap-4 h-full">
+          <div className="flex-grow">
+            {links.map((link, index) => (
+              <SidebarLink key={index} link={link} />
+            ))}
+          </div>
+          {user && (
+            <div className="mt-auto p-2 border-t border-gray-700">
+              <div className="flex items-center gap-2 px-2 py-3">
+                <div className="bg-gray-700 p-2 rounded-full">
+                  <User size={18} />
+                </div>
+                <span className="text-sm font-medium">{user.username}</span>
+              </div>
+            </div>
+          )}
         </div>
       </DesktopSidebar>
     </SidebarProvider>
