@@ -7,6 +7,8 @@ export default function Review() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState(null);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [feedbackError, setFeedbackError] = useState(null);
 
   useEffect(() => {
     fetchTranscripts();
@@ -18,11 +20,11 @@ export default function Review() {
       // Get user from local storage or context
       const userJson = localStorage.getItem('user');
       const user = userJson ? JSON.parse(userJson) : null;
-      
+
       if (!user || !user.id) {
         throw new Error('User not authenticated');
       }
-      
+
       const response = await fetch(`/api/transcripts/user/${user.id}`);
 
       if (!response.ok) {
@@ -44,62 +46,92 @@ export default function Review() {
       // Get user from local storage or context
       const userJson = localStorage.getItem('user');
       const user = userJson ? JSON.parse(userJson) : null;
-      
+
       if (!user || !user.id) {
         console.warn('User not authenticated, cannot fetch feedback');
-        setFeedback(null);
         return;
       }
-      
+
       const response = await fetch(`/api/transcripts/${transcriptId}/feedback?userId=${user.id}`);
 
       if (response.ok) {
         const data = await response.json();
         setFeedback(data.feedback);
       } else {
-        console.log(`No feedback found for transcript ${transcriptId}`);
-        setFeedback(null);
+        const errorText = await response.text();
+        let errorJson;
+        try {
+          errorJson = JSON.parse(errorText);
+          console.error('Failed to fetch feedback:', errorJson.error || errorText);
+        } catch (e) {
+          // If the response is not valid JSON, log the text
+          console.error('Failed to fetch feedback:', errorText);
+        }
       }
-    } catch (err) {
-      console.error("Failed to fetch feedback:", err);
-      setFeedback(null);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
     }
   };
 
   const handleSelectTranscript = async (transcript) => {
-    if (!transcript || !transcript.id) {
-      console.error('Invalid transcript selected');
-      return;
-    }
-    
-    setSelectedTranscript(transcript);
-    
     // Get user from local storage or context
     const userJson = localStorage.getItem('user');
     const user = userJson ? JSON.parse(userJson) : null;
-    
+
     if (!user || !user.id) {
-      console.warn('User not authenticated, cannot fetch transcript details');
+      console.warn('User not authenticated, cannot select transcript');
       return;
     }
+
+    try {
+      setFeedbackLoading(true);
+      setFeedbackError(null);
+      setFeedback(null);
+
+      // Get full transcript data if needed
+      const response = await fetch(`/api/transcripts/${transcript.id}?userId=${user.id}`);
+
+      if (response.ok) {
+        const fullTranscript = await response.json();
+        setSelectedTranscript(fullTranscript);
+
+        // Once we have the transcript, fetch its feedback
+        await fetchFeedback(transcript.id);
+      } else {
+        const errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          setFeedbackError(errorData.error || 'Failed to fetch transcript details');
+        } catch (e) {
+          setFeedbackError('Failed to fetch transcript details');
+        }
+        console.error('Failed to fetch full transcript details');
+      }
+    } catch (error) {
+      setFeedbackError('Error loading transcript: ' + error.message);
+      console.error('Error fetching transcript details:', error);
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
 
   const retryFeedback = async (feedbackId) => {
     try {
       // Get user from local storage or context
       const userJson = localStorage.getItem('user');
       const user = userJson ? JSON.parse(userJson) : null;
-      
+
       if (!user || !user.id) {
         console.warn('User not authenticated, cannot retry feedback');
         return;
       }
-      
+
       const response = await fetch(`/api/openai-feedback/${feedbackId}/retry`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.id })
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setFeedback(data.feedback);
@@ -111,89 +143,105 @@ export default function Review() {
     }
   };
 
-
-    
-    try {
-      // Get full transcript data if needed
-      const response = await fetch(`/api/transcripts/${transcript.id}?userId=${user.id}`);
-      
-      if (response.ok) {
-        const fullTranscript = await response.json();
-        setSelectedTranscript(fullTranscript);
-        
-        // Once we have the transcript, fetch its feedback
-        await fetchFeedback(transcript.id);
-      } else {
-        console.error('Failed to fetch full transcript details');
-      }
-    } catch (error) {
-      console.error('Error fetching transcript details:', error);
-    }
-
-    // Fetch feedback for this transcript
-    if (transcript && transcript.id) {
-      await fetchFeedback(transcript.id);
-    } else {
-      setFeedback(null);
-    }
-  };
-
   const formatContent = (content) => {
+    if (!content) return "";
+
+    // First try to parse as JSON
     try {
-      // Check if content is already parsed
-      if (typeof content === 'object') {
+      const parsedContent = JSON.parse(content);
+      return parsedContent;
+    } catch (error) {
+      // If not valid JSON, content might be plain text format (common for conversation logs)
+      // Check if it has the format of a conversation - if so, just return the original
+      if (typeof content === 'string' && 
+          (content.includes("User:") || content.includes("AI:") || 
+           content.includes("Human:") || content.includes("Assistant:"))) {
         return content;
       }
-      return JSON.parse(content);
-    } catch (err) {
-      // If parsing fails, return content as is
-      console.error('Error parsing transcript content:', err);
-      return content;
+
+      console.warn('Content is not in valid JSON format:', error);
+      return content; // Return original content 
     }
   };
 
   const renderTranscriptContent = (content) => {
-    try {
-      const formattedContent = formatContent(content);
+    const formattedContent = formatContent(content);
 
-      if (typeof formattedContent === 'string') {
-        return <div className="whitespace-pre-wrap">{formattedContent}</div>;
-      }
-
-      if (Array.isArray(formattedContent)) {
-        return (
-          <div className="space-y-4">
-            {formattedContent.map((message, index) => (
-              <div 
-                key={index} 
-                className={`p-3 rounded-lg ${
-                  message.role === 'user' ? 'bg-blue-100' : 'bg-gray-100'
-                } ${message.role === 'user' ? 'ml-12' : 'mr-12'}`}
-              >
-                <div className="text-sm text-gray-600 mb-1">
-                  {message.role === 'user' ? 'User' : 'Assistant'}
-                </div>
-                <div className="whitespace-pre-wrap">{message.content}</div>
-              </div>
-            ))}
-          </div>
-        );
-      }
-
-      // If it's neither string nor array, convert to string
-      return <div className="whitespace-pre-wrap">{JSON.stringify(formattedContent, null, 2)}</div>;
-    } catch (err) {
-      console.error("Error rendering transcript content:", err);
-      return <div className="text-red-500">Error displaying transcript content</div>;
+    if (typeof formattedContent === 'string') {
+      return <div className="whitespace-pre-wrap">{formattedContent}</div>;
     }
+
+    // Handle JSON content if needed
+    return <div className="whitespace-pre-wrap">{JSON.stringify(formattedContent, null, 2)}</div>;
   };
 
   const renderFeedback = () => {
+    if (feedbackLoading) {
+      return (
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="flex items-center">
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Loading feedback...
+          </p>
+        </div>
+      );
+    }
+
+    if (feedbackError) {
+      return (
+        <div className="mt-6 p-4 bg-red-50 rounded-lg border border-red-200">
+          <p className="text-red-600">Error loading feedback:</p>
+          <p>{feedbackError}</p>
+          <Button 
+            className="mt-2"
+            onClick={() => fetchFeedback(selectedTranscript.id)}
+          >
+            Try Again
+          </Button>
+        </div>
+      );
+    }
+
     if (!feedback) {
       return (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-medium mb-3">Transcript Feedback</h3>
-          <p className="text-gray-500">No feedback available for this transcript.</p>
+        <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+          <p>No feedback available for this transcript.</p>
+          <Button 
+            className="mt-2"
+            onClick={() => {
+              setFeedbackLoading(true);
+              // Request feedback generation for this transcript
+              fetch('/api/openai-feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                  transcriptId: selectedTranscript.id, 
+                  userId: JSON.parse(localStorage.getItem('user')).id 
+                })
+              })
+              .then(response => {
+                if (response.ok) {
+                  return response.json();
+                }
+                throw new Error('Failed to generate feedback');
+              })
+              .then(data => {
+                setFeedback(data.feedback);
+              })
+              .catch(error => {
+                setFeedbackError('Error generating feedback: ' + error.message);
+                console.error('Error generating feedback:', error);
+              })
+              .finally(() => {
+                setFeedbackLoading(false);
+              });
+            }}
+          >
+            Generate Feedback
+          </Button>
         </div>
       );
     }
@@ -201,8 +249,13 @@ export default function Review() {
     if (feedback.status === 'pending') {
       return (
         <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h3 className="text-lg font-medium mb-3">Transcript Feedback</h3>
-          <p className="text-blue-500">Feedback is being generated...</p>
+          <p className="flex items-center">
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Feedback is being generated. This may take a moment...
+          </p>
         </div>
       );
     }
@@ -210,11 +263,15 @@ export default function Review() {
     if (feedback.status === 'failed') {
       return (
         <div className="mt-6 p-4 bg-red-50 rounded-lg border border-red-200">
-          <h3 className="text-lg font-medium mb-3">Transcript Feedback</h3>
-          <p className="text-red-500">Failed to generate feedback: {feedback.errorMessage}</p>
-          <Button
+          <p className="text-red-600">Feedback generation failed:</p>
+          <p>{feedback.errorMessage || 'Unknown error'}</p>
+          <Button 
             className="mt-2"
-            onClick={() => retryFeedback(feedback.id)}
+            onClick={() => {
+              setFeedbackLoading(true);
+              retryFeedback(feedback.id)
+                .finally(() => setFeedbackLoading(false));
+            }}
           >
             Retry
           </Button>

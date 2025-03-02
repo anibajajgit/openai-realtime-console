@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario, User, Transcript } from './database/schema.js';
+import { Role, Scenario, User, Transcript, TranscriptFeedback } from './database/schema.js';
 
 const app = express();
 app.use(express.json());
@@ -366,7 +366,7 @@ app.post('/api/openai-feedback', async (req, res) => {
     const role = transcript.role ? 
       `ROLE: ${transcript.role.name}\n${transcript.role.instructions}\n` : '';
     
-    const systemPrompt = `
+    const systemContent = `
       You are a communications coach for executives with a decade of experience. 
       Review the conversation transcript between the user and an AI and give feedback 
       on the user's communication. Evaluate their grammar, clarity, and communication quality.
@@ -383,13 +383,10 @@ app.post('/api/openai-feedback', async (req, res) => {
       ${scenario}
       ${rubric}
       ${role}
-      
-      TRANSCRIPT:
-      ${transcript.content}
     `;
     
     try {
-      // Make OpenAI API call
+      // Make OpenAI API call with correct message format
       const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -401,7 +398,11 @@ app.post('/api/openai-feedback', async (req, res) => {
           messages: [
             {
               role: "system",
-              content: systemPrompt
+              content: systemContent
+            },
+            {
+              role: "user",
+              content: `Here is the transcript to review:\n\n${transcript.content}`
             }
           ],
           temperature: 0.7,
