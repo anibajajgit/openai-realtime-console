@@ -1,0 +1,38 @@
+Transcript saved successfully!
+ScenarioSelector.jsx:20 Fetched roles from API: (3) [{…}, {…}, {…}]
+App.jsx:165 Feedback generated successfully!
+App.jsx:268 AuthContext Provider rendering with user: {id: 1, username: 'testuser', email: 'test@example.com'}
+App.jsx:283 Rendering scenarios route with user: {id: 1, username: 'testuser', email: 'test@example.com'}
+App.jsx:268 AuthContext Provider rendering with user: {id: 1, username: 'testuser', email: 'test@example.com'}
+App.jsx:283 Rendering scenarios route with user: {id: 1, username: 'testuser', email: 'test@example.com'}
+Review.jsx:27 Failed to fetch transcripts: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+fetchTranscripts @ Review.jsx:27
+await in fetchTranscripts
+(anonymous) @ Review.jsx:12
+commitHookEffectListMount @ chunk-BCXODTBQ.js?v=4194879c:16913
+commitPassiveMountOnFiber @ chunk-BCXODTBQ.js?v=4194879c:18154
+commitPassiveMountEffects_complete @ chunk-BCXODTBQ.js?v=4194879c:18127
+commitPassiveMountEffects_begin @ chunk-BCXODTBQ.js?v=4194879c:18117
+commitPassiveMountEffects @ chunk-BCXODTBQ.js?v=4194879c:18107
+flushPassiveEffectsImpl @ chunk-BCXODTBQ.js?v=4194879c:19488
+flushPassiveEffects @ chunk-BCXODTBQ.js?v=4194879c:19445
+commitRootImpl @ chunk-BCXODTBQ.js?v=4194879c:19414
+commitRoot @ chunk-BCXODTBQ.js?v=4194879c:19275
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18893
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=4194879c:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:18625Understand this errorAI
+Review.jsx:27 Failed to fetch transcripts: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+fetchTranscripts @ Review.jsx:27
+await in fetchTranscripts
+(anonymous) @ Review.jsx:12
+commitHookEffectListMount @ chunk-BCXODTBQ.js?v=4194879c:16913
+invokePassiveEffectMountInDEV @ chunk-BCXODTBQ.js?v=4194879c:18322
+invokeEffectsInDev @ chunk-BCXODTBQ.js?v=4194879c:19699
+commitDoubleInvokeEffectsInDEV @ chunk-BCXODTBQ.js?v=4194879c:19684
+flushPassiveEffectsImpl @ chunk-BCXODTBQ.js?v=4194879c:19501
+flushPassiveEffects @ chunk-BCXODTBQ.js?v=4194879c:19445
+commitRootImpl @ chunk-BCXODTBQ.js?v=4194879c:19414
+commitRoot @ chunk-BCXODTBQ.js?v=4194879c:19275
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=4194879c:18893
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=4194879c:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=4194879c:18625Understand this errorAI
