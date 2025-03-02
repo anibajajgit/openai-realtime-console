@@ -203,7 +203,7 @@ export default function AppSidebar() {
                 onClick={handleLogout}
                 className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-700"
               >
-                <LogOut size={18} />
+                <LogOut size={18} className="text-black" />
                 <span
                   style={{
                     display: open ? "inline-block" : "none",
@@ -238,7 +238,7 @@ export default function AppSidebar() {
                 onClick={handleLogout}
                 className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-700"
               >
-                <LogOut size={18} />
+                <LogOut size={18} className="text-black" />
                 <span
                   style={{
                     display: open ? "inline-block" : "none",
