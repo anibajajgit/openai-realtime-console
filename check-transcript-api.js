@@ -97,10 +97,12 @@ async function testTranscriptAPI() {
     
     // Make the API request
     console.log("Making request to /api/transcripts...");
+    console.log("Current server URL:", `http://0.0.0.0:3000`);
     const response = await fetch('http://0.0.0.0:3000/api/transcripts', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(testPayload)
     });

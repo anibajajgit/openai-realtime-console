@@ -370,7 +370,21 @@ const vite = await createViteServer({
   appType: "custom",
 });
 
+// Add API preflight handling
 app.use((req, res, next) => {
+  // Check if this is an API request
+  if (req.path.startsWith('/api/')) {
+    console.log(`Processing API request: ${req.method} ${req.path}`);
+    // If it's a preflight request
+    if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+      return res.status(200).send();
+    }
+  }
+  
+  // For non-API requests, just set CORS headers
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
   if (req.headers.upgrade === 'websocket') {
@@ -380,7 +394,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(vite.middlewares);
+// Apply Vite middleware for all non-API routes
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api/')) {
+    return vite.middlewares(req, res, next);
+  }
+  next();
+});
 
 // Initialize database and seed data
 console.log("Initializing database...");
