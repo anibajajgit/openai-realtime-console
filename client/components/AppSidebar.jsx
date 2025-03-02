@@ -148,7 +148,7 @@ const SidebarLink = ({
           opacity: animate ? (open ? 1 : 0) : 1,
           transition: "opacity 0.3s ease"
         }}
-        className="text-white text-sm whitespace-pre transition duration-150"
+        className="text-black text-sm whitespace-pre transition duration-150" // Changed text color here
       >
         {link.label}
       </span>
@@ -197,7 +197,7 @@ export default function AppSidebar() {
                 <div className="bg-gray-700 p-2 rounded-full">
                   <User size={18} />
                 </div>
-                <span className="text-sm font-medium text-white">{user.username}</span>
+                <span className="text-sm font-medium text-black">{user.username}</span>
               </div>
               <button 
                 onClick={handleLogout}
@@ -209,7 +209,7 @@ export default function AppSidebar() {
           )}
         </div>
       </MobileSidebar>
-      <DesktopSidebar className="bg-gray-800 text-white">
+      <DesktopSidebar className="bg-gray-800 text-black"> {/* Changed text color here */}
         <div className="flex flex-col gap-4 h-full">
           <div className="flex-grow">
             {links.map((link, index) => (
@@ -222,7 +222,7 @@ export default function AppSidebar() {
                 <div className="bg-gray-700 p-2 rounded-full">
                   <User size={18} />
                 </div>
-                <span className="text-sm font-medium text-white">{user.username}</span>
+                <span className="text-sm font-medium text-black">{user.username}</span>
               </div>
               <button 
                 onClick={handleLogout}
