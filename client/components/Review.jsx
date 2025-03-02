@@ -136,13 +136,19 @@ export default function Review() {
                           <span className="text-sm text-gray-500">{formatDate(selectedTranscript.createdAt)}</span>
                         </div>
                         
-                        <div className="bg-white p-4 rounded-lg shadow-sm">
+                        <div className="bg-white p-4 rounded-lg shadow-sm mb-4">
                           {selectedTranscript.content.split('\n\n').map((paragraph, index) => (
                             <p key={index} className={`mb-4 ${paragraph.startsWith('AI:') ? 'text-blue-600' : 'text-gray-800'}`}>
                               {paragraph}
                             </p>
                           ))}
                         </div>
+                        
+                        {/* Feedback Section */}
+                        <TranscriptFeedback 
+                          transcriptId={selectedTranscript.id} 
+                          userId={user.id} 
+                        />
                       </div>
                     )}
                   </div>
@@ -154,4 +160,162 @@ export default function Review() {
       </main>
     </>
   );
+}
+
+// Feedback Component
+function TranscriptFeedback({ transcriptId, userId }) {
+  const [feedback, setFeedback] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [retrying, setRetrying] = useState(false);
+
+  useEffect(() => {
+    fetchFeedback();
+  }, [transcriptId]);
+
+  const fetchFeedback = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch(`/api/transcripts/${transcriptId}/feedback?userId=${userId}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch feedback');
+      }
+      
+      const data = await response.json();
+      setFeedback(data.feedback);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      setError('Failed to load feedback');
+      setLoading(false);
+    }
+  };
+
+  const retryFeedbackGeneration = async () => {
+    try {
+      setRetrying(true);
+      setError(null);
+      
+      const response = await fetch('/api/openai-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcriptId, userId })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate feedback');
+      }
+      
+      const data = await response.json();
+      setFeedback(data.feedback);
+      setRetrying(false);
+    } catch (error) {
+      console.error('Error generating feedback:', error);
+      setError('Failed to generate feedback. Please try again later.');
+      setRetrying(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-medium mb-2">Communication Feedback</h3>
+        <p className="text-gray-500">Loading feedback...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-medium mb-2">Communication Feedback</h3>
+        <p className="text-red-500 mb-4">{error}</p>
+        <button 
+          onClick={fetchFeedback}
+          className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Refresh
+        </button>
+      </div>
+    );
+  }
+
+  if (!feedback) {
+    return (
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-medium mb-2">Communication Feedback</h3>
+        <p className="text-gray-500 mb-4">No feedback available for this conversation.</p>
+        <button 
+          onClick={retryFeedbackGeneration} 
+          disabled={retrying}
+          className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
+        >
+          {retrying ? 'Generating...' : 'Generate Feedback'}
+        </button>
+      </div>
+    );
+  }
+
+  if (feedback.status === 'pending') {
+    return (
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-medium mb-2">Communication Feedback</h3>
+        <p className="text-gray-500">Feedback is being generated. Please check back soon.</p>
+        <button 
+          onClick={fetchFeedback} 
+          className="mt-4 px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Refresh Status
+        </button>
+      </div>
+    );
+  }
+
+  if (feedback.status === 'failed') {
+    return (
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-medium mb-2">Communication Feedback</h3>
+        <p className="text-red-500 mb-4">Failed to generate feedback: {feedback.errorMessage}</p>
+        <button 
+          onClick={retryFeedbackGeneration} 
+          disabled={retrying}
+          className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
+        >
+          {retrying ? 'Retrying...' : 'Retry Generation'}
+        </button>
+      </div>
+    );
+  }
+
+  // Format the feedback content for display
+  const formattedFeedback = feedback.content.split('\n').map((line, index) => {
+    if (line.startsWith('SCENARIO OBJECTIVE:')) {
+      return <h4 key={index} className="font-bold mt-4 mb-2">{line}</h4>;
+    } else if (line.startsWith('WAS OBJECTIVE ACHIEVED:')) {
+      return <h4 key={index} className="font-bold mt-4 mb-2">{line}</h4>;
+    } else if (line.startsWith('COMMUNICATION FEEDBACK:')) {
+      return <h4 key={index} className="font-bold mt-4 mb-2">{line}</h4>;
+    } else if (line.startsWith('IMPROVEMENT OPPORTUNITY:')) {
+      return <h4 key={index} className="font-bold mt-4 mb-2">{line}</h4>;
+    } else if (line.startsWith('- ')) {
+      return <li key={index} className="ml-4 list-disc mb-2">{line.substring(2)}</li>;
+    } else if (line.trim() === '') {
+      return <br key={index} />;
+    } else {
+      return <p key={index} className="mb-2">{line}</p>;
+    }
+  });
+
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-sm">
+      <h3 className="text-lg font-medium mb-4">Communication Feedback</h3>
+      <div className="bg-gray-50 p-4 rounded-md">
+        {formattedFeedback}
+      </div>
+    </div>
+  );
+}
 }

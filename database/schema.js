@@ -1,111 +1,129 @@
-
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import sequelize from './index.js';
 
-const Role = sequelize.define('Role', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  name: DataTypes.STRING,
-  title: DataTypes.STRING,
-  style: DataTypes.STRING,
-  photoUrl: DataTypes.STRING,
-  voice: DataTypes.STRING,
-  instructions: DataTypes.TEXT
-});
-
-const Scenario = sequelize.define('Scenario', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  name: DataTypes.STRING,
-  description: DataTypes.TEXT,
-  instructions: DataTypes.TEXT,
-  rubric: {
-    type: DataTypes.JSON,
-    defaultValue: []
-  }
-});
-
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
+class User extends Model {}
+User.init({
   username: {
     type: DataTypes.STRING,
-    unique: true,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   password: {
     type: DataTypes.STRING,
     allowNull: false
   },
   email: {
-    type: DataTypes.STRING,
-    unique: true,
-    allowNull: true
+    type: DataTypes.STRING
   }
 }, {
-  timestamps: true
+  sequelize,
+  modelName: 'user'
 });
 
-const Transcript = sequelize.define('Transcript', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+class Role extends Model {}
+Role.init({
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
+  instructions: {
+    type: DataTypes.TEXT
+  },
+  voice: {
+    type: DataTypes.STRING,
+    defaultValue: 'echo'
+  }
+}, {
+  sequelize,
+  modelName: 'role'
+});
+
+class Scenario extends Model {}
+Scenario.init({
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  instructions: {
+    type: DataTypes.TEXT
+  },
+  rubric: {
+    type: DataTypes.TEXT
+  }
+}, {
+  sequelize,
+  modelName: 'scenario'
+});
+
+class Transcript extends Model {}
+Transcript.init({
   content: {
-    type: DataTypes.TEXT('long'),
+    type: DataTypes.TEXT,
     allowNull: false
   },
   title: {
     type: DataTypes.STRING,
     defaultValue: 'Conversation'
   },
+  userId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
   roleId: {
     type: DataTypes.INTEGER,
-    allowNull: true,
     references: {
-      model: 'Roles',
+      model: Role,
       key: 'id'
     }
   },
   scenarioId: {
     type: DataTypes.INTEGER,
-    allowNull: true,
     references: {
-      model: 'Scenarios',
-      key: 'id'
-    }
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Users',
+      model: Scenario,
       key: 'id'
     }
   }
 }, {
-  timestamps: true
+  sequelize,
+  modelName: 'transcript'
 });
 
-// Define associations
-User.hasMany(Transcript, { foreignKey: 'userId' });
-Transcript.belongsTo(User, { foreignKey: 'userId' });
+class TranscriptFeedback extends Model {}
+TranscriptFeedback.init({
+  content: {
+    type: DataTypes.TEXT
+  },
+  status: {
+    type: DataTypes.ENUM('pending', 'completed', 'failed'),
+    defaultValue: 'pending'
+  },
+  errorMessage: {
+    type: DataTypes.TEXT
+  },
+  transcriptId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Transcript,
+      key: 'id'
+    },
+    unique: true
+  }
+}, {
+  sequelize,
+  modelName: 'transcript_feedback'
+});
 
-// Add missing associations for Role and Scenario
-Role.hasMany(Transcript, { foreignKey: 'roleId' });
-Transcript.belongsTo(Role, { foreignKey: 'roleId' });
+// Set up associations
+Transcript.belongsTo(User);
+Transcript.belongsTo(Role);
+Transcript.belongsTo(Scenario);
+User.hasMany(Transcript);
+Role.hasMany(Transcript);
+Scenario.hasMany(Transcript);
+Transcript.hasOne(TranscriptFeedback);
+TranscriptFeedback.belongsTo(Transcript);
 
-Scenario.hasMany(Transcript, { foreignKey: 'scenarioId' });
-Transcript.belongsTo(Scenario, { foreignKey: 'scenarioId' });
-
-export { Role, Scenario, User, Transcript };
+export { User, Role, Scenario, Transcript, TranscriptFeedback };

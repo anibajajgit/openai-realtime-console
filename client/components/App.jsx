@@ -102,7 +102,7 @@ export default function App() {
   async function saveTranscript(events, user, roleId, scenarioId) {
     if (!user || !user.id) {
       console.error('Cannot save transcript: No authenticated user');
-      return;
+      return false; //Explicitly return false for no user
     }
 
     // Format the transcript content
@@ -147,9 +147,38 @@ export default function App() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      const transcriptData = await response.json();
       console.log('Transcript saved successfully!');
+
+      // Now send to OpenAI for feedback
+      try {
+        const feedbackResponse = await fetch('/api/openai-feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            transcriptId: transcriptData.transcript.id, 
+            userId: user.id 
+          })
+        });
+
+        if (feedbackResponse.ok) {
+          console.log('Feedback generated successfully!');
+        } else {
+          const errorData = await feedbackResponse.json();
+          console.warn('Feedback generation issue:', errorData.error);
+          // The transcript is still saved, just the feedback failed
+          console.info('Note: Your conversation was saved successfully, but feedback generation failed. You can try again later in the Review section.');
+        }
+      } catch (feedbackError) {
+        console.error('Error generating feedback:', feedbackError);
+        // Don't let feedback error affect the success of saving transcript
+        console.info('Note: Your conversation was saved successfully, but feedback generation failed. You can try again later in the Review section.');
+      }
+
+      return true; // Indicate successful transcript save, even if feedback failed
     } catch (error) {
       console.error('Error saving transcript:', error);
+      return false;
     }
   }
 
@@ -165,7 +194,10 @@ export default function App() {
     if (events.length > 0) {
       const role = JSON.parse(localStorage.getItem('selectedRole') || '{"id":1}');
       const scenario = JSON.parse(localStorage.getItem('selectedScenario') || '{"id":1}');
-      saveTranscript(events, user, role.id, scenario.id);
+      const saveSuccess = saveTranscript(events, user, role.id, scenario.id);
+      if (!saveSuccess) {
+          console.warn("Transcript save failed. Consider adding retry mechanism.");
+      }
     }
 
     setEvents(prevEvents => [...prevEvents]);
