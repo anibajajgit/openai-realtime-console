@@ -61,7 +61,7 @@ app.get('/api/transcripts', async (req, res) => {
 });
 
 // Start the server
-const PORT = 3001;
+const PORT = 3002;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`API test server running on port ${PORT}`);
 });
