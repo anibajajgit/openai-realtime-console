@@ -81,9 +81,15 @@ export default function ScenarioSelector() {
 
           <h3 className="font-medium mb-2">RUBRIC</h3>
           <ul className="list-disc pl-4 space-y-2">
-            {selectedScenario?.rubric?.map((item, index) => (
-              <li key={index} className="text-gray-600">{item}</li>
-            ))}
+            {selectedScenario?.rubric ? 
+              (typeof selectedScenario.rubric === 'string' 
+                ? JSON.parse(selectedScenario.rubric)
+                : selectedScenario.rubric
+              ).map((item, index) => (
+                <li key={index} className="text-gray-600">{item}</li>
+              ))
+              : null
+            }
           </ul>
         </div>
       </div>
