@@ -170,9 +170,21 @@ export default function App() {
       console.log("Saving transcript with payload:", payload);
 
       // Try with absolute URL to avoid routing issues
-      const apiUrl = window.location.origin + '/api/transcripts';
-      console.log("Using API URL:", apiUrl);
-      console.log("Sending payload:", JSON.stringify(payload, null, 2));
+      // Make sure we use the correct server URL - fallback to fixed 3000 port if needed
+      let apiUrl;
+      try {
+        apiUrl = new URL('/api/transcripts', window.location.origin).toString();
+        console.log("Using API URL:", apiUrl);
+      } catch (urlError) {
+        // Fallback in case of URL creation issues
+        apiUrl = 'http://0.0.0.0:3000/api/transcripts';
+        console.log("Using fallback API URL:", apiUrl);
+      }
+      
+      console.log("Sending payload:", JSON.stringify({
+        ...payload,
+        content_length: payload.content?.length || 0
+      }));
 
       try {
         console.log("Making initial API request");
@@ -180,7 +192,8 @@ export default function App() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
           },
           body: JSON.stringify(payload),
         });
@@ -188,6 +201,13 @@ export default function App() {
         // Check response type before trying to parse JSON
         const contentType = response.headers.get('content-type');
         console.log(`Response status: ${response.status}, content type: ${contentType}`);
+        
+        // Log response headers for debugging
+        const headers = {};
+        response.headers.forEach((value, name) => {
+          headers[name] = value;
+        });
+        console.log("Response headers:", headers);
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -286,6 +306,55 @@ export default function App() {
     if (dataChannel) {
       dataChannel.close();
       setDataChannel(null);
+    }
+    
+    // Save transcript when session ends
+    console.log("End session triggered. Events:", events.length);
+    if (events && events.length > 0) {
+      try {
+        // Get role and scenario from localStorage with proper error handling
+        let roleId = null;
+        let scenarioId = null;
+        
+        try {
+          const roleStr = localStorage.getItem('selectedRole');
+          const scenarioStr = localStorage.getItem('selectedScenario');
+          console.log("Raw values from localStorage:", { roleStr, scenarioStr });
+          
+          if (roleStr) {
+            const role = JSON.parse(roleStr);
+            roleId = role?.id || null;
+          }
+          
+          if (scenarioStr) {
+            const scenario = JSON.parse(scenarioStr);
+            scenarioId = scenario?.id || null;
+          }
+          
+          console.log("Parsed values:", { roleId, scenarioId });
+        } catch (parseErr) {
+          console.error("Error parsing role/scenario from localStorage:", parseErr);
+        }
+        
+        if (!user || !user.id) {
+          console.error("No valid user found when trying to save transcript");
+          return;
+        }
+        
+        console.log("Calling saveTranscript with:", { 
+          eventsCount: events.length, 
+          userId: user.id, 
+          roleId, 
+          scenarioId 
+        });
+        
+        // Call the saveTranscript function with properly validated parameters
+        saveTranscript(events, user, roleId, scenarioId);
+      } catch (error) {
+        console.error("Error in transcript save process:", error);
+      }
+    } else {
+      console.warn("No events to save in transcript");
     }
 
     // Save transcript when session ends
