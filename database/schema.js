@@ -101,4 +101,11 @@ const Transcript = sequelize.define('Transcript', {
 User.hasMany(Transcript, { foreignKey: 'userId' });
 Transcript.belongsTo(User, { foreignKey: 'userId' });
 
+// Add missing associations for Role and Scenario
+Role.hasMany(Transcript, { foreignKey: 'roleId' });
+Transcript.belongsTo(Role, { foreignKey: 'roleId' });
+
+Scenario.hasMany(Transcript, { foreignKey: 'scenarioId' });
+Transcript.belongsTo(Scenario, { foreignKey: 'scenarioId' });
+
 export { Role, Scenario, User, Transcript };
