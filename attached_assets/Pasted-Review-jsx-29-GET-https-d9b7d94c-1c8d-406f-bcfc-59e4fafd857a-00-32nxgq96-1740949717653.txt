@@ -1,0 +1,85 @@
+Review.jsx:29 
+        
+        
+       GET https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/api/transcripts/user/1 500 (Internal Server Error)
+fetchTranscripts @ Review.jsx:29
+(anonymous) @ Review.jsx:15
+commitHookEffectListMount @ chunk-BCXODTBQ.js?v=6882c40d:16913
+commitPassiveMountOnFiber @ chunk-BCXODTBQ.js?v=6882c40d:18154
+commitPassiveMountEffects_complete @ chunk-BCXODTBQ.js?v=6882c40d:18127
+commitPassiveMountEffects_begin @ chunk-BCXODTBQ.js?v=6882c40d:18117
+commitPassiveMountEffects @ chunk-BCXODTBQ.js?v=6882c40d:18107
+flushPassiveEffectsImpl @ chunk-BCXODTBQ.js?v=6882c40d:19488
+flushPassiveEffects @ chunk-BCXODTBQ.js?v=6882c40d:19445
+commitRootImpl @ chunk-BCXODTBQ.js?v=6882c40d:19414
+commitRoot @ chunk-BCXODTBQ.js?v=6882c40d:19275
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=6882c40d:18893
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=6882c40d:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=6882c40d:18625Understand this errorAI
+Review.jsx:33 Server response: 500 {error: 'Failed to fetch transcripts'}
+fetchTranscripts @ Review.jsx:33
+await in fetchTranscripts
+(anonymous) @ Review.jsx:15
+commitHookEffectListMount @ chunk-BCXODTBQ.js?v=6882c40d:16913
+commitPassiveMountOnFiber @ chunk-BCXODTBQ.js?v=6882c40d:18154
+commitPassiveMountEffects_complete @ chunk-BCXODTBQ.js?v=6882c40d:18127
+commitPassiveMountEffects_begin @ chunk-BCXODTBQ.js?v=6882c40d:18117
+commitPassiveMountEffects @ chunk-BCXODTBQ.js?v=6882c40d:18107
+flushPassiveEffectsImpl @ chunk-BCXODTBQ.js?v=6882c40d:19488
+flushPassiveEffects @ chunk-BCXODTBQ.js?v=6882c40d:19445
+commitRootImpl @ chunk-BCXODTBQ.js?v=6882c40d:19414
+commitRoot @ chunk-BCXODTBQ.js?v=6882c40d:19275
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=6882c40d:18893
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=6882c40d:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=6882c40d:18625Understand this errorAI
+Review.jsx:42 Error fetching transcripts: Error: Failed to fetch transcripts
+    at fetchTranscripts (Review.jsx:34:15)
+fetchTranscripts @ Review.jsx:42
+await in fetchTranscripts
+(anonymous) @ Review.jsx:15
+commitHookEffectListMount @ chunk-BCXODTBQ.js?v=6882c40d:16913
+commitPassiveMountOnFiber @ chunk-BCXODTBQ.js?v=6882c40d:18154
+commitPassiveMountEffects_complete @ chunk-BCXODTBQ.js?v=6882c40d:18127
+commitPassiveMountEffects_begin @ chunk-BCXODTBQ.js?v=6882c40d:18117
+commitPassiveMountEffects @ chunk-BCXODTBQ.js?v=6882c40d:18107
+flushPassiveEffectsImpl @ chunk-BCXODTBQ.js?v=6882c40d:19488
+flushPassiveEffects @ chunk-BCXODTBQ.js?v=6882c40d:19445
+commitRootImpl @ chunk-BCXODTBQ.js?v=6882c40d:19414
+commitRoot @ chunk-BCXODTBQ.js?v=6882c40d:19275
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=6882c40d:18893
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=6882c40d:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=6882c40d:18625Understand this errorAI
+Review.jsx:29 
+        
+        
+       GET https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/api/transcripts/user/1 500 (Internal Server Error)
+fetchTranscripts @ Review.jsx:29
+(anonymous) @ Review.jsx:15
+commitHookEffectListMount @ chunk-BCXODTBQ.js?v=6882c40d:16913
+invokePassiveEffectMountInDEV @ chunk-BCXODTBQ.js?v=6882c40d:18322
+invokeEffectsInDev @ chunk-BCXODTBQ.js?v=6882c40d:19699
+commitDoubleInvokeEffectsInDEV @ chunk-BCXODTBQ.js?v=6882c40d:19684
+flushPassiveEffectsImpl @ chunk-BCXODTBQ.js?v=6882c40d:19501
+flushPassiveEffects @ chunk-BCXODTBQ.js?v=6882c40d:19445
+commitRootImpl @ chunk-BCXODTBQ.js?v=6882c40d:19414
+commitRoot @ chunk-BCXODTBQ.js?v=6882c40d:19275
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=6882c40d:18893
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=6882c40d:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=6882c40d:18625Understand this errorAI
+Review.jsx:33 Server response: 500 {error: 'Failed to fetch transcripts'}
+fetchTranscripts @ Review.jsx:33
+await in fetchTranscripts
+(anonymous) @ Review.jsx:15
+commitHookEffectListMount @ chunk-BCXODTBQ.js?v=6882c40d:16913
+invokePassiveEffectMountInDEV @ chunk-BCXODTBQ.js?v=6882c40d:18322
+invokeEffectsInDev @ chunk-BCXODTBQ.js?v=6882c40d:19699
+commitDoubleInvokeEffectsInDEV @ chunk-BCXODTBQ.js?v=6882c40d:19684
+flushPassiveEffectsImpl @ chunk-BCXODTBQ.js?v=6882c40d:19501
+flushPassiveEffects @ chunk-BCXODTBQ.js?v=6882c40d:19445
+commitRootImpl @ chunk-BCXODTBQ.js?v=6882c40d:19414
+commitRoot @ chunk-BCXODTBQ.js?v=6882c40d:19275
+performSyncWorkOnRoot @ chunk-BCXODTBQ.js?v=6882c40d:18893
+flushSyncCallbacks @ chunk-BCXODTBQ.js?v=6882c40d:9117
+(anonymous) @ chunk-BCXODTBQ.js?v=6882c40d:18625Understand this errorAI
+Review.jsx:42 Error fetching transcripts: Error: Failed to fetch transcripts
+    at fetchTranscripts (Review.jsx:34:15)
