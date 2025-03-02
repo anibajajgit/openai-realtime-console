@@ -9,9 +9,6 @@ export default function SessionControls({
   sendTextMessage,
   serverEvents,
   isSessionActive,
-  user,
-  selectedScenario,
-  selectedRole
 }) {
   return (
     <div className="flex gap-4 border-t-2 border-gray-200 h-full rounded-md">
@@ -21,9 +18,6 @@ export default function SessionControls({
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
           serverEvents={serverEvents}
-          user={user}
-          selectedScenario={selectedScenario}
-          selectedRole={selectedRole}
         />
       ) : (
         <SessionStopped startSession={startSession} />
@@ -55,43 +49,12 @@ function SessionStopped({ startSession }) {
   );
 }
 
-function SessionActive({ stopSession, sendTextMessage, serverEvents, user, selectedScenario, selectedRole }) {
+function SessionActive({ stopSession, sendTextMessage }) {
   const [message, setMessage] = useState("");
 
   function handleSendClientEvent() {
     sendTextMessage(message);
     setMessage("");
-  }
-
-  async function handleStopSession() {
-    // First stop the session
-    stopSession();
-    
-    // Then save the transcript if user is logged in
-    if (user && serverEvents && serverEvents.length > 0) {
-      try {
-        const scenarioName = selectedScenario ? selectedScenario.name : 'Unknown Scenario';
-        const roleName = selectedRole ? selectedRole.name : 'Unknown Role';
-        
-        // Save transcript to object storage through API
-        await fetch('/api/transcripts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: user.id,
-            transcript: serverEvents,
-            scenarioName,
-            roleName
-          }),
-        });
-        
-        console.log('Transcript saved successfully');
-      } catch (error) {
-        console.error('Failed to save transcript:', error);
-      }
-    }
   }
 
   return (
@@ -119,7 +82,7 @@ function SessionActive({ stopSession, sendTextMessage, serverEvents, user, selec
       >
         send text
       </Button>
-      <Button onClick={handleStopSession} icon={<CloudOff height={16} />}>
+      <Button onClick={stopSession} icon={<CloudOff height={16} />}>
         disconnect
       </Button>
     </div>

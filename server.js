@@ -33,25 +33,25 @@ app.get('/api/scenarios', async (req, res) => {
 app.post('/api/register', async (req, res) => {
   try {
     const { username, password, email } = req.body;
-
+    
     // Basic validation
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
-
+    
     // Check if user already exists
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
       return res.status(409).json({ error: 'Username already exists' });
     }
-
+    
     // Create new user
     const user = await User.create({
       username,
       password, // In a production app, you'd hash this password
       email
     });
-
+    
     res.status(201).json({ 
       message: 'User registered successfully',
       user: {
@@ -69,23 +69,23 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-
+    
     // Basic validation
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
-
+    
     // Find user
     const user = await User.findOne({ where: { username } });
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
+    
     // Check password (in a real app, you'd compare hashed passwords)
     if (user.password !== password) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
+    
     // Return user info (excluding password)
     res.json({
       message: 'Login successful',
@@ -98,160 +98,6 @@ app.post('/api/login', async (req, res) => {
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed' });
-  }
-});
-
-// Transcript routes
-import { Client as ObjectStorageClient } from '@replit/object-storage';
-import { Transcript } from './database/schema.js';
-
-// Initialize object storage client
-let objectStorage;
-try {
-  // Try to use the object storage client with a default bucket name
-  objectStorage = new ObjectStorageClient({ bucket: process.env.REPLIT_OBJECT_STORAGE_BUCKET || 'default-bucket' });
-  console.log("Object storage client initialized successfully");
-} catch (error) {
-  console.error("Error initializing object storage client:", error.message);
-  console.log("Using in-memory transcript storage as fallback");
-  
-  // Create an in-memory storage for transcripts as fallback
-  const inMemoryStorage = new Map();
-  
-  objectStorage = {
-    upload_from_text: async (key, content) => { 
-      console.log(`Storing transcript with key: ${key} (in-memory fallback)`);
-      inMemoryStorage.set(key, content);
-      return key; 
-    },
-    download_from_text: async (key) => { 
-      console.log(`Retrieving transcript with key: ${key} (in-memory fallback)`);
-      return inMemoryStorage.get(key) || JSON.stringify({
-        transcript: [{
-          type: "message", 
-          content: "This is a fallback transcript. Object storage is not properly configured."
-        }],
-        scenarioName: "Default Scenario",
-        roleName: "Default Role",
-        timestamp: new Date().toISOString()
-      }); 
-    }
-  };
-}
-
-// Save transcript to object storage and record in database
-app.post('/api/transcripts', async (req, res) => {
-  try {
-    const { userId, transcript, scenarioName, roleName } = req.body;
-
-    if (!userId || !transcript) {
-      return res.status(400).json({ error: 'User ID and transcript are required' });
-    }
-
-    // Generate a unique key for the transcript
-    const timestamp = new Date().toISOString();
-    const storageKey = `transcripts/${userId}/${timestamp}.json`;
-
-    // Store transcript in object storage
-    await objectStorage.upload_from_text(storageKey, JSON.stringify({
-      transcript,
-      scenarioName,
-      roleName,
-      timestamp
-    }));
-
-    // Record in database
-    const transcriptRecord = await Transcript.create({
-      userId,
-      storageKey,
-      scenarioName,
-      roleName
-    });
-
-    res.status(201).json({
-      message: 'Transcript saved successfully',
-      transcriptId: transcriptRecord.id
-    });
-  } catch (error) {
-    console.error('Error saving transcript:', error);
-    res.status(500).json({ error: 'Failed to save transcript' });
-  }
-});
-
-// Get all transcripts for a user
-app.get('/api/transcripts/user/:userId', async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    const transcripts = await Transcript.findAll({
-      where: { userId: parseInt(userId) },
-      order: [['createdAt', 'DESC']]
-    });
-
-    res.json(transcripts);
-  } catch (error) {
-    console.error('Error fetching transcripts:', error);
-    res.status(500).json({ error: 'Failed to fetch transcripts' });
-  }
-});
-
-// Get a specific transcript by ID
-app.get('/api/transcripts/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(`Fetching transcript with ID: ${id}`);
-
-    const transcriptRecord = await Transcript.findByPk(id);
-
-    if (!transcriptRecord) {
-      console.log(`Transcript with ID ${id} not found in database`);
-      return res.status(404).json({ error: 'Transcript not found' });
-    }
-
-    console.log(`Found transcript record: ${transcriptRecord.id}, storageKey: ${transcriptRecord.storageKey}`);
-
-    try {
-      // Retrieve from object storage
-      const transcriptData = await objectStorage.download_from_text(transcriptRecord.storageKey);
-      
-      // Ensure we got valid JSON data
-      let parsedData;
-      try {
-        parsedData = JSON.parse(transcriptData);
-      } catch (jsonError) {
-        console.error('Error parsing transcript JSON:', jsonError);
-        console.log('Raw transcript data:', transcriptData);
-        return res.status(500).json({ 
-          error: 'Invalid transcript data format',
-          record: transcriptRecord,
-          rawData: transcriptData.substring(0, 100) + '...' // Send partial raw data for debugging
-        });
-      }
-
-      res.json({
-        record: transcriptRecord,
-        data: parsedData
-      });
-    } catch (storageError) {
-      console.error('Error retrieving from object storage:', storageError);
-      // Return a partial response with the record but no data
-      res.status(207).json({
-        record: transcriptRecord,
-        error: 'Storage retrieval failed',
-        data: {
-          transcript: [{
-            type: "response.text.done",
-            text: "The transcript content could not be retrieved from storage."
-          }],
-          scenarioName: transcriptRecord.scenarioName || "Unknown",
-          roleName: transcriptRecord.roleName || "Unknown",
-          timestamp: transcriptRecord.createdAt
-        }
-      });
-    }
-  } catch (error) {
-    console.error('Error fetching transcript:', error);
-    res.status(500).json({ error: `Failed to fetch transcript: ${error.message}` });
   }
 });
 
