@@ -6,17 +6,7 @@ import EventLog from "./EventLog";
 import Home from "./Home";
 import "../base.css";
 
-// Added SessionControls component -  This is a placeholder; replace with your actual component
-const SessionControls = ({ startSession, stopSession, sendClientEvent, sendTextMessage, events, isSessionActive, onAudioTranscript }) => {
-  return (
-    <div>
-      <button onClick={startSession} disabled={isSessionActive}>Start Session</button>
-      <button onClick={stopSession} disabled={!isSessionActive}>Stop Session</button>
-      <input type="text" onKeyDown={(e) => { if (e.key === 'Enter') sendTextMessage(e.target.value); e.target.value = ''; }} />
-      <div>Events: {events.map(event => <p key={event.event_id}>{JSON.stringify(event)}</p>)}</div>
-    </div>
-  );
-};
+import SessionControls from "./SessionControls";
 
 
 export default function App() {
@@ -200,15 +190,8 @@ export default function App() {
                       stopSession={stopSession}
                       sendClientEvent={sendClientEvent}
                       sendTextMessage={sendTextMessage}
-                      events={events}
+                      serverEvents={events}
                       isSessionActive={isSessionActive}
-                      onAudioTranscript={(transcript) => {
-                        setEvents(prev => [{
-                          type: "audio.transcription",
-                          transcript,
-                          event_id: Date.now().toString()
-                        }, ...prev]);
-                      }}
                     />
                   </div>
                 </section>
