@@ -100,21 +100,35 @@ export default function App() {
   }
 
   async function saveTranscript(events, user, roleId, scenarioId) {
-    if (!user || !user.id) {
-      console.error('Cannot save transcript: No authenticated user');
+    // Verify all parameters are properly defined
+    console.log("saveTranscript called with:", {
+      eventsCount: events.length,
+      user: user?.id ? `User ID: ${user.id}` : "Missing user",
+      roleId: roleId || "null",
+      scenarioId: scenarioId || "null"
+    });
+
+    if (!user?.id) {
+      console.error("Cannot save transcript: User ID is missing");
       return;
     }
 
-    // Format the transcript content
+    if (events.length === 0) {
+      console.error("Cannot save transcript: No events to save");
+      return;
+    }
+
+    // Format the content as a readable conversation
     const formattedContent = events
-      .filter(event => {
-        return event.type === "conversation.item.input_audio_transcription.completed" || 
-               event.type === "response.text.done" ||
-               event.type === "response.audio_transcript.done";
-      })
+      .slice()
+      .reverse()
+      .filter(event => 
+        event.type === "conversation.item.input_audio_transcription.completed" ||
+        event.type === "response.text.done" ||
+        event.type === "response.audio_transcript.done"
+      )
       .map(event => {
-        let prefix = "";
-        let text = "";
+        let prefix = "", text = "";
 
         if (event.type === "conversation.item.input_audio_transcription.completed") {
           prefix = "User:";
@@ -128,26 +142,44 @@ export default function App() {
       })
       .join('\n\n');
 
+    console.log("Formatted content length:", formattedContent.length);
+
+    if (formattedContent.length === 0) {
+      console.error("Cannot save transcript: No valid conversation content to save");
+      return;
+    }
+
     try {
+      const payload = { 
+        content: formattedContent,
+        userId: user.id,
+        roleId: roleId || null,
+        scenarioId: scenarioId || null,
+        title: `Conversation on ${new Date().toLocaleDateString()}`
+      };
+
+      console.log("Saving transcript with payload:", payload);
+
       const response = await fetch('/api/transcripts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          content: formattedContent,
-          userId: user.id,
-          roleId: roleId || null,
-          scenarioId: scenarioId || null,
-          title: `Conversation on ${new Date().toLocaleDateString()}`
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, response: ${errorText}`);
       }
 
-      console.log('Transcript saved successfully!');
+      const data = await response.json();
+      console.log('Transcript saved successfully!', data);
+
+      // Force refresh the transcripts list if we're on the review page
+      if (window.location.pathname.includes('/review')) {
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Error saving transcript:', error);
     }

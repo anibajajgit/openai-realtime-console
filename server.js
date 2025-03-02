@@ -118,12 +118,18 @@ async function generateFeedbackFromOpenAI(transcriptContent, scenarioInfo, roleI
 // Automatically generate and save feedback after transcript is saved
 app.post('/api/transcripts', async (req, res) => {
   try {
+    console.log('Received request to save transcript');
     const { content, userId, roleId, scenarioId, title } = req.body;
     
+    console.log(`Transcript details - userId: ${userId}, roleId: ${roleId}, scenarioId: ${scenarioId}`);
+    console.log(`Content length: ${content?.length || 0} characters`);
+    
     if (!content || !userId) {
+      console.error('Missing required fields:', { content: !!content, userId: !!userId });
       return res.status(400).json({ error: 'Content and userId are required' });
     }
     
+    console.log('Creating transcript in database...');
     const transcript = await Transcript.create({
       content,
       userId,
@@ -132,29 +138,39 @@ app.post('/api/transcripts', async (req, res) => {
       title: title || 'Conversation'
     });
     
+    console.log(`Transcript created with ID: ${transcript.id}`);
+    
     // Generate feedback asynchronously - don't wait for it to complete
     // to avoid blocking the response
     (async () => {
       try {
+        console.log(`Starting async feedback generation for transcript ${transcript.id}`);
+        
         // Get role and scenario details for context
         const role = roleId ? await Role.findByPk(roleId) : null;
         const scenario = scenarioId ? await Scenario.findByPk(scenarioId) : null;
         
+        console.log(`Found role: ${role?.name || 'None'}, scenario: ${scenario?.name || 'None'}`);
+        
         // Generate feedback from OpenAI
+        console.log('Calling OpenAI API for feedback generation...');
         const feedback = await generateFeedbackFromOpenAI(content, scenario, role);
         
+        console.log('OpenAI feedback generated, saving to database...');
         // Save the feedback to the database
-        await TranscriptFeedback.create({
+        const savedFeedback = await TranscriptFeedback.create({
           transcriptId: transcript.id,
           feedback
         });
         
-        console.log(`Feedback generated and saved for transcript ${transcript.id}`);
+        console.log(`Feedback saved with ID: ${savedFeedback.id} for transcript ${transcript.id}`);
       } catch (error) {
         console.error('Error in async feedback generation:', error);
+        console.error('Error details:', error.stack);
       }
     })();
     
+    console.log('Sending successful response to client');
     res.status(201).json({
       message: 'Transcript saved successfully',
       transcript: {
@@ -165,7 +181,8 @@ app.post('/api/transcripts', async (req, res) => {
     });
   } catch (error) {
     console.error('Error saving transcript:', error);
-    res.status(500).json({ error: 'Failed to save transcript' });
+    console.error('Error details:', error.message, error.stack);
+    res.status(500).json({ error: `Failed to save transcript: ${error.message}` });
   }
 });
 
