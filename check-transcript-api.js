@@ -68,8 +68,7 @@ app.listen(PORT, '0.0.0.0', () => {
 
 console.log('API test script loaded. Run this to test your transcript endpoints.');
 import fetch from 'node-fetch';
-// User is already imported at the top of the file
-import { initDatabase } from './database/index.js';
+// All imports are already handled at the top of the file
 
 async function testTranscriptAPI() {
   try {
