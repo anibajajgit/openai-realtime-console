@@ -193,18 +193,39 @@ export default function AppSidebar() {
           </div>
           {user && (
             <div className="mt-auto p-2 border-t border-gray-700">
-              <div className="flex items-center gap-2 px-2 py-3">
-                <div className="bg-gray-700 p-2 rounded-full">
-                  <User size={18} />
-                </div>
-                <span className="text-sm font-medium text-black">{user.username}</span>
+              <div className="flex items-center gap-2 p-2 rounded">
+                <User size={18} />
+                <span 
+                  style={{
+                    display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                    opacity: animate ? (open ? 1 : 0) : 1,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-black text-sm whitespace-pre transition duration-150"
+                >
+                  {user.username}
+                </span>
               </div>
-              <button 
+              <Link
+                to="/"
                 onClick={handleLogout}
-                className="w-full mt-2 py-2 px-3 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
+                className={cn(
+                  "flex items-center gap-2 p-2 rounded",
+                  "hover:bg-red-600",
+                )}
               >
-                Logout
-              </button>
+                <LogOut size={18} />
+                <span
+                  style={{
+                    display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                    opacity: animate ? (open ? 1 : 0) : 1,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-black text-sm whitespace-pre transition duration-150"
+                >
+                  Logout
+                </span>
+              </Link>
             </div>
           )}
         </div>
@@ -218,18 +239,39 @@ export default function AppSidebar() {
           </div>
           {user && (
             <div className="mt-auto p-2 border-t border-gray-700">
-              <div className="flex items-center gap-2 px-2 py-3">
-                <div className="bg-gray-700 p-2 rounded-full">
-                  <User size={18} />
-                </div>
-                <span className="text-sm font-medium text-black">{user.username}</span>
+              <div className="flex items-center gap-2 p-2 rounded">
+                <User size={18} />
+                <span 
+                  style={{
+                    display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                    opacity: animate ? (open ? 1 : 0) : 1,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-black text-sm whitespace-pre transition duration-150"
+                >
+                  {user.username}
+                </span>
               </div>
-              <button 
+              <Link
+                to="/"
                 onClick={handleLogout}
-                className="w-full mt-2 py-2 px-3 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
+                className={cn(
+                  "flex items-center gap-2 p-2 rounded",
+                  "hover:bg-red-600",
+                )}
               >
-                Logout
-              </button>
+                <LogOut size={18} />
+                <span
+                  style={{
+                    display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                    opacity: animate ? (open ? 1 : 0) : 1,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-black text-sm whitespace-pre transition duration-150"
+                >
+                  Logout
+                </span>
+              </Link>
             </div>
           )}
         </div>
