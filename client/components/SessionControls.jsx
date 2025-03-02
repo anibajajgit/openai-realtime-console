@@ -88,3 +88,28 @@ export default function SessionControls({
     </div>
   );
 }
+import React from "react";
+
+const SessionControls = ({ isSessionActive, startSession, stopSession }) => {
+  return (
+    <div className="flex items-center space-x-2 p-2 bg-white/90 backdrop-blur-sm shadow-md rounded-xl">
+      {!isSessionActive ? (
+        <button
+          onClick={startSession}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+        >
+          Start Session
+        </button>
+      ) : (
+        <button
+          onClick={stopSession}
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+        >
+          Stop Session
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default SessionControls;

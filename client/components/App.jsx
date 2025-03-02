@@ -6,6 +6,18 @@ import EventLog from "./EventLog";
 import Home from "./Home";
 import "../base.css";
 
+// Added SessionControls component -  This is a placeholder; replace with your actual component
+const SessionControls = ({ startSession, stopSession, sendClientEvent, sendTextMessage, events, isSessionActive, onAudioTranscript }) => {
+  return (
+    <div>
+      <button onClick={startSession} disabled={isSessionActive}>Start Session</button>
+      <button onClick={stopSession} disabled={!isSessionActive}>Stop Session</button>
+      <input type="text" onKeyDown={(e) => { if (e.key === 'Enter') sendTextMessage(e.target.value); e.target.value = ''; }} />
+      <div>Events: {events.map(event => <p key={event.event_id}>{JSON.stringify(event)}</p>)}</div>
+    </div>
+  );
+};
+
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -16,44 +28,51 @@ export default function App() {
   const location = useLocation(); // Using useLocation to conditionally render header
 
   async function startSession() {
-    const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
-    const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
-    const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
-    const data = await tokenResponse.json();
-    const EPHEMERAL_KEY = data.client_secret.value;
+    try {
+      const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
+      const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
+      const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
+      const data = await tokenResponse.json();
+      const EPHEMERAL_KEY = data.client_secret.value;
 
-    const pc = new RTCPeerConnection();
-    audioElement.current = document.createElement("audio");
-    audioElement.current.autoplay = true;
-    pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
+      const pc = new RTCPeerConnection();
+      audioElement.current = document.createElement("audio");
+      audioElement.current.autoplay = true;
+      pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
-    const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
-    pc.addTrack(ms.getTracks()[0]);
+      const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
+      pc.addTrack(ms.getTracks()[0]);
 
-    const dc = pc.createDataChannel("oai-events");
-    setDataChannel(dc);
+      const dc = pc.createDataChannel("oai-events");
+      setDataChannel(dc);
 
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
 
-    const baseUrl = "https://api.openai.com/v1/realtime";
-    const model = "gpt-4o-realtime-preview-2024-12-17";
-    const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
-      method: "POST",
-      body: offer.sdp,
-      headers: {
-        Authorization: `Bearer ${EPHEMERAL_KEY}`,
-        "Content-Type": "application/sdp",
-      },
-    });
+      const baseUrl = "https://api.openai.com/v1/realtime";
+      const model = "gpt-4o-realtime-preview-2024-12-17";
+      const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
+        method: "POST",
+        body: offer.sdp,
+        headers: {
+          Authorization: `Bearer ${EPHEMERAL_KEY}`,
+          "Content-Type": "application/sdp",
+        },
+      });
 
-    const answer = {
-      type: "answer",
-      sdp: await sdpResponse.text(),
-    };
-    await pc.setRemoteDescription(answer);
+      const answer = {
+        type: "answer",
+        sdp: await sdpResponse.text(),
+      };
+      await pc.setRemoteDescription(answer);
 
-    peerConnection.current = pc;
+      peerConnection.current = pc;
+      setEvents((prev) => [...prev, { type: "system", message: "Starting session..." }]);
+      setIsSessionActive(true);
+    } catch (error) {
+      console.error("Error starting session:", error);
+      setEvents((prev) => [...prev, { type: "error", message: `Failed to start session: ${error.message}` }]);
+    }
   }
 
   function stopSession() {
@@ -202,5 +221,3 @@ export default function App() {
     </>
   );
 }
-
-// Note: SessionControls component is assumed to be defined elsewhere and handles session control elements.  This is not included in the original code.
