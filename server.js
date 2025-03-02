@@ -4,7 +4,11 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario, User, Transcript } from './database/schema.js';
+import { Role, Scenario, User, Transcript, TranscriptFeedback } from './database/schema.js';
+
+import fetch from 'node-fetch';
+import { Role, Scenario, User, Transcript, TranscriptFeedback } from './database/schema.js';
+
 
 const app = express();
 app.use(express.json());
@@ -30,35 +34,6 @@ app.get('/api/scenarios', async (req, res) => {
 });
 
 // Transcript routes
-app.post('/api/transcripts', async (req, res) => {
-  try {
-    const { content, userId, roleId, scenarioId, title } = req.body;
-    
-    if (!content || !userId) {
-      return res.status(400).json({ error: 'Content and userId are required' });
-    }
-    
-    const transcript = await Transcript.create({
-      content,
-      userId,
-      roleId,
-      scenarioId,
-      title: title || 'Conversation'
-    });
-    
-    res.status(201).json({
-      message: 'Transcript saved successfully',
-      transcript: {
-        id: transcript.id,
-        title: transcript.title,
-        createdAt: transcript.createdAt
-      }
-    });
-  } catch (error) {
-    console.error('Error saving transcript:', error);
-    res.status(500).json({ error: 'Failed to save transcript' });
-  }
-});
 
 app.get('/api/transcripts/user/:userId', async (req, res) => {
   try {
@@ -98,6 +73,150 @@ app.get('/api/transcripts/user/:userId', async (req, res) => {
       order: [['createdAt', 'DESC']],
       include: includeOptions
     });
+
+// Generate feedback from OpenAI
+async function generateFeedbackFromOpenAI(transcriptContent, scenarioInfo, roleInfo) {
+  try {
+    // Construct the system prompt
+    const baseSystemPrompt = "You are a communications coach for executives with a decade of experience. Review the conversation transcript between the user and an AI and give feedback on the user's communication. You need to evaluate their grammar, clarity, and communication quality. Also make suggestions on what they could have done better - but be nice and you can say you did a good job if they fulfilled the objectives. Evaluate the quality of the conversation against the context of the scenario and the rubric given.\n\nYou response should be in the following format:\nSCENARIO OBJECTIVE: <to be based on the scenario>\nWAS OBJECTIVE ACHIEVED: <select between Achieved, Not achieved or partially achieved>\nCOMMUNICATION FEEDBACK: <give feedback on communication in bullets>\nIMPROVEMENT OPPORTUNITY: <give feedback on what they could have done better to achieve the objective and have better communication>\n/end";
+    
+    // Combine with scenario and role context
+    const contextInfo = `Context: Role - ${roleInfo?.name || 'Unknown'}: ${roleInfo?.instructions || 'No role instructions'}\nScenario - ${scenarioInfo?.name || 'Unknown'}: ${scenarioInfo?.instructions || 'No scenario instructions'}\nRubric: ${JSON.stringify(scenarioInfo?.rubric || [])}`;
+    const fullSystemPrompt = `${baseSystemPrompt}\n\n${contextInfo}`;
+    
+    // Make the API call to OpenAI
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4-turbo',
+        messages: [
+          { role: 'system', content: fullSystemPrompt },
+          { role: 'user', content: transcriptContent }
+        ],
+        temperature: 0.7,
+        max_tokens: 800
+      })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('Error generating feedback:', error);
+    return 'Error generating feedback. Please try again later.';
+  }
+}
+
+// Automatically generate and save feedback after transcript is saved
+app.post('/api/transcripts', async (req, res) => {
+  try {
+    const { content, userId, roleId, scenarioId, title } = req.body;
+    
+    if (!content || !userId) {
+      return res.status(400).json({ error: 'Content and userId are required' });
+    }
+    
+    const transcript = await Transcript.create({
+      content,
+      userId,
+      roleId,
+      scenarioId,
+      title: title || 'Conversation'
+    });
+    
+    // Generate feedback asynchronously - don't wait for it to complete
+    // to avoid blocking the response
+    (async () => {
+      try {
+        // Get role and scenario details for context
+        const role = roleId ? await Role.findByPk(roleId) : null;
+        const scenario = scenarioId ? await Scenario.findByPk(scenarioId) : null;
+        
+        // Generate feedback from OpenAI
+        const feedback = await generateFeedbackFromOpenAI(content, scenario, role);
+        
+        // Save the feedback to the database
+        await TranscriptFeedback.create({
+          transcriptId: transcript.id,
+          feedback
+        });
+        
+        console.log(`Feedback generated and saved for transcript ${transcript.id}`);
+      } catch (error) {
+        console.error('Error in async feedback generation:', error);
+      }
+    })();
+    
+    res.status(201).json({
+      message: 'Transcript saved successfully',
+      transcript: {
+        id: transcript.id,
+        title: transcript.title,
+        createdAt: transcript.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Error saving transcript:', error);
+    res.status(500).json({ error: 'Failed to save transcript' });
+  }
+});
+
+// Get feedback for a specific transcript
+app.get('/api/transcripts/:id/feedback', async (req, res) => {
+  try {
+    const transcriptId = req.params.id;
+    const userId = req.query.userId;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'userId query parameter is required' });
+    }
+    
+    // First check if transcript exists and belongs to user
+    const transcript = await Transcript.findOne({
+      where: { 
+        id: transcriptId,
+        userId: userId 
+      }
+    });
+    
+    if (!transcript) {
+      return res.status(404).json({ error: 'Transcript not found or access denied' });
+    }
+    
+    // Get feedback for this transcript
+    let feedback = await TranscriptFeedback.findOne({
+      where: { transcriptId }
+    });
+    
+    // If no feedback exists yet, generate it
+    if (!feedback) {
+      const role = transcript.roleId ? await Role.findByPk(transcript.roleId) : null;
+      const scenario = transcript.scenarioId ? await Scenario.findByPk(transcript.scenarioId) : null;
+      
+      const feedbackContent = await generateFeedbackFromOpenAI(transcript.content, scenario, role);
+      
+      feedback = await TranscriptFeedback.create({
+        transcriptId,
+        feedback: feedbackContent
+      });
+    }
+    
+    res.json({ feedback: feedback.feedback });
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    res.status(500).json({ error: 'Failed to fetch feedback' });
+  }
+});
+
     
     console.log(`Found ${transcripts.length} transcripts for user ${userId}`);
     res.json(transcripts);

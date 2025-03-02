@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from "react";
 import AppSidebar from "./AppSidebar";
 import { AuthContext } from "../utils/AuthContext";
@@ -9,6 +8,7 @@ export default function Review() {
   const [selectedTranscript, setSelectedTranscript] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [transcriptFeedback, setTranscriptFeedback] = useState(null); // Add state for feedback
 
   useEffect(() => {
     if (user) {
@@ -24,16 +24,16 @@ export default function Review() {
         setLoading(false);
         return;
       }
-      
+
       console.log(`Fetching transcripts for user ID: ${user.id}`);
       const response = await fetch(`/api/transcripts/user/${user.id}`);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('Server response:', response.status, errorData);
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log(`Received ${data.length} transcripts`);
       setTranscripts(data);
@@ -53,15 +53,33 @@ export default function Review() {
       }
       const data = await response.json();
       setSelectedTranscript(data);
+      // Fetch feedback after fetching transcript details
+      fetchTranscriptFeedback(transcriptId);
     } catch (error) {
       console.error('Error fetching transcript details:', error);
       setError('Failed to load transcript details. Please try again later.');
     }
   };
 
+  const fetchTranscriptFeedback = async (transcriptId) => {
+    try {
+      const response = await fetch(`/api/feedback/${transcriptId}`); //New API endpoint
+      if (!response.ok) {
+        throw new Error('Failed to fetch feedback');
+      }
+      const feedback = await response.json();
+      setTranscriptFeedback(feedback);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      setError('Failed to load feedback. Please try again later.');
+    }
+  };
+
+
   const handleTranscriptSelect = (transcript) => {
     if (transcript.id === selectedTranscript?.id) {
       setSelectedTranscript(null);
+      setTranscriptFeedback(null); // Clear feedback when deselecting
     } else {
       fetchTranscriptDetails(transcript.id);
     }
@@ -105,7 +123,7 @@ export default function Review() {
             ) : (
               <div className="bg-white shadow-md rounded-xl p-5">
                 <h2 className="text-xl font-semibold mb-4">Your Conversation History</h2>
-                
+
                 {transcripts.length === 0 ? (
                   <p>You don't have any saved conversations yet.</p>
                 ) : (
@@ -128,14 +146,14 @@ export default function Review() {
                         ))}
                       </select>
                     </div>
-                    
+
                     {selectedTranscript && (
                       <div className="bg-gray-50 p-4 rounded-lg mt-4">
                         <div className="flex justify-between items-center mb-4">
                           <h3 className="text-lg font-medium">{selectedTranscript.title}</h3>
                           <span className="text-sm text-gray-500">{formatDate(selectedTranscript.createdAt)}</span>
                         </div>
-                        
+
                         <div className="bg-white p-4 rounded-lg shadow-sm">
                           {selectedTranscript.content.split('\n\n').map((paragraph, index) => (
                             <p key={index} className={`mb-4 ${paragraph.startsWith('AI:') ? 'text-blue-600' : 'text-gray-800'}`}>
@@ -143,6 +161,12 @@ export default function Review() {
                             </p>
                           ))}
                         </div>
+                        {transcriptFeedback && ( // Display feedback if available
+                          <div>
+                            <h2>Transcript Feedback</h2>
+                            <pre>{JSON.stringify(transcriptFeedback, null, 2)}</pre> {/* Placeholder, needs proper formatting */}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
