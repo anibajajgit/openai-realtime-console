@@ -64,18 +64,46 @@ app.get('/api/transcripts/user/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
     
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    console.log(`Fetching transcripts for user ${userId}`);
+    
+    // First check if user exists
+    const user = await User.findByPk(userId);
+    if (!user) {
+      console.log(`User with ID ${userId} not found`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Include Role and Scenario models only if they exist and are properly associated
+    const includeOptions = [];
+    try {
+      await Role.findOne(); // test if Role model is accessible
+      includeOptions.push({ model: Role, attributes: ['name'], required: false });
+    } catch (e) {
+      console.log('Role model not properly defined or associated, skipping include');
+    }
+    
+    try {
+      await Scenario.findOne(); // test if Scenario model is accessible
+      includeOptions.push({ model: Scenario, attributes: ['name'], required: false });
+    } catch (e) {
+      console.log('Scenario model not properly defined or associated, skipping include');
+    }
+    
     const transcripts = await Transcript.findAll({
       where: { userId },
       order: [['createdAt', 'DESC']],
-      include: [
-        { model: Role, attributes: ['name'] },
-        { model: Scenario, attributes: ['name'] }
-      ]
+      include: includeOptions
     });
     
+    console.log(`Found ${transcripts.length} transcripts for user ${userId}`);
     res.json(transcripts);
   } catch (error) {
     console.error('Error fetching transcripts:', error);
+    console.error('Error details:', error.message, error.stack);
     res.status(500).json({ error: 'Failed to fetch transcripts' });
   }
 });

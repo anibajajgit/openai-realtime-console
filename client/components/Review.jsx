@@ -19,16 +19,28 @@ export default function Review() {
   const fetchTranscripts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/transcripts/user/${user.id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch transcripts');
+      if (!user || !user.id) {
+        setError('User information not available. Please log in again.');
+        setLoading(false);
+        return;
       }
+      
+      console.log(`Fetching transcripts for user ID: ${user.id}`);
+      const response = await fetch(`/api/transcripts/user/${user.id}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server response:', response.status, errorData);
+        throw new Error(errorData.error || `Server error: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log(`Received ${data.length} transcripts`);
       setTranscripts(data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching transcripts:', error);
-      setError('Failed to load transcripts. Please try again later.');
+      setError(`Failed to load transcripts: ${error.message || 'Unknown error'}`);
       setLoading(false);
     }
   };
