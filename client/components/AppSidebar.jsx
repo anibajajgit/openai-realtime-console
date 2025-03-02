@@ -204,7 +204,14 @@ export default function AppSidebar() {
                 className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-700"
               >
                 <LogOut size={18} />
-                <span className="text-black text-sm whitespace-pre transition duration-150">
+                <span
+                  style={{
+                    display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                    opacity: animate ? (open ? 1 : 0) : 1,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-black text-sm whitespace-pre transition duration-150"
+                >
                   Logout
                 </span>
               </div>
@@ -232,7 +239,14 @@ export default function AppSidebar() {
                 className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-700"
               >
                 <LogOut size={18} />
-                <span className="text-black text-sm whitespace-pre transition duration-150">
+                <span
+                  style={{
+                    display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                    opacity: animate ? (open ? 1 : 0) : 1,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-black text-sm whitespace-pre transition duration-150"
+                >
                   Logout
                 </span>
               </div>
