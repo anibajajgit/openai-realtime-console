@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Home, List, User } from "react-feather";
+import { Home, List, User, LogOut } from "react-feather";
 import { AuthContext } from "./App"; // Import AuthContext
 
 // Create a context for sidebar
@@ -174,7 +174,13 @@ export default function AppSidebar() {
     }
   ];
 
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
   
   return (
     <SidebarProvider open={open} setOpen={setOpen} animate={true}>
@@ -193,6 +199,12 @@ export default function AppSidebar() {
                 </div>
                 <span className="text-sm font-medium">{user.username}</span>
               </div>
+              <button 
+                onClick={handleLogout}
+                className="w-full mt-2 py-2 px-3 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>
@@ -212,6 +224,12 @@ export default function AppSidebar() {
                 </div>
                 <span className="text-sm font-medium">{user.username}</span>
               </div>
+              <button 
+                onClick={handleLogout}
+                className="w-full mt-2 py-2 px-3 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center justify-center"
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>
