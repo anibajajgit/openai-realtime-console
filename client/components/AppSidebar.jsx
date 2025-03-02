@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Home, List, User, LogOut } from "react-feather";
+import { Home, List, User, LogOut, FileText } from "lucide-react"; // Added FileText icon for Review
 import { AuthContext } from "./App"; // Import AuthContext
 
 // Create a context for sidebar
@@ -148,7 +148,7 @@ const SidebarLink = ({
           opacity: animate ? (open ? 1 : 0) : 1,
           transition: "opacity 0.3s ease"
         }}
-        className="text-black text-sm whitespace-pre transition duration-150" // Changed text color here
+        className="text-black text-sm whitespace-pre transition duration-150"
       >
         {link.label}
       </span>
@@ -164,13 +164,18 @@ export default function AppSidebar() {
   const links = [
     {
       label: "Home",
-      href: "/", // Corrected href for Home link
+      href: "/",
       icon: <Home size={18} />
     },
     {
       label: "Scenarios",
       href: "/scenarios",
       icon: <List size={18} />
+    },
+    {
+      label: "Review",
+      href: "/review",
+      icon: <FileText size={18} />
     }
   ];
 
@@ -219,7 +224,7 @@ export default function AppSidebar() {
           )}
         </div>
       </MobileSidebar>
-      <DesktopSidebar className="bg-gray-800 text-black"> {/* Changed text color here */}
+      <DesktopSidebar className="bg-gray-800 text-black">
         <div className="flex flex-col gap-4 h-full">
           <div className="flex-grow">
             {links.map((link, index) => (

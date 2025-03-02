@@ -5,6 +5,7 @@ import ScenarioSelector from "./ScenarioSelector";
 import EventLog from "./EventLog";
 import Home from "./Home";
 import Login from "./Login"; //New Component
+import Review from "./Review"; //Review Component
 import "../base.css";
 import SessionControls from "./SessionControls";
 
@@ -173,6 +174,15 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} /> {/*Login Route*/}
+        <Route path="/review" element={
+          user ? (
+            <>
+              <Review />
+            </>
+          ) : (
+            <Navigate to="/login" />
+          )
+        } />
         <Route path="/scenarios" element={
           user ? (
             console.log("Rendering scenarios route with user:", user) || 
