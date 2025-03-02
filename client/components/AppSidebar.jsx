@@ -158,7 +158,7 @@ const SidebarLink = ({
 
 // Main AppSidebar component
 export default function AppSidebar() {
-  const [open, setOpen] = useState(true);
+  const { open, setOpen, animate } = useSidebar();
   const location = useLocation();
 
   const links = [
