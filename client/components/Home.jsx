@@ -1,5 +1,5 @@
-
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -15,6 +15,12 @@ export default function Home() {
             <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5">
               <h2 className="text-xl font-semibold mb-4">Welcome to the Voice Chat App</h2>
               <p className="mb-3">This is your home page where you can see an overview of your application.</p>
+              <Link 
+                to="/scenarios" 
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Back to Scenarios
+              </Link>
             </div>
           </section>
         </div>
@@ -22,22 +28,3 @@ export default function Home() {
     </>
   );
 }
-import React from "react";
-import { Link } from "react-router-dom";
-
-function Home() {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Home Page</h1>
-      <p className="mb-4">Welcome to the application homepage.</p>
-      <Link 
-        to="/scenarios" 
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Back to Scenarios
-      </Link>
-    </div>
-  );
-}
-
-export default Home;
