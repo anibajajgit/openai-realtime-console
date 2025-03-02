@@ -230,33 +230,4 @@ export default function App() {
 }
 
 //Login Component
-function Login() {
-  const { login } = useContext(AuthContext);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    //Simulate DB lookup - replace with actual DB interaction
-    const simulatedUsers = {
-      "user1": "pass1",
-      "user2": "pass2"
-    };
-    if (simulatedUsers[username] === password) {
-      login({ username });
-    } else {
-      alert('Invalid credentials');
-    }
-  };
-
-  return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-        <button type="submit">Login</button>
-      </form>
-    </div>
-  );
-}
+// Login component is now imported from './Login' instead of defined here
