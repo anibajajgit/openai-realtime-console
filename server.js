@@ -33,25 +33,25 @@ app.get('/api/scenarios', async (req, res) => {
 app.post('/api/register', async (req, res) => {
   try {
     const { username, password, email } = req.body;
-    
+
     // Basic validation
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
-    
+
     // Check if user already exists
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
       return res.status(409).json({ error: 'Username already exists' });
     }
-    
+
     // Create new user
     const user = await User.create({
       username,
       password, // In a production app, you'd hash this password
       email
     });
-    
+
     res.status(201).json({ 
       message: 'User registered successfully',
       user: {
@@ -69,23 +69,23 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    
+
     // Basic validation
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
-    
+
     // Find user
     const user = await User.findOne({ where: { username } });
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    
+
     // Check password (in a real app, you'd compare hashed passwords)
     if (user.password !== password) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    
+
     // Return user info (excluding password)
     res.json({
       message: 'Login successful',
@@ -106,21 +106,40 @@ import { Client as ObjectStorageClient } from '@replit/object-storage';
 import { Transcript } from './database/schema.js';
 
 // Initialize object storage client
-const objectStorage = new ObjectStorageClient();
+let objectStorage;
+try {
+  // First try to use the default bucket configuration
+  objectStorage = new ObjectStorageClient();
+  console.log("Object storage client initialized successfully");
+} catch (error) {
+  console.error("Error initializing object storage client:", error.message);
+  console.log("Please create a bucket in the Object Storage tool in the Replit UI");
+  // Provide fallback behavior
+  objectStorage = {
+    upload_from_text: async () => { 
+      console.log("Object storage not configured - transcript not saved"); 
+      return null; 
+    },
+    download_from_text: async () => { 
+      console.log("Object storage not configured - transcript not available"); 
+      return "{}"; 
+    }
+  };
+}
 
 // Save transcript to object storage and record in database
 app.post('/api/transcripts', async (req, res) => {
   try {
     const { userId, transcript, scenarioName, roleName } = req.body;
-    
+
     if (!userId || !transcript) {
       return res.status(400).json({ error: 'User ID and transcript are required' });
     }
-    
+
     // Generate a unique key for the transcript
     const timestamp = new Date().toISOString();
     const storageKey = `transcripts/${userId}/${timestamp}.json`;
-    
+
     // Store transcript in object storage
     await objectStorage.upload_from_text(storageKey, JSON.stringify({
       transcript,
@@ -128,7 +147,7 @@ app.post('/api/transcripts', async (req, res) => {
       roleName,
       timestamp
     }));
-    
+
     // Record in database
     const transcriptRecord = await Transcript.create({
       userId,
@@ -136,7 +155,7 @@ app.post('/api/transcripts', async (req, res) => {
       scenarioName,
       roleName
     });
-    
+
     res.status(201).json({
       message: 'Transcript saved successfully',
       transcriptId: transcriptRecord.id
@@ -151,12 +170,12 @@ app.post('/api/transcripts', async (req, res) => {
 app.get('/api/transcripts/user/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    
+
     const transcripts = await Transcript.findAll({
       where: { userId: parseInt(userId) },
       order: [['createdAt', 'DESC']]
     });
-    
+
     res.json(transcripts);
   } catch (error) {
     console.error('Error fetching transcripts:', error);
@@ -168,16 +187,16 @@ app.get('/api/transcripts/user/:userId', async (req, res) => {
 app.get('/api/transcripts/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const transcriptRecord = await Transcript.findByPk(id);
-    
+
     if (!transcriptRecord) {
       return res.status(404).json({ error: 'Transcript not found' });
     }
-    
+
     // Retrieve from object storage
     const transcriptData = await objectStorage.download_from_text(transcriptRecord.storageKey);
-    
+
     res.json({
       record: transcriptRecord,
       data: JSON.parse(transcriptData)
