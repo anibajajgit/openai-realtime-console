@@ -1,4 +1,3 @@
-
 import React, { useState, createContext, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -130,7 +129,7 @@ const SidebarLink = ({
   const { open, animate } = useSidebar();
   const location = useLocation();
   const isActive = location.pathname === link.href;
-  
+
   return (
     <Link
       to={link.href}
@@ -160,11 +159,11 @@ const SidebarLink = ({
 export default function AppSidebar() {
   const [open, setOpen] = useState(true);
   const location = useLocation();
-  
+
   const links = [
     {
       label: "Home",
-      href: "/home",
+      href: "/", // Corrected href for Home link
       icon: <Home size={18} />
     },
     {
