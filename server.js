@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario } from './database/schema.js';
+import { Role, Scenario, User } from './database/schema.js';
 
 const app = express();
 app.use(express.json());
