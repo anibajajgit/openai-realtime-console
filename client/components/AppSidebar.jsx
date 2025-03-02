@@ -48,7 +48,7 @@ const DesktopSidebar = ({
   return (
     <div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-gray-800 w-[300px] flex-shrink-0",
+        "h-full px-4 py-4 md:flex md:flex-col bg-white w-[300px] flex-shrink-0 shadow-md",
         className
       )}
       style={{
@@ -135,19 +135,24 @@ const SidebarLink = ({
       to={link.href}
       className={cn(
         "flex items-center gap-2 p-2 rounded",
-        isActive ? "bg-blue-600 text-white" : "hover:bg-gray-700 text-black",
+        isActive ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-700",
         className
       )}
       {...props}
     >
-      {link.icon}
+      <span className={isActive ? "text-white" : "text-gray-700"}>
+        {link.icon}
+      </span>
       <span
         style={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
           transition: "opacity 0.3s ease"
         }}
-        className="text-black font-medium text-sm whitespace-pre transition duration-150"
+        className={cn(
+          "font-medium text-sm whitespace-pre transition duration-150",
+          isActive ? "text-white" : "text-gray-700"
+        )}
       >
         {link.label}
       </span>
@@ -163,12 +168,12 @@ export default function AppSidebar() {
     {
       label: "Home",
       href: "/home",
-      icon: <Home size={18} className="text-black" />
+      icon: <Home size={18} />
     },
     {
       label: "Scenarios",
       href: "/scenarios",
-      icon: <List size={18} className="text-black" />
+      icon: <List size={18} />
     }
   ];
 
