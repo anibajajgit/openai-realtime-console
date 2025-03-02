@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Home, List } from "lucide-react"; // Assuming you're using lucide-react for icons
+import { Home, List } from "react-feather"; // Using react-feather which is already installed
 
 export default function AppSidebar() {
   const location = useLocation();
