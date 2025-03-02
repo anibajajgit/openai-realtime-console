@@ -40,9 +40,19 @@ export default function App() {
 
   async function startSession() {
     try {
-      setSelectedRole(JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 });
-      setSelectedScenario(JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 });
-      const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
+      // Get role and scenario from localStorage or use defaults
+      const roleFromStorage = localStorage.getItem('selectedRole');
+      const scenarioFromStorage = localStorage.getItem('selectedScenario');
+      
+      const role = roleFromStorage ? JSON.parse(roleFromStorage) : { id: 1 };
+      const scenario = scenarioFromStorage ? JSON.parse(scenarioFromStorage) : { id: 1 };
+      
+      // Update state with these values
+      setSelectedRole(role);
+      setSelectedScenario(scenario);
+      
+      // Use the local variables instead of state since state updates are asynchronous
+      const tokenResponse = await fetch(`/token?roleId=${role.id}&scenarioId=${scenario.id}`);
       const data = await tokenResponse.json();
       const EPHEMERAL_KEY = data.client_secret.value;
 
@@ -150,7 +160,9 @@ export default function App() {
 
     // Save transcript when session ends
     if (events.length > 0) {
-      saveTranscript(events, user, selectedRole?.id, selectedScenario?.id);
+      const role = JSON.parse(localStorage.getItem('selectedRole') || '{"id":1}');
+      const scenario = JSON.parse(localStorage.getItem('selectedScenario') || '{"id":1}');
+      saveTranscript(events, user, role.id, scenario.id);
     }
 
     setEvents(prevEvents => [...prevEvents]);
