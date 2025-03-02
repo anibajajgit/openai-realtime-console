@@ -8,7 +8,7 @@ import Login from "./Login"; //New Component
 import Review from "./Review"; //Review Component
 import "../base.css";
 import SessionControls from "./SessionControls";
-import { AuthContext } from "../utils/AuthContext"; // Assuming AuthContext is in ../utils
+import { AuthContext, AuthProvider } from "../utils/AuthContext"; // Assuming AuthContext is in ../utils
 
 
 export default function App() {
@@ -88,14 +88,48 @@ export default function App() {
     }
   }
 
-  async function saveTranscript(transcript, user, roleId, scenarioId) {
+  async function saveTranscript(events, user, roleId, scenarioId) {
+    if (!user || !user.id) {
+      console.error('Cannot save transcript: No authenticated user');
+      return;
+    }
+    
+    // Format the transcript content
+    const formattedContent = events
+      .filter(event => {
+        return event.type === "conversation.item.input_audio_transcription.completed" || 
+               event.type === "response.text.done" ||
+               event.type === "response.audio_transcript.done";
+      })
+      .map(event => {
+        let prefix = "";
+        let text = "";
+        
+        if (event.type === "conversation.item.input_audio_transcription.completed") {
+          prefix = "User:";
+          text = event.transcript;
+        } else if (event.type === "response.text.done" || event.type === "response.audio_transcript.done") {
+          prefix = "AI:";
+          text = event.type === "response.text.done" ? event.text : event.transcript;
+        }
+        
+        return `${prefix} ${text}`;
+      })
+      .join('\n\n');
+      
     try {
       const response = await fetch('/api/transcripts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ transcript, user, roleId, scenarioId }),
+        body: JSON.stringify({ 
+          content: formattedContent,
+          userId: user.id,
+          roleId: roleId || null,
+          scenarioId: scenarioId || null,
+          title: `Conversation on ${new Date().toLocaleDateString()}`
+        }),
       });
 
       if (!response.ok) {

@@ -2,7 +2,7 @@ import React, { useState, createContext, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Home, List, User, LogOut, FileText } from "lucide-react"; // Added FileText icon for Review
-import { AuthContext } from "./App"; // Import AuthContext
+import { AuthContext } from "../utils/AuthContext"; // Import AuthContext
 
 // Create a context for sidebar
 const SidebarContext = createContext(undefined);
