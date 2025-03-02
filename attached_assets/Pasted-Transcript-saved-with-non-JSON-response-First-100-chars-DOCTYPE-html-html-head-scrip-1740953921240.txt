@@ -1,0 +1,52 @@
+Transcript saved with non-JSON response. First 100 chars: <!DOCTYPE html>
+<html>
+  <head>
+    <script type="module">
+import RefreshRuntime from "/@react-refre
+App.jsx:227 Received HTML instead of JSON - this indicates a routing issue
+saveTranscript @ App.jsx:227
+await in saveTranscript
+endSession @ App.jsx:352
+callCallback2 @ chunk-BCXODTBQ.js?v=9b675471:3672
+invokeGuardedCallbackDev @ chunk-BCXODTBQ.js?v=9b675471:3697
+invokeGuardedCallback @ chunk-BCXODTBQ.js?v=9b675471:3731
+invokeGuardedCallbackAndCatchFirstError @ chunk-BCXODTBQ.js?v=9b675471:3734
+executeDispatch @ chunk-BCXODTBQ.js?v=9b675471:7012
+processDispatchQueueItemsInOrder @ chunk-BCXODTBQ.js?v=9b675471:7032
+processDispatchQueue @ chunk-BCXODTBQ.js?v=9b675471:7041
+dispatchEventsForPlugins @ chunk-BCXODTBQ.js?v=9b675471:7049
+(anonymous) @ chunk-BCXODTBQ.js?v=9b675471:7172
+batchedUpdates$1 @ chunk-BCXODTBQ.js?v=9b675471:18911
+batchedUpdates @ chunk-BCXODTBQ.js?v=9b675471:3577
+dispatchEventForPluginEventSystem @ chunk-BCXODTBQ.js?v=9b675471:7171
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-BCXODTBQ.js?v=9b675471:5476
+dispatchEvent @ chunk-BCXODTBQ.js?v=9b675471:5470
+dispatchDiscreteEvent @ chunk-BCXODTBQ.js?v=9b675471:5447Understand this errorAI
+App.jsx:203 Response status: 200, content type: text/html; charset=utf-8
+App.jsx:210 Response headers: {access-control-allow-headers: '*', access-control-allow-origin: '*', content-length: '875', content-type: 'text/html; charset=utf-8', date: 'Sun, 02 Mar 2025 22:18:03 GMT', …}
+App.jsx:224 Transcript saved with non-JSON response. First 100 chars: <!DOCTYPE html>
+<html>
+  <head>
+    <script type="module">
+import RefreshRuntime from "/@react-refre
+App.jsx:227 Received HTML instead of JSON - this indicates a routing issue
+saveTranscript @ App.jsx:227
+await in saveTranscript
+endSession @ App.jsx:384
+callCallback2 @ chunk-BCXODTBQ.js?v=9b675471:3672
+invokeGuardedCallbackDev @ chunk-BCXODTBQ.js?v=9b675471:3697
+invokeGuardedCallback @ chunk-BCXODTBQ.js?v=9b675471:3731
+invokeGuardedCallbackAndCatchFirstError @ chunk-BCXODTBQ.js?v=9b675471:3734
+executeDispatch @ chunk-BCXODTBQ.js?v=9b675471:7012
+processDispatchQueueItemsInOrder @ chunk-BCXODTBQ.js?v=9b675471:7032
+processDispatchQueue @ chunk-BCXODTBQ.js?v=9b675471:7041
+dispatchEventsForPlugins @ chunk-BCXODTBQ.js?v=9b675471:7049
+(anonymous) @ chunk-BCXODTBQ.js?v=9b675471:7172
+batchedUpdates$1 @ chunk-BCXODTBQ.js?v=9b675471:18911
+batchedUpdates @ chunk-BCXODTBQ.js?v=9b675471:3577
+dispatchEventForPluginEventSystem @ chunk-BCXODTBQ.js?v=9b675471:7171
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-BCXODTBQ.js?v=9b675471:5476
+dispatchEvent @ chunk-BCXODTBQ.js?v=9b675471:5470
+dispatchDiscreteEvent @ chunk-BCXODTBQ.js?v=9b675471:5447Understand this errorAI
+ScenarioSelector.jsx:20 Fetched roles from API: (3) [{…}, {…}, {…}]
+ScenarioSelector.jsx:20 Fetched roles from API: (3) [{…}, {…}, {…}]
