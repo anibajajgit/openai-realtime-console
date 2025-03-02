@@ -111,6 +111,12 @@ export default function Review() {
 
 
   const handleTranscriptSelect = (transcript) => {
+    // Check if transcript is undefined or null
+    if (!transcript) {
+      console.error("Transcript is undefined in handleTranscriptSelect");
+      return;
+    }
+    
     if (transcript.id === selectedTranscript?.id) {
       setSelectedTranscript(null);
       setTranscriptFeedback(null); // Clear feedback when deselecting
@@ -169,7 +175,17 @@ export default function Review() {
                       <select
                         id="transcript-select"
                         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                        onChange={(e) => handleTranscriptSelect(transcripts.find(t => t.id.toString() === e.target.value))}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "") {
+                            // Handle empty selection
+                            setSelectedTranscript(null);
+                            setTranscriptFeedback(null);
+                            return;
+                          }
+                          const transcript = transcripts.find(t => t.id.toString() === value);
+                          handleTranscriptSelect(transcript);
+                        }}
                         value={selectedTranscript?.id || ""}
                       >
                         <option value="">-- Select a conversation --</option>
