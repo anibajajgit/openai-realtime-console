@@ -18,7 +18,8 @@ export default HomePage;
 
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import AppSidebar from '../components/AppSidebar';
 import ScenarioCard from '../components/ScenarioCard';
 
 // Sample scenario data (This is duplicated, ideally it should be in a separate file)
@@ -41,22 +42,6 @@ const scenariosData = [
   },
   // Add more scenarios as needed
 ];
-
-const AppSidebar = () => {
-  return (
-    <aside className="bg-gray-200 w-64 p-4">
-      <ul>
-        <li>
-          <Link to="/" className="block py-2 px-4 text-gray-800 hover:bg-gray-300 rounded">Home</Link>
-        </li>
-        <li>
-          <Link to="/scenarios" className="block py-2 px-4 text-gray-800 hover:bg-gray-300 rounded">Scenarios</Link>
-        </li>
-        {/* Add more links as needed */}
-      </ul>
-    </aside>
-  );
-};
 
 export default function ScenariosPage() {
   const [scenarios, setScenarios] = useState([]);
@@ -89,4 +74,3 @@ export default function ScenariosPage() {
     </div>
   );
 }
-export {AppSidebar};

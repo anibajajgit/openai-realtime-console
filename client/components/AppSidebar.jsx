@@ -1,7 +1,6 @@
 
 import React, { useState, createContext, useContext } from "react";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Home, List } from "react-feather";
 
 // Create a context for sidebar
@@ -49,7 +48,7 @@ const DesktopSidebar = ({
   return (
     <div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-white w-[300px] flex-shrink-0",
+        "h-full px-4 py-4 hidden md:flex md:flex-col bg-gray-800 w-[300px] flex-shrink-0",
         className
       )}
       style={{
@@ -100,17 +99,17 @@ const MobileSidebar = ({
               transition: "transform 0.3s ease, opacity 0.3s ease"
             }}
             className={cn(
-              "fixed h-full w-full inset-0 bg-gray-800 p-10 z-[100] flex flex-col",
+              "fixed h-full w-full inset-0 bg-gray-800 p-10 z-[100] flex flex-col justify-between",
               className
             )}
           >
             <div
               className="absolute right-10 top-10 z-50 text-white cursor-pointer"
-              onClick={() => setOpen(!open)}
+              onClick={() => setOpen(false)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
               </svg>
             </div>
             {children}
@@ -136,7 +135,7 @@ const SidebarLink = ({
       to={link.href}
       className={cn(
         "flex items-center gap-2 p-2 rounded",
-        isActive ? "bg-blue-600 text-white" : "hover:bg-gray-700 text-white",
+        isActive ? "bg-blue-600 text-white" : "hover:bg-gray-700 text-black",
         className
       )}
       {...props}
@@ -148,7 +147,7 @@ const SidebarLink = ({
           opacity: animate ? (open ? 1 : 0) : 1,
           transition: "opacity 0.3s ease"
         }}
-        className="text-white font-medium text-sm whitespace-pre transition duration-150"
+        className="text-black font-medium text-sm whitespace-pre transition duration-150"
       >
         {link.label}
       </span>
@@ -159,18 +158,17 @@ const SidebarLink = ({
 // Main AppSidebar component
 export default function AppSidebar() {
   const [open, setOpen] = useState(true);
-  const location = useLocation();
   
   const links = [
     {
       label: "Home",
       href: "/home",
-      icon: <Home size={18} />
+      icon: <Home size={18} className="text-black" />
     },
     {
       label: "Scenarios",
       href: "/scenarios",
-      icon: <List size={18} />
+      icon: <List size={18} className="text-black" />
     }
   ];
 
@@ -183,7 +181,7 @@ export default function AppSidebar() {
           ))}
         </div>
       </MobileSidebar>
-      <DesktopSidebar className="bg-gray-800 text-white">
+      <DesktopSidebar>
         <div className="flex flex-col gap-4">
           {links.map((link, index) => (
             <SidebarLink key={index} link={link} />
