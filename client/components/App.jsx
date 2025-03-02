@@ -8,20 +8,22 @@ import Login from "./Login"; //New Component
 import Review from "./Review"; //Review Component
 import "../base.css";
 import SessionControls from "./SessionControls";
+import { AuthContext } from "../utils/AuthContext"; // Assuming AuthContext is in ../utils
 
-export const AuthContext = createContext();
 
 export default function App() {
-  const [user, setUser] = useState(null); // Add user state
-  const [isSessionActive, setIsSessionActive] = useState(false);
+  const { user } = useContext(AuthContext);
   const [events, setEvents] = useState([]);
+  const [isSessionActive, setIsSessionActive] = useState(false);
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
   const location = useLocation();
+  const [selectedRole, setSelectedRole] = useState(null); // Add state for selected role
+  const [selectedScenario, setSelectedScenario] = useState(null); // Add state for selected scenario
+
 
   const login = (userData) => {
-    // Simulate login - replace with actual authentication logic
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
@@ -31,7 +33,6 @@ export default function App() {
     setUser(null);
   };
 
-
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     if (storedUser) {
@@ -39,11 +40,10 @@ export default function App() {
     }
   }, []);
 
-
   async function startSession() {
     try {
-      const selectedRole = JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 };
-      const selectedScenario = JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 };
+      setSelectedRole(JSON.parse(localStorage.getItem('selectedRole')) || { id: 1 });
+      setSelectedScenario(JSON.parse(localStorage.getItem('selectedScenario')) || { id: 1 });
       const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
       const data = await tokenResponse.json();
       const EPHEMERAL_KEY = data.client_secret.value;
@@ -88,25 +88,41 @@ export default function App() {
     }
   }
 
-  function stopSession() {
+  async function saveTranscript(transcript, user, roleId, scenarioId) {
+    try {
+      const response = await fetch('/api/transcripts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ transcript, user, roleId, scenarioId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log('Transcript saved successfully!');
+    } catch (error) {
+      console.error('Error saving transcript:', error);
+    }
+  }
+
+
+  const endSession = () => {
+    setIsSessionActive(false);
     if (dataChannel) {
       dataChannel.close();
+      setDataChannel(null);
     }
 
-    peerConnection.current.getSenders().forEach((sender) => {
-      if (sender.track) {
-        sender.track.stop();
-      }
-    });
-
-    if (peerConnection.current) {
-      peerConnection.current.close();
+    // Save transcript when session ends
+    if (events.length > 0) {
+      saveTranscript(events, user, selectedRole?.id, selectedScenario?.id);
     }
 
-    setIsSessionActive(false);
-    setDataChannel(null);
-    peerConnection.current = null;
-  }
+    setEvents(prevEvents => [...prevEvents]);
+  };
 
   function sendClientEvent(message) {
     if (dataChannel) {
@@ -185,7 +201,7 @@ export default function App() {
         } />
         <Route path="/scenarios" element={
           user ? (
-            console.log("Rendering scenarios route with user:", user) || 
+            console.log("Rendering scenarios route with user:", user) ||
             <>
               <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
                 <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
@@ -221,7 +237,7 @@ export default function App() {
                     <div className="h-24 md:h-32">
                       <SessionControls
                         startSession={startSession}
-                        stopSession={stopSession}
+                        stopSession={endSession}  //Corrected stopSession call
                         sendClientEvent={sendClientEvent}
                         sendTextMessage={sendTextMessage}
                         serverEvents={events}
@@ -240,6 +256,3 @@ export default function App() {
     </AuthContext.Provider>
   );
 }
-
-//Login Component
-// Login component is now imported from './Login' instead of defined here

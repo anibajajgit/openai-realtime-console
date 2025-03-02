@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario, User } from './database/schema.js';
+import { Role, Scenario, User, Transcript } from './database/schema.js';
 
 const app = express();
 app.use(express.json());
@@ -27,6 +27,88 @@ app.get('/api/roles', async (req, res) => {
 app.get('/api/scenarios', async (req, res) => {
   const scenarios = await Scenario.findAll();
   res.json(scenarios);
+});
+
+// Transcript routes
+app.post('/api/transcripts', async (req, res) => {
+  try {
+    const { content, userId, roleId, scenarioId, title } = req.body;
+    
+    if (!content || !userId) {
+      return res.status(400).json({ error: 'Content and userId are required' });
+    }
+    
+    const transcript = await Transcript.create({
+      content,
+      userId,
+      roleId,
+      scenarioId,
+      title: title || 'Conversation'
+    });
+    
+    res.status(201).json({
+      message: 'Transcript saved successfully',
+      transcript: {
+        id: transcript.id,
+        title: transcript.title,
+        createdAt: transcript.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Error saving transcript:', error);
+    res.status(500).json({ error: 'Failed to save transcript' });
+  }
+});
+
+app.get('/api/transcripts/user/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    
+    const transcripts = await Transcript.findAll({
+      where: { userId },
+      order: [['createdAt', 'DESC']],
+      include: [
+        { model: Role, attributes: ['name'] },
+        { model: Scenario, attributes: ['name'] }
+      ]
+    });
+    
+    res.json(transcripts);
+  } catch (error) {
+    console.error('Error fetching transcripts:', error);
+    res.status(500).json({ error: 'Failed to fetch transcripts' });
+  }
+});
+
+app.get('/api/transcripts/:id', async (req, res) => {
+  try {
+    const transcriptId = req.params.id;
+    const userId = req.query.userId;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'userId query parameter is required' });
+    }
+    
+    const transcript = await Transcript.findOne({
+      where: { 
+        id: transcriptId,
+        userId: userId 
+      },
+      include: [
+        { model: Role, attributes: ['name'] },
+        { model: Scenario, attributes: ['name'] }
+      ]
+    });
+    
+    if (!transcript) {
+      return res.status(404).json({ error: 'Transcript not found or access denied' });
+    }
+    
+    res.json(transcript);
+  } catch (error) {
+    console.error('Error fetching transcript:', error);
+    res.status(500).json({ error: 'Failed to fetch transcript' });
+  }
 });
 
 // User authentication routes
