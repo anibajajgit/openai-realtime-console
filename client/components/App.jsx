@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import ScenarioSelector from "./ScenarioSelector";
