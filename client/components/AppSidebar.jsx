@@ -136,7 +136,7 @@ const SidebarLink = ({
       to={link.href}
       className={cn(
         "flex items-center gap-2 p-2 rounded",
-        isActive ? "bg-blue-600" : "hover:bg-gray-700",
+        isActive ? "bg-blue-600 text-white" : "hover:bg-gray-700 text-white",
         className
       )}
       {...props}
@@ -148,7 +148,7 @@ const SidebarLink = ({
           opacity: animate ? (open ? 1 : 0) : 1,
           transition: "opacity 0.3s ease"
         }}
-        className="text-white text-sm whitespace-pre transition duration-150"
+        className="text-white font-medium text-sm whitespace-pre transition duration-150"
       >
         {link.label}
       </span>
