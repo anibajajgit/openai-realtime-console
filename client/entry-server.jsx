@@ -8,9 +8,20 @@ import { AuthProvider } from './utils/AuthContext';
 if (typeof window === 'undefined') {
   global.window = {};
   global.localStorage = {
-    getItem: () => null,
+    getItem: (key) => {
+      // Return null for user on server side to ensure consistency
+      if (key === 'user') return null;
+      return null;
+    },
     setItem: () => {},
     removeItem: () => {}
+  };
+  // Ensure document is defined for server-side rendering
+  global.document = {
+    querySelector: () => null,
+    createElement: () => ({
+      style: {}
+    })
   };
 }
 

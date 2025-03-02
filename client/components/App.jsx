@@ -12,7 +12,9 @@ import { AuthContext, AuthProvider } from "../utils/AuthContext"; // Assuming Au
 
 
 export default function App() {
-  const { user, login, logout } = useContext(AuthContext);
+  // Get user from context if available, otherwise null
+  const authContext = useContext(AuthContext);
+  const user = authContext ? authContext.user : null;
   const [events, setEvents] = useState([]);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [dataChannel, setDataChannel] = useState(null);
@@ -25,12 +27,12 @@ export default function App() {
 
   const loginApp = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
-    login(userData);
+    authContext.login(userData); // Use authContext.login here
   };
 
   const logoutApp = () => {
     localStorage.removeItem('user');
-    logout();
+    authContext.logout(); // Use authContext.logout here
   };
 
   useEffect(() => {

@@ -10,7 +10,7 @@ export default function Home() {
   const isClient = typeof window !== 'undefined'; // Check if running in browser
 
   useEffect(() => {
-    if (isClient) { // Only run this on the client-side
+    if (typeof window !== 'undefined') { // Only run this on the client-side
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         try {
@@ -21,7 +21,7 @@ export default function Home() {
         }
       }
     }
-  }, [isClient]);
+  }, []);
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);

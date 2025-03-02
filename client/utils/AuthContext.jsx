@@ -1,6 +1,12 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-const AuthContext = createContext();
+// Create context with default values to prevent undefined errors
+export const AuthContext = createContext({
+  user: null,
+  login: () => {},
+  logout: () => {},
+  isClient: false
+});
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -10,18 +16,18 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isClient, setIsClient] = useState(false);
 
+  // Only run this effect on the client side
   useEffect(() => {
-    // Mark that we're on the client side
-    setIsClient(true);
-
-    // Check localStorage for existing user (only on client)
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Error parsing stored user:", e);
-        localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      setIsClient(true);
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (e) {
+          console.error("Error parsing stored user:", e);
+          localStorage.removeItem('user');
+        }
       }
     }
   }, []);
