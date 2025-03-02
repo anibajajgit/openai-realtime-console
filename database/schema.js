@@ -1,129 +1,111 @@
-import { DataTypes, Model } from 'sequelize';
+
+import { DataTypes } from 'sequelize';
 import sequelize from './index.js';
 
-class User extends Model {}
-User.init({
+const Role = sequelize.define('Role', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: DataTypes.STRING,
+  title: DataTypes.STRING,
+  style: DataTypes.STRING,
+  photoUrl: DataTypes.STRING,
+  voice: DataTypes.STRING,
+  instructions: DataTypes.TEXT
+});
+
+const Scenario = sequelize.define('Scenario', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: DataTypes.STRING,
+  description: DataTypes.TEXT,
+  instructions: DataTypes.TEXT,
+  rubric: {
+    type: DataTypes.JSON,
+    defaultValue: []
+  }
+});
+
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   username: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    unique: true,
+    allowNull: false
   },
   password: {
     type: DataTypes.STRING,
     allowNull: false
   },
   email: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: true
   }
 }, {
-  sequelize,
-  modelName: 'user'
+  timestamps: true
 });
 
-class Role extends Model {}
-Role.init({
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
+const Transcript = sequelize.define('Transcript', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
-  instructions: {
-    type: DataTypes.TEXT
-  },
-  voice: {
-    type: DataTypes.STRING,
-    defaultValue: 'echo'
-  }
-}, {
-  sequelize,
-  modelName: 'role'
-});
-
-class Scenario extends Model {}
-Scenario.init({
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  instructions: {
-    type: DataTypes.TEXT
-  },
-  rubric: {
-    type: DataTypes.TEXT
-  }
-}, {
-  sequelize,
-  modelName: 'scenario'
-});
-
-class Transcript extends Model {}
-Transcript.init({
   content: {
-    type: DataTypes.TEXT,
+    type: DataTypes.TEXT('long'),
     allowNull: false
   },
   title: {
     type: DataTypes.STRING,
     defaultValue: 'Conversation'
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: User,
-      key: 'id'
-    }
-  },
   roleId: {
     type: DataTypes.INTEGER,
+    allowNull: true,
     references: {
-      model: Role,
+      model: 'Roles',
       key: 'id'
     }
   },
   scenarioId: {
     type: DataTypes.INTEGER,
+    allowNull: true,
     references: {
-      model: Scenario,
+      model: 'Scenarios',
+      key: 'id'
+    }
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users',
       key: 'id'
     }
   }
 }, {
-  sequelize,
-  modelName: 'transcript'
+  timestamps: true
 });
 
-class TranscriptFeedback extends Model {}
-TranscriptFeedback.init({
-  content: {
-    type: DataTypes.TEXT
-  },
-  status: {
-    type: DataTypes.ENUM('pending', 'completed', 'failed'),
-    defaultValue: 'pending'
-  },
-  errorMessage: {
-    type: DataTypes.TEXT
-  },
-  transcriptId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Transcript,
-      key: 'id'
-    },
-    unique: true
-  }
-}, {
-  sequelize,
-  modelName: 'transcript_feedback'
-});
+// Define associations
+User.hasMany(Transcript, { foreignKey: 'userId' });
+Transcript.belongsTo(User, { foreignKey: 'userId' });
 
-// Set up associations
-Transcript.belongsTo(User);
-Transcript.belongsTo(Role);
-Transcript.belongsTo(Scenario);
-User.hasMany(Transcript);
-Role.hasMany(Transcript);
-Scenario.hasMany(Transcript);
-Transcript.hasOne(TranscriptFeedback);
-TranscriptFeedback.belongsTo(Transcript);
+// Add missing associations for Role and Scenario
+Role.hasMany(Transcript, { foreignKey: 'roleId' });
+Transcript.belongsTo(Role, { foreignKey: 'roleId' });
 
-export { User, Role, Scenario, Transcript, TranscriptFeedback };
+Scenario.hasMany(Transcript, { foreignKey: 'scenarioId' });
+Transcript.belongsTo(Scenario, { foreignKey: 'scenarioId' });
+
+export { Role, Scenario, User, Transcript };
