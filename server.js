@@ -256,38 +256,26 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
     }
     
     // Construct the system prompt
-    const systemPrompt = `You are a communications coach for executives with a decade of experience. 
-      Review the conversation transcript between the user and an AI and give feedback 
-      on the user's communication. Evaluate their grammar, clarity, and communication quality.
-      Also, make suggestions on what they could have done better - but be nice 
-      and you can say you did a good job if they fulfilled the objectives.
-      
-      ${scenarioContext ? `Scenario Context: ${scenarioContext}` : ''}
-      ${rubric.length > 0 ? `Rubric: ${JSON.stringify(rubric)}` : ''}
-      
-      Your response should be in the following format:
-      
-      COMMUNICATION FEEDBACK: <give feedback on communication in bullets>
-      IMPROVEMENT OPPORTUNITY: <give feedback on what they could have done better to achieve the objective and have better communication>`;
+    const systemPrompt = `you are a communcaitons coach for executives with a decade of expreicnce. review the conversation trasncript between the user and an AI and give feedback on the user's communcation. you need to evaualte their grammar, clarity, and communcation quality. also make suggestions on what they could have done better - but be nice and you can say you did a good job if they fulfiled the objectives. evalaute the quality of the conversation against the context of the scenario and the rubric given.
+      you response should be in teh following format:
+      SCENARIO OBJECTIVE: <to be based on the scenario>
+      WAS OBJECTIVE ACHEIVED: <select between Achieved, Not acheived or partailly achieved>
+      COMMUNICATION FEEDBACK: <give feedback on communcaition in bullets>
+      IMPROVEMENT OPPORTUNITY: <give feedback on what they couldm have done better to achive the objecgive and have better communcaition>`;
     
-    // Log request for debugging (without API key)
-    console.log('OpenAI request payload:', {
-      model: "gpt-4",
-      messages: [
-        { role: "system", content: "System prompt (length): " + systemPrompt.length },
-        { role: "user", content: "Transcript content (length): " + transcriptContent.length }
-      ],
-      temperature: 0.7,
-      max_tokens: 1000
-    });
-    
-    // Log detailed information about the request
-    console.log('======= OPENAI API REQUEST =======');
+    // Log request for debugging with full content
+    console.log('======= OPENAI API REQUEST DETAILS =======');
     console.log('Transcript ID:', transcriptId);
     console.log('API Key present:', !!process.env.OPENAI_API_KEY);
     console.log('API Key length:', process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.length : 0);
-    console.log('System prompt length:', systemPrompt.length);
-    console.log('Transcript content length:', transcriptContent.length);
+    console.log('System prompt:', systemPrompt);
+    console.log('User content:', `${transcriptContent}
+    
+    SCENARIO CONTEXT: ${scenarioContext || "No scenario context available"}
+    RUBRIC: ${JSON.stringify(rubric) || "No rubric available"}`);
+    console.log('Temperature:', 0.7);
+    console.log('Max tokens:', 1000);
+    console.log('======= END REQUEST DETAILS =======');
     
     // Make the OpenAI API call
     console.log('Making OpenAI API request...');
@@ -307,7 +295,10 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
           },
           {
             role: "user",
-            content: transcriptContent
+            content: `${transcriptContent}
+            
+            SCENARIO CONTEXT: ${scenarioContext || "No scenario context available"}
+            RUBRIC: ${JSON.stringify(rubric) || "No rubric available"}`
           }
         ],
         temperature: 0.7,
@@ -358,7 +349,10 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
     }
     
     const data = await response.json();
-    console.log('OpenAI feedback received - status:', data.object, 'model:', data.model);
+    console.log('======= OPENAI API RESPONSE =======');
+    console.log('Status:', data.object, 'model:', data.model);
+    console.log('Response content:', data.choices && data.choices.length > 0 ? data.choices[0].message.content : 'No content');
+    console.log('======= END RESPONSE =======');
     
     if (data.choices && data.choices.length > 0 && data.choices[0].message) {
       const feedbackContent = data.choices[0].message.content;
