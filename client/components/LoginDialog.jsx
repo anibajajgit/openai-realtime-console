@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -81,6 +80,14 @@ export default function LoginDialog({ isOpen, onClose, onLoginSuccess }) {
       // Call success callback
       onLoginSuccess(data.user);
       onClose();
+
+      // Force a reload to ensure the app picks up the new user
+      console.log("LoginDialog: Login successful, refreshing page");
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/scenarios';
+        }
+      }, 100);
     } catch (err) {
       setError(err.message);
     } finally {

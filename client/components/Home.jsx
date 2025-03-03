@@ -29,7 +29,13 @@ export default function Home() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.setItem('logout_timestamp', Date.now().toString());
     setUser(null);
+    console.log("Home component: User logged out");
+    // Force the page to reload to clear any lingering state
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
   };
 
   const handleGetStarted = () => {

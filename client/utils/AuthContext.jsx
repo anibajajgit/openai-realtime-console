@@ -51,9 +51,12 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    console.log("AuthContext: Logging out user");
     setUser(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user');
+      // Force a clean slate by adding a timestamp to prevent caching issues
+      localStorage.setItem('logout_timestamp', Date.now().toString());
     }
   };
 

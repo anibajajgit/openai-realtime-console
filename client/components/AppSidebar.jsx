@@ -183,8 +183,12 @@ export default function AppSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    console.log("AppSidebar: Logging out user");
     logout();
-    navigate('/');
+    // Force a complete refresh to clear all React state
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
   };
 
   return (
