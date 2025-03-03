@@ -109,6 +109,8 @@ export default function Review() {
           setTranscriptContent(data.content || "No content available");
 
           // Parse feedback if available
+          console.log("Complete transcript data:", data);
+          
           if (data.Feedbacks && data.Feedbacks.length > 0) {
             const feedbackData = data.Feedbacks[0];
             setFeedbackStatus(feedbackData.status);
@@ -119,6 +121,31 @@ export default function Review() {
               setFeedback(feedbackData.content);
             } else if (feedbackData.status === 'pending') {
               setFeedback("Feedback generation is in progress... This may take a minute.");
+              
+              // Poll for feedback updates if status is pending
+              const feedbackPollInterval = setInterval(() => {
+                console.log("Polling for feedback updates...");
+                fetch(`/api/transcripts/${selectedTranscript.id}?userId=${user.id}`)
+                  .then(response => response.json())
+                  .then(updatedData => {
+                    if (updatedData.Feedbacks && updatedData.Feedbacks.length > 0) {
+                      const updatedFeedback = updatedData.Feedbacks[0];
+                      if (updatedFeedback.status !== 'pending') {
+                        clearInterval(feedbackPollInterval);
+                        setFeedbackStatus(updatedFeedback.status);
+                        if (updatedFeedback.status === 'completed') {
+                          setFeedback(updatedFeedback.content);
+                        } else if (updatedFeedback.status === 'failed') {
+                          setFeedback(`Feedback generation failed: ${updatedFeedback.content || 'Unknown error'}`);
+                        }
+                      }
+                    }
+                  })
+                  .catch(error => console.error("Error polling for feedback:", error));
+              }, 5000); // Poll every 5 seconds
+              
+              // Clean up interval on unmount
+              return () => clearInterval(feedbackPollInterval);
             } else if (feedbackData.status === 'failed') {
               setFeedback(`Feedback generation failed: ${feedbackData.content || 'Unknown error'}`);
             } else {
@@ -126,7 +153,7 @@ export default function Review() {
             }
           } else {
             console.log("No feedback entries found for this transcript");
-            setFeedback("No feedback available");
+            setFeedback("No feedback available - the system will attempt to generate one now");
           }
 
           setFeedbackLoading(false);

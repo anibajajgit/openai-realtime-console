@@ -163,6 +163,33 @@ app.get('/api/transcripts/:id', async (req, res) => {
       return res.status(404).json({ error: 'Transcript not found or access denied' });
     }
     
+    // If transcript exists but has no feedback, create a pending feedback entry
+    if (!transcript.Feedbacks || transcript.Feedbacks.length === 0) {
+      console.log(`No feedback found for transcript ${transcriptId}, creating a pending feedback entry`);
+      
+      try {
+        const newFeedback = await Feedback.create({
+          transcriptId: transcript.id,
+          status: 'pending',
+          content: 'Feedback generation pending...'
+        });
+        
+        // Add the newly created feedback to the transcript object
+        transcript.Feedbacks = [newFeedback];
+        
+        // Trigger OpenAI feedback generation for this transcript
+        setTimeout(() => {
+          generateOpenAIFeedback(transcript.id, transcript.content, transcript.roleId, transcript.scenarioId)
+            .catch(error => {
+              console.error('Error generating OpenAI feedback:', error);
+            });
+        }, 100);
+      } catch (feedbackError) {
+        console.error('Error creating missing feedback entry:', feedbackError);
+        // Continue without failing - the client will handle missing feedback
+      }
+    }
+    
     res.json(transcript);
   } catch (error) {
     console.error('Error fetching transcript:', error);
