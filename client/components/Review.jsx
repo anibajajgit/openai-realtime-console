@@ -50,15 +50,23 @@ export default function Review() {
 
   const fetchTranscriptDetails = async (transcriptId) => {
     try {
+      console.log(`Fetching transcript details for ID: ${transcriptId}, User ID: ${user.id}`);
       const response = await fetch(`/api/transcripts/${transcriptId}?userId=${user.id}`);
+      
       if (!response.ok) {
+        console.error(`HTTP error! Status: ${response.status}`);
         throw new Error('Failed to fetch transcript details');
       }
+      
       const data = await response.json();
+      console.log('Transcript details received:', data);
       setSelectedTranscript(data);
 
-      // If feedback is pending, poll for updates
-      if (data.Feedback && data.Feedback.status === 'pending') {
+      // Check for feedback - handle both data.Feedback (singular) and data.Feedbacks (plural)
+      const feedbackData = data.Feedback || (data.Feedbacks && data.Feedbacks[0]);
+      
+      if (feedbackData && feedbackData.status === 'pending') {
+        console.log('Feedback is pending, will poll for updates in 5 seconds');
         // Wait 5 seconds before polling again
         setTimeout(() => {
           console.log('Polling for feedback updates...');

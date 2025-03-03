@@ -147,24 +147,46 @@ app.get('/api/transcripts/:id', async (req, res) => {
       return res.status(400).json({ error: 'userId query parameter is required' });
     }
     
-    const transcript = await Transcript.findOne({
+    // First verify the transcript exists and belongs to the user
+    const transcriptExists = await Transcript.findOne({
       where: { 
         id: transcriptId,
         userId: userId 
-      },
-      include: [
-        { model: Role, attributes: ['name'], required: false },
-        { model: Scenario, attributes: ['name'], required: false },
-        { model: Feedback, required: false }
-      ]
+      }
     });
     
-    if (!transcript) {
+    if (!transcriptExists) {
+      console.log(`Transcript ID ${transcriptId} not found or does not belong to user ${userId}`);
       return res.status(404).json({ error: 'Transcript not found or access denied' });
     }
     
+    // Now fetch with associations, but handle potential errors with each association
+    let transcript;
+    try {
+      transcript = await Transcript.findOne({
+        where: { 
+          id: transcriptId,
+          userId: userId 
+        },
+        include: [
+          { model: Role, attributes: ['name', 'title'], required: false },
+          { model: Scenario, attributes: ['name', 'description'], required: false },
+          { model: Feedback, required: false }
+        ]
+      });
+    } catch (associationError) {
+      console.error('Error with associations, falling back to basic fetch:', associationError);
+      // Fallback to just the transcript without associations
+      transcript = transcriptExists;
+    }
+    
+    // Check if feedback exists
+    const existingFeedback = await Feedback.findOne({
+      where: { transcriptId: transcript.id }
+    });
+    
     // If transcript exists but has no feedback, create a pending feedback entry
-    if (!transcript.Feedbacks || transcript.Feedbacks.length === 0) {
+    if (!existingFeedback) {
       console.log(`No feedback found for transcript ${transcriptId}, creating a pending feedback entry`);
       
       try {
@@ -175,7 +197,7 @@ app.get('/api/transcripts/:id', async (req, res) => {
         });
         
         // Add the newly created feedback to the transcript object
-        transcript.Feedbacks = [newFeedback];
+        transcript.dataValues.Feedbacks = [newFeedback];
         
         // Trigger OpenAI feedback generation for this transcript
         setTimeout(() => {
@@ -186,8 +208,15 @@ app.get('/api/transcripts/:id', async (req, res) => {
         }, 100);
       } catch (feedbackError) {
         console.error('Error creating missing feedback entry:', feedbackError);
-        // Continue without failing - the client will handle missing feedback
+        // Create a stub feedback object to prevent client errors
+        transcript.dataValues.Feedbacks = [{
+          status: 'failed',
+          content: 'Unable to generate feedback at this time.'
+        }];
       }
+    } else if (!transcript.Feedbacks) {
+      // If the feedback exists but wasn't included in the query
+      transcript.dataValues.Feedbacks = [existingFeedback];
     }
     
     res.json(transcript);
