@@ -289,15 +289,24 @@ export default function App() {
                   </section>
                   <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg relative">
                     {/* Avatar photo container */}
-                    {selectedRole && (
-                      <div className="absolute top-6 left-6 w-1/5 aspect-square rounded-lg overflow-hidden shadow-md border-2 border-white/50">
+                    {console.log("Selected role:", selectedRole)}
+                    <div className="absolute top-6 left-6 w-1/5 aspect-square rounded-lg overflow-hidden shadow-md border-2 border-red-500 bg-white z-10">
+                      {selectedRole ? (
                         <img 
                           src={selectedRole.photoUrl} 
                           alt={`${selectedRole.name} avatar`}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            console.error("Failed to load image:", selectedRole.photoUrl);
+                            e.target.src = "https://via.placeholder.com/150";
+                          }}
                         />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-sm text-red-500">
+                          No role selected
+                        </div>
+                      )}
+                    </div>
                     <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
                       <video
                         ref={(video) => {
