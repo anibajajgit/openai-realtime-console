@@ -1,7 +1,7 @@
+
 import { Sequelize } from 'sequelize';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { Role, Scenario, User, Transcript, Feedback } from './schema.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +18,9 @@ export async function initDatabase() {
     // First test the connection
     await sequelize.authenticate();
     console.log('Database connection has been established successfully.');
+
+    // Import models here to avoid circular dependency
+    const { User, Role, Scenario, Transcript, Feedback } = await import('./schema.js');
 
     // Sync models in a specific order to prevent foreign key issues
     await User.sync({ alter: true });
@@ -42,3 +45,6 @@ export async function initDatabase() {
     throw error;
   }
 }
+
+// Export sequelize instance as default
+export default sequelize;
