@@ -95,8 +95,12 @@ const Home = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
         >
-          <h1 className="text-4xl font-bold mb-4">ConvoCoach</h1>
-          <p className="text-xl mb-8">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-4 tracking-tight">
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
+              ConvoCoach
+            </span>
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl text-white/60 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto">
             Get Real-Time Voice Insights & Communication Feedback by AI
           </p>
         </motion.div>
