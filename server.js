@@ -6,6 +6,11 @@ import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
 import { Role, Scenario, User, Transcript, Feedback } from './database/schema.js';
+import fs from 'fs';
+
+// Create __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
