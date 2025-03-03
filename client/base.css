@@ -69,3 +69,56 @@ select {
   background-size: 1.5em 1.5em;
   padding-right: 2.5rem;
 }
+
+/* Styles for the elegant background elements */
+.bg-\[\#030303\] {
+  background-color: #030303;
+}
+
+.from-indigo-500\/\[0\.05\] {
+  --tw-gradient-from: rgb(99 102 241 / 0.05);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-rose-500\/\[0\.05\] {
+  --tw-gradient-to: rgb(244 63 94 / 0.05);
+}
+
+.blur-3xl {
+  --tw-blur: blur(64px);
+  filter: var(--tw-blur);
+}
+
+.from-indigo-500\/\[0\.15\] {
+  --tw-gradient-from: rgb(99 102 241 / 0.15);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-rose-500\/\[0\.15\] {
+  --tw-gradient-from: rgb(244 63 94 / 0.15);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-violet-500\/\[0\.15\] {
+  --tw-gradient-from: rgb(139 92 246 / 0.15);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-amber-500\/\[0\.15\] {
+  --tw-gradient-from: rgb(245 158 11 / 0.15);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-cyan-500\/\[0\.15\] {
+  --tw-gradient-from: rgb(6 182 212 / 0.15);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-\[\#030303\] {
+  --tw-gradient-from: #030303;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-\[\#030303\]\/80 {
+  --tw-gradient-to: rgb(3 3 3 / 0.8);
+}
