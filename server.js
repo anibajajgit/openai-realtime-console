@@ -519,8 +519,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Configure Vite middleware for React client
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// __filename and __dirname are already defined above
 const vite = await createViteServer({
   server: { 
     middlewareMode: true,
