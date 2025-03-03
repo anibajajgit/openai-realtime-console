@@ -19,6 +19,11 @@ app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, 'client/assets')));
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
 
+// Create client/assets directory if it doesn't exist
+if (!fs.existsSync(path.join(__dirname, 'client/assets'))) {
+  fs.mkdirSync(path.join(__dirname, 'client/assets'), { recursive: true });
+}
+
 // Serve MP3 files with the correct MIME type
 app.get('/assets/*.mp3', (req, res, next) => {
   res.set('Content-Type', 'audio/mpeg');
