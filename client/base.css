@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 :root {
   --color-base: #ffffff;
   --color-highlight: #6366f1;

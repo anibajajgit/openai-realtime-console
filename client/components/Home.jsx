@@ -3,14 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/Button";
 import LoginDialog from "./LoginDialog";
 
+// Assumed implementation of HeroGeometric component.  Replace with actual implementation if available.
+const HeroGeometric = () => (
+  <div className="absolute inset-0 z-0">
+    {/* Add your background styling here */}
+    <svg className="w-full h-full text-gray-100/10" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+      <polygon points="0,100 50,0 100,100" fill="#1f2937"/>
+    </svg>
+  </div>
+);
+
 export default function Home() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const isClient = typeof window !== 'undefined'; // Check if running in browser
+  const isClient = typeof window !== 'undefined';
 
   useEffect(() => {
-    if (typeof window !== 'undefined') { // Only run this on the client-side
+    if (isClient) {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         try {
@@ -32,16 +42,14 @@ export default function Home() {
     localStorage.setItem('logout_timestamp', Date.now().toString());
     setUser(null);
     console.log("Home component: User logged out");
-    // Force the page to reload to clear any lingering state
-    if (typeof window !== 'undefined') {
+    if (isClient) {
       window.location.href = '/';
     }
   };
 
   const handleGetStarted = () => {
     console.log("Get Started button clicked, navigating to /scenarios");
-    // Make sure user is actually stored before navigation
-    if (!user && typeof window !== 'undefined') {
+    if (!user && isClient) {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) {
         console.log("No user found, redirecting to login first");
@@ -53,29 +61,33 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
-      <div className="max-w-2xl w-full text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to the Scenario Simulator</h1>
-        <p className="text-xl mb-8">
+    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
+      {/* Background elements */}
+      <HeroGeometric />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-2xl w-full text-center px-6">
+        <h1 className="text-4xl font-bold mb-4 text-white">Welcome to the Scenario Simulator</h1>
+        <p className="text-xl mb-8 text-white/80">
           Practice real-world scenarios with AI-powered role-playing
         </p>
 
-        {isClient && ( // Conditionally render based on client-side environment
+        {isClient && (
           <>
             {user ? (
               <div className="space-y-4">
                 <p className="text-gray-700">Logged in as: {user.username}</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    size="lg" 
-                    onClick={handleGetStarted} 
+                  <Button
+                    size="lg"
+                    onClick={handleGetStarted}
                     className="w-full sm:w-auto"
                   >
                     Get Started
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleLogout} 
+                  <Button
+                    variant="outline"
+                    onClick={handleLogout}
                     className="w-full sm:w-auto"
                   >
                     Logout
@@ -83,8 +95,8 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 onClick={() => setIsLoginOpen(true)}
                 className="px-8"
               >
@@ -93,13 +105,12 @@ export default function Home() {
             )}
           </>
         )}
-
       </div>
 
-      <LoginDialog 
-        isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)} 
-        onLoginSuccess={handleLoginSuccess} 
+      <LoginDialog
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );
