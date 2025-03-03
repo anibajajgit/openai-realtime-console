@@ -133,10 +133,14 @@ const Home = () => {
         </motion.div>
       </div>
 
-      {/* Login Dialog - Keep exactly as it was */}
+      {/* Login Dialog */}
       <LoginDialog
         isOpen={isLoginOpen} 
         onClose={() => setIsLoginOpen(false)}
+        onLoginSuccess={(userData) => {
+          console.log("Login successful", userData);
+          // The function will automatically store user in localStorage
+        }}
       />
     </div>
   );
