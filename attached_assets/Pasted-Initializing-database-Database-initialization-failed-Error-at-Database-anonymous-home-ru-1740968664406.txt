@@ -1,0 +1,113 @@
+Initializing database...
+Database initialization failed: Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.changeColumn (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query-interface.js:43:7)
+    at async Role.sync (/home/runner/workspace/node_modules/sequelize/lib/model.js:984:11)
+    at async Sequelize.sync (/home/runner/workspace/node_modules/sequelize/lib/sequelize.js:377:9)
+    at async initDatabase (file:///home/runner/workspace/database/index.js:14:5)
+    at async file:///home/runner/workspace/server.js:487:1 {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'id must be unique',
+      type: 'unique violation',
+      path: 'id',
+      value: null,
+      origin: 'DB',
+      instance: null,
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Roles_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+  },
+  original: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Roles_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+  },
+  fields: [ 'id' ],
+  sql: 'INSERT INTO `Roles_backup` SELECT `id`, `name`, `title`, `style`, `photoUrl`, `voice`, `instructions`, `createdAt`, `updatedAt` FROM `Roles`;'
+}
+Seeding database...
+Found 3 existing roles in the database
+All expected roles are already in the database: Priya Anand, Michael Chen, Sarah Johnson
+Users already exist, skipping seed
+Database setup complete
+Server startup: Found 3 roles in database: Priya Anand, Michael Chen, Sarah Johnson
+Express server running on *:3000
+AuthContext Provider rendering with user: null
+AuthContext Provider rendering with user: null
+Sending 3 roles to client
+Sending 3 roles to client
+Fetching transcripts for user 1
+Found 5 transcripts for user 1
+Fetching transcripts for user 1
+Found 5 transcripts for user 1
+Retrieving transcript ID 5 for user 1
+Error with associations, falling back to basic fetch: Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.select (/home/runner/workspace/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:12)
+    at async Transcript.findAll (/home/runner/workspace/node_modules/sequelize/lib/model.js:1140:21)
+    at async Transcript.findOne (/home/runner/workspace/node_modules/sequelize/lib/model.js:1240:12)
+    at async file:///home/runner/workspace/server.js:166:20 {
+  name: 'SequelizeDatabaseError',
+  parent: [Error: SQLITE_ERROR: no such table: Feedbacks] {
+    errno: 1,
+    code: 'SQLITE_ERROR',
+    sql: "SELECT `Transcript`.`id`, `Transcript`.`content`, `Transcript`.`title`, `Transcript`.`roleId`, `Transcript`.`scenarioId`, `Transcript`.`userId`, `Transcript`.`createdAt`, `Transcript`.`updatedAt`, `Role`.`id` AS `Role.id`, `Role`.`name` AS `Role.name`, `Role`.`title` AS `Role.title`, `Scenario`.`id` AS `Scenario.id`, `Scenario`.`name` AS `Scenario.name`, `Scenario`.`description` AS `Scenario.description`, `Feedback`.`id` AS `Feedback.id`, `Feedback`.`content` AS `Feedback.content`, `Feedback`.`status` AS `Feedback.status`, `Feedback`.`transcriptId` AS `Feedback.transcriptId`, `Feedback`.`createdAt` AS `Feedback.createdAt`, `Feedback`.`updatedAt` AS `Feedback.updatedAt` FROM `Transcripts` AS `Transcript` LEFT OUTER JOIN `Roles` AS `Role` ON `Transcript`.`roleId` = `Role`.`id` LEFT OUTER JOIN `Scenarios` AS `Scenario` ON `Transcript`.`scenarioId` = `Scenario`.`id` LEFT OUTER JOIN `Feedbacks` AS `Feedback` ON `Transcript`.`id` = `Feedback`.`transcriptId` WHERE `Transcript`.`id` = '5' AND `Transcript`.`userId` = '1';"
+  },
+  original: [Error: SQLITE_ERROR: no such table: Feedbacks] {
+    errno: 1,
+    code: 'SQLITE_ERROR',
+    sql: "SELECT `Transcript`.`id`, `Transcript`.`content`, `Transcript`.`title`, `Transcript`.`roleId`, `Transcript`.`scenarioId`, `Transcript`.`userId`, `Transcript`.`createdAt`, `Transcript`.`updatedAt`, `Role`.`id` AS `Role.id`, `Role`.`name` AS `Role.name`, `Role`.`title` AS `Role.title`, `Scenario`.`id` AS `Scenario.id`, `Scenario`.`name` AS `Scenario.name`, `Scenario`.`description` AS `Scenario.description`, `Feedback`.`id` AS `Feedback.id`, `Feedback`.`content` AS `Feedback.content`, `Feedback`.`status` AS `Feedback.status`, `Feedback`.`transcriptId` AS `Feedback.transcriptId`, `Feedback`.`createdAt` AS `Feedback.createdAt`, `Feedback`.`updatedAt` AS `Feedback.updatedAt` FROM `Transcripts` AS `Transcript` LEFT OUTER JOIN `Roles` AS `Role` ON `Transcript`.`roleId` = `Role`.`id` LEFT OUTER JOIN `Scenarios` AS `Scenario` ON `Transcript`.`scenarioId` = `Scenario`.`id` LEFT OUTER JOIN `Feedbacks` AS `Feedback` ON `Transcript`.`id` = `Feedback`.`transcriptId` WHERE `Transcript`.`id` = '5' AND `Transcript`.`userId` = '1';"
+  },
+  sql: "SELECT `Transcript`.`id`, `Transcript`.`content`, `Transcript`.`title`, `Transcript`.`roleId`, `Transcript`.`scenarioId`, `Transcript`.`userId`, `Transcript`.`createdAt`, `Transcript`.`updatedAt`, `Role`.`id` AS `Role.id`, `Role`.`name` AS `Role.name`, `Role`.`title` AS `Role.title`, `Scenario`.`id` AS `Scenario.id`, `Scenario`.`name` AS `Scenario.name`, `Scenario`.`description` AS `Scenario.description`, `Feedback`.`id` AS `Feedback.id`, `Feedback`.`content` AS `Feedback.content`, `Feedback`.`status` AS `Feedback.status`, `Feedback`.`transcriptId` AS `Feedback.transcriptId`, `Feedback`.`createdAt` AS `Feedback.createdAt`, `Feedback`.`updatedAt` AS `Feedback.updatedAt` FROM `Transcripts` AS `Transcript` LEFT OUTER JOIN `Roles` AS `Role` ON `Transcript`.`roleId` = `Role`.`id` LEFT OUTER JOIN `Scenarios` AS `Scenario` ON `Transcript`.`scenarioId` = `Scenario`.`id` LEFT OUTER JOIN `Feedbacks` AS `Feedback` ON `Transcript`.`id` = `Feedback`.`transcriptId` WHERE `Transcript`.`id` = '5' AND `Transcript`.`userId` = '1';",
+  parameters: {}
+}
+Error fetching transcript: Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.select (/home/runner/workspace/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:12)
+    at async Feedback.findAll (/home/runner/workspace/node_modules/sequelize/lib/model.js:1140:21)
+    at async Feedback.findOne (/home/runner/workspace/node_modules/sequelize/lib/model.js:1240:12)
+    at async file:///home/runner/workspace/server.js:184:30 {
+  name: 'SequelizeDatabaseError',
+  parent: [Error: SQLITE_ERROR: no such table: Feedbacks] {
+    errno: 1,
+    code: 'SQLITE_ERROR',
+    sql: 'SELECT `id`, `content`, `status`, `transcriptId`, `createdAt`, `updatedAt` FROM `Feedbacks` AS `Feedback` WHERE `Feedback`.`transcriptId` = 5 LIMIT 1;'
+  },
+  original: [Error: SQLITE_ERROR: no such table: Feedbacks] {
+    errno: 1,
+    code: 'SQLITE_ERROR',
+    sql: 'SELECT `id`, `content`, `status`, `transcriptId`, `createdAt`, `updatedAt` FROM `Feedbacks` AS `Feedback` WHERE `Feedback`.`transcriptId` = 5 LIMIT 1;'
+  },
+  sql: 'SELECT `id`, `content`, `status`, `transcriptId`, `createdAt`, `updatedAt` FROM `Feedbacks` AS `Feedback` WHERE `Feedback`.`transcriptId` = 5 LIMIT 1;',
+  parameters: {}
+}
+Error details: SQLITE_ERROR: no such table: Feedbacks Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.select (/home/runner/workspace/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:12)
+    at async Feedback.findAll (/home/runner/workspace/node_modules/sequelize/lib/model.js:1140:21)
+    at async Feedback.findOne (/home/runner/workspace/node_modules/sequelize/lib/model.js:1240:12)
+    at async file:///home/runner/workspace/server.js:184:30
