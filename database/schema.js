@@ -97,6 +97,32 @@ const Transcript = sequelize.define('Transcript', {
   timestamps: true
 });
 
+const Feedback = sequelize.define('Feedback', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  content: {
+    type: DataTypes.TEXT('long'),
+    allowNull: true
+  },
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: 'pending' // pending, completed, failed
+  },
+  transcriptId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Transcripts',
+      key: 'id'
+    }
+  }
+}, {
+  timestamps: true
+});
+
 // Define associations
 User.hasMany(Transcript, { foreignKey: 'userId' });
 Transcript.belongsTo(User, { foreignKey: 'userId' });
@@ -108,4 +134,7 @@ Transcript.belongsTo(Role, { foreignKey: 'roleId' });
 Scenario.hasMany(Transcript, { foreignKey: 'scenarioId' });
 Transcript.belongsTo(Scenario, { foreignKey: 'scenarioId' });
 
-export { Role, Scenario, User, Transcript };
+Transcript.hasOne(Feedback, { foreignKey: 'transcriptId' });
+Feedback.belongsTo(Transcript, { foreignKey: 'transcriptId' });
+
+export { Role, Scenario, User, Transcript, Feedback };

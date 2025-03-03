@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 import { initDatabase } from './database/index.js';
 import { seedDatabase } from './database/seed.js';
-import { Role, Scenario, User, Transcript } from './database/schema.js';
+import { Role, Scenario, User, Transcript, Feedback } from './database/schema.js';
 
 const app = express();
 app.use(express.json());
@@ -45,6 +45,18 @@ app.post('/api/transcripts', async (req, res) => {
       scenarioId,
       title: title || 'Conversation'
     });
+    
+    // Create a pending feedback entry
+    await Feedback.create({
+      transcriptId: transcript.id,
+      status: 'pending'
+    });
+    
+    // Trigger OpenAI feedback request (non-blocking)
+    generateOpenAIFeedback(transcript.id, content, roleId, scenarioId)
+      .catch(error => {
+        console.error('Error generating OpenAI feedback:', error);
+      });
     
     res.status(201).json({
       message: 'Transcript saved successfully',
@@ -124,7 +136,8 @@ app.get('/api/transcripts/:id', async (req, res) => {
       },
       include: [
         { model: Role, attributes: ['name'] },
-        { model: Scenario, attributes: ['name'] }
+        { model: Scenario, attributes: ['name'] },
+        { model: Feedback }
       ]
     });
     
@@ -138,6 +151,102 @@ app.get('/api/transcripts/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch transcript' });
   }
 });
+
+// OpenAI feedback generation function
+async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, scenarioId) {
+  try {
+    console.log(`Generating OpenAI feedback for transcript ${transcriptId}...`);
+    
+    // Fetch scenario information if available
+    let scenarioContext = '';
+    let rubric = [];
+    
+    if (scenarioId) {
+      const scenario = await Scenario.findByPk(scenarioId);
+      if (scenario) {
+        scenarioContext = scenario.instructions || '';
+        rubric = scenario.rubric || [];
+      }
+    }
+    
+    // Construct the system prompt
+    const systemPrompt = `You are a communications coach for executives with a decade of experience. 
+      Review the conversation transcript between the user and an AI and give feedback 
+      on the user's communication. Evaluate their grammar, clarity, and communication quality.
+      Also, make suggestions on what they could have done better - but be nice 
+      and you can say you did a good job if they fulfilled the objectives.
+      
+      ${scenarioContext ? `Scenario Context: ${scenarioContext}` : ''}
+      ${rubric.length > 0 ? `Rubric: ${JSON.stringify(rubric)}` : ''}
+      
+      Your response should be in the following format:
+      
+      COMMUNICATION FEEDBACK: <give feedback on communication in bullets>
+      IMPROVEMENT OPPORTUNITY: <give feedback on what they could have done better to achieve the objective and have better communication>`;
+    
+    // Make the OpenAI API call
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt
+          },
+          {
+            role: "user",
+            content: transcriptContent
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error(`OpenAI API error (${response.status}):`, errorData);
+      
+      // Update feedback status to failed
+      await Feedback.update(
+        { status: 'failed', content: `API Error: ${response.status} - ${errorData}` },
+        { where: { transcriptId } }
+      );
+      
+      return;
+    }
+    
+    const data = await response.json();
+    console.log('OpenAI feedback received:', data);
+    
+    if (data.choices && data.choices.length > 0) {
+      const feedbackContent = data.choices[0].message.content;
+      
+      // Update the feedback in the database
+      await Feedback.update(
+        { content: feedbackContent, status: 'completed' },
+        { where: { transcriptId } }
+      );
+      
+      console.log(`Feedback saved for transcript ${transcriptId}`);
+    } else {
+      throw new Error('No feedback content received from OpenAI');
+    }
+  } catch (error) {
+    console.error('Error in OpenAI feedback generation:', error);
+    
+    // Update feedback status to failed
+    await Feedback.update(
+      { status: 'failed', content: `Error: ${error.message}` },
+      { where: { transcriptId } }
+    );
+  }
+}
 
 // User authentication routes
 app.post('/api/register', async (req, res) => {

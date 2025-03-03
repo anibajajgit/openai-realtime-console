@@ -53,6 +53,15 @@ export default function Review() {
       }
       const data = await response.json();
       setSelectedTranscript(data);
+      
+      // If feedback is pending, poll for updates
+      if (data.Feedback && data.Feedback.status === 'pending') {
+        // Wait 5 seconds before polling again
+        setTimeout(() => {
+          console.log('Polling for feedback updates...');
+          fetchTranscriptDetails(transcriptId);
+        }, 5000);
+      }
     } catch (error) {
       console.error('Error fetching transcript details:', error);
       setError('Failed to load transcript details. Please try again later.');
@@ -137,12 +146,65 @@ export default function Review() {
                         </div>
                         
                         <div className="bg-white p-4 rounded-lg shadow-sm">
-                          {selectedTranscript.content.split('\n\n').map((paragraph, index) => (
-                            <p key={index} className={`mb-4 ${paragraph.startsWith('AI:') ? 'text-blue-600' : 'text-gray-800'}`}>
-                              {paragraph}
-                            </p>
-                          ))}
+                          {(() => {
+                            try {
+                              return selectedTranscript.content.split('\n\n').map((paragraph, index) => (
+                                <p key={index} className={`mb-4 ${paragraph.startsWith('AI:') ? 'text-blue-600' : 'text-gray-800'}`}>
+                                  {paragraph}
+                                </p>
+                              ));
+                            } catch (error) {
+                              console.error('Error parsing transcript content:', error);
+                              return <p className="text-red-500">Error displaying transcript. Content may be malformed.</p>;
+                            }
+                          })()}
                         </div>
+                        
+                        {/* Feedback Section */}
+                        {selectedTranscript.Feedback && (
+                          <div className="mt-8">
+                            <h4 className="text-lg font-medium mb-3">AI Coach Feedback</h4>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                              {selectedTranscript.Feedback.status === 'pending' && (
+                                <p className="text-yellow-600">Feedback is being generated...</p>
+                              )}
+                              
+                              {selectedTranscript.Feedback.status === 'failed' && (
+                                <p className="text-red-600">
+                                  Failed to generate feedback. 
+                                  {selectedTranscript.Feedback.content && 
+                                    selectedTranscript.Feedback.content.startsWith('Error:') && 
+                                    `: ${selectedTranscript.Feedback.content.substring(6)}`}
+                                </p>
+                              )}
+                              
+                              {selectedTranscript.Feedback.status === 'completed' && selectedTranscript.Feedback.content && (
+                                <div>
+                                  {selectedTranscript.Feedback.content.split('\n').map((line, index) => {
+                                    // Format the feedback content
+                                    if (line.startsWith('COMMUNICATION FEEDBACK:') || line.startsWith('IMPROVEMENT OPPORTUNITY:')) {
+                                      return (
+                                        <h5 key={index} className="font-semibold mt-2 mb-1">
+                                          {line}
+                                        </h5>
+                                      );
+                                    } else if (line.trim().startsWith('- ')) {
+                                      // Handle bullet points
+                                      return (
+                                        <p key={index} className="ml-4 mb-1">
+                                          {line}
+                                        </p>
+                                      );
+                                    } else if (line.trim()) {
+                                      return <p key={index} className="mb-2">{line}</p>;
+                                    }
+                                    return null;
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
