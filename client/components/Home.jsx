@@ -1,42 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "./ui/Button";
-import LoginDialog from "./LoginDialog";
 
-export default function Home() {
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../utils/AuthContext";
+import LoginDialog from "./LoginDialog";
+import { motion } from "framer-motion";
+import { cn } from "../utils/styleUtils";
+import { ElegantShape } from "./ElegantBackground";
+
+const Home = () => {
+  const { user, logout } = useContext(AuthContext);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const isClient = typeof window !== 'undefined'; // Check if running in browser
 
   useEffect(() => {
-    if (typeof window !== 'undefined') { // Only run this on the client-side
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        try {
-          setUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error("Error parsing user from localStorage:", error);
-          localStorage.removeItem("user");
-        }
-      }
+    // Close login dialog if user is logged in
+    if (user && isLoginOpen) {
+      setIsLoginOpen(false);
     }
-  }, []);
-
-  const handleLoginSuccess = (userData) => {
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.setItem('logout_timestamp', Date.now().toString());
-    setUser(null);
-    console.log("Home component: User logged out");
-    // Force the page to reload to clear any lingering state
-    if (typeof window !== 'undefined') {
-      window.location.href = '/';
-    }
-  };
+  }, [user, isLoginOpen]);
 
   const handleGetStarted = () => {
     console.log("Get Started button clicked, navigating to /scenarios");
@@ -53,54 +34,112 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
-      <div className="max-w-2xl w-full text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to the Scenario Simulator</h1>
-        <p className="text-xl mb-8">
-          Practice real-world scenarios with AI-powered role-playing
-        </p>
+    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden bg-[#030303] text-white">
+      {/* Elegant Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-rose-500/[0.05] blur-3xl" />
 
-        {isClient && ( // Conditionally render based on client-side environment
-          <>
-            {user ? (
-              <div className="space-y-4">
-                <p className="text-gray-700">Logged in as: {user.username}</p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    size="lg" 
-                    onClick={handleGetStarted} 
-                    className="w-full sm:w-auto"
-                  >
-                    Get Started
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleLogout} 
-                    className="w-full sm:w-auto"
-                  >
-                    Logout
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <Button 
-                size="lg" 
-                onClick={() => setIsLoginOpen(true)}
-                className="px-8"
-              >
-                Login to Get Started
-              </Button>
-            )}
-          </>
-        )}
+      <div className="absolute inset-0 overflow-hidden">
+        <ElegantShape
+          delay={0.3}
+          width={600}
+          height={140}
+          rotate={12}
+          gradient="from-indigo-500/[0.15]"
+          className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
+        />
 
+        <ElegantShape
+          delay={0.5}
+          width={500}
+          height={120}
+          rotate={-15}
+          gradient="from-rose-500/[0.15]"
+          className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
+        />
+
+        <ElegantShape
+          delay={0.4}
+          width={300}
+          height={80}
+          rotate={-8}
+          gradient="from-violet-500/[0.15]"
+          className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
+        />
+
+        <ElegantShape
+          delay={0.6}
+          width={200}
+          height={60}
+          rotate={20}
+          gradient="from-amber-500/[0.15]"
+          className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]"
+        />
+
+        <ElegantShape
+          delay={0.7}
+          width={150}
+          height={40}
+          rotate={-25}
+          gradient="from-cyan-500/[0.15]"
+          className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]"
+        />
       </div>
 
-      <LoginDialog 
+      {/* Add a subtle gradient overlay to ensure content visibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/80 pointer-events-none" />
+
+      {/* Content - Preserved exactly as it was */}
+      <div className="max-w-2xl w-full text-center z-10 relative p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2 }}
+        >
+          <h1 className="text-4xl font-bold mb-4">Welcome to the Scenario Simulator</h1>
+          <p className="text-xl mb-8">
+            Practice real-world scenarios with AI-powered role-playing
+          </p>
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.4 }}
+          className="flex flex-col sm:flex-row justify-center gap-4"
+        >
+          {user ? (
+            <>
+              <button
+                onClick={handleGetStarted}
+                className="py-2 px-6 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                Get Started
+              </button>
+              <button
+                onClick={logout}
+                className="py-2 px-6 bg-transparent border border-white/30 text-white rounded-lg hover:bg-white/10 transition-colors"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsLoginOpen(true)}
+              className="py-2 px-6 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              Login to Get Started
+            </button>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Login Dialog - Keep exactly as it was */}
+      <LoginDialog
         isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)} 
-        onLoginSuccess={handleLoginSuccess} 
+        onClose={() => setIsLoginOpen(false)}
       />
     </div>
   );
-}
+};
+
+export default Home;

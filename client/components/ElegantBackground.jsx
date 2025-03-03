@@ -1,12 +1,7 @@
+"use client";
 
 import { motion } from "framer-motion";
-import { Circle } from "lucide-react";
-import { useEffect, useState } from "react";
-
-// Utility function to combine class names
-const cn = (...classes) => {
-  return classes.filter(Boolean).join(" ");
-};
+import { cn } from "../utils/styleUtils";
 
 function ElegantShape({
     className,
