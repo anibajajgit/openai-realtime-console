@@ -7,4 +7,12 @@ const path = fileURLToPath(import.meta.url);
 export default {
   root: join(dirname(path), "client"),
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      external: ['motion-dom']
+    }
+  },
+  optimizeDeps: {
+    exclude: ['motion-dom']
+  }
 };
