@@ -20,11 +20,33 @@ app.get('/debug-assets', (req, res) => {
   
   try {
     const files = fs.readdirSync(assetPath);
+    
+    // Check for image files specifically
+    const imageFiles = files.filter(file => 
+      file.endsWith('.jpg') || file.endsWith('.jpeg') || 
+      file.endsWith('.png') || file.endsWith('.gif')
+    );
+    
+    // Get file stats for each image
+    const imageStats = imageFiles.map(file => {
+      const filePath = path.join(assetPath, file);
+      const stats = fs.statSync(filePath);
+      return {
+        file,
+        size: stats.size,
+        exists: true,
+        url: `/attached_assets/${file}`,
+        fullPath: filePath
+      };
+    });
+    
     res.json({
       success: true,
       basePath: assetPath,
       files: files,
-      urls: files.map(file => `/attached_assets/${file}`)
+      imageFiles: imageStats,
+      expressStaticPath: path.join(__dirname, 'attached_assets'),
+      urls: imageFiles.map(file => `/attached_assets/${file}`)
     });
   } catch (error) {
     res.json({
@@ -32,6 +54,18 @@ app.get('/debug-assets', (req, res) => {
       error: error.message,
       basePath: assetPath
     });
+  }
+});
+
+// Test route to directly serve a specific image
+app.get('/test-image/:name', (req, res) => {
+  const imageName = req.params.name;
+  const imagePath = path.join(__dirname, 'attached_assets', `${imageName}.jpg`);
+  
+  if (fs.existsSync(imagePath)) {
+    res.sendFile(imagePath);
+  } else {
+    res.status(404).send(`Image ${imageName}.jpg not found`);
   }
 });
 
