@@ -1,0 +1,96 @@
+
+Initializing database...
+Executing (default): SELECT 1+1 AS result
+Database connection has been established successfully.
+Executing (default): SELECT name FROM sqlite_master WHERE type='table' AND name='Users';
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `email` VARCHAR(255) UNIQUE, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `password`, `email`, `createdAt`, `updatedAt` FROM `Users`;
+Unable to initialize database: Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.changeColumn (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query-interface.js:43:7)
+    at async User.sync (/home/runner/workspace/node_modules/sequelize/lib/model.js:984:11)
+    at async initDatabase (file:///home/runner/workspace/database/index.js:26:5)
+    at async file:///home/runner/workspace/server.js:487:1 {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'id must be unique',
+      type: 'unique violation',
+      path: 'id',
+      value: null,
+      origin: 'DB',
+      instance: null,
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users_backup` SELECT `id`, `username`, `password`, `email`, `createdAt`, `updatedAt` FROM `Users`;'
+  },
+  original: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users_backup` SELECT `id`, `username`, `password`, `email`, `createdAt`, `updatedAt` FROM `Users`;'
+  },
+  fields: [ 'id' ],
+  sql: 'INSERT INTO `Users_backup` SELECT `id`, `username`, `password`, `email`, `createdAt`, `updatedAt` FROM `Users`;'
+}
+node:internal/modules/run_main:128
+    triggerUncaughtException(
+    ^
+
+Error
+    at Database.<anonymous> (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/runner/workspace/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.changeColumn (/home/runner/workspace/node_modules/sequelize/lib/dialects/sqlite/query-interface.js:43:7)
+    at async User.sync (/home/runner/workspace/node_modules/sequelize/lib/model.js:984:11)
+    at async initDatabase (file:///home/runner/workspace/database/index.js:26:5)
+    at async file:///home/runner/workspace/server.js:487:1 {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'id must be unique',
+      type: 'unique violation',
+      path: 'id',
+      value: null,
+      origin: 'DB',
+      instance: null,
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users_backup` SELECT `id`, `username`, `password`, `email`, `createdAt`, `updatedAt` FROM `Users`;'
+  },
+  original: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users_backup.id] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users_backup` SELECT `id`, `username`, `password`, `email`, `createdAt`, `updatedAt` FROM `Users`;'
+  },
+  fields: [ 'id' ],
+  sql: 'INSERT INTO `Users_backup` SELECT `id`, `username`, `password`, `email`, `createdAt`, `updatedAt` FROM `Users`;'
+}
