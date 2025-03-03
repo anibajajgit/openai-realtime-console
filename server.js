@@ -224,7 +224,17 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
       max_tokens: 1000
     });
     
+    // Log detailed information about the request
+    console.log('======= OPENAI API REQUEST =======');
+    console.log('Transcript ID:', transcriptId);
+    console.log('API Key present:', !!process.env.OPENAI_API_KEY);
+    console.log('API Key length:', process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.length : 0);
+    console.log('System prompt length:', systemPrompt.length);
+    console.log('Transcript content length:', transcriptContent.length);
+    
     // Make the OpenAI API call
+    console.log('Making OpenAI API request...');
+    const startTime = Date.now();
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -248,21 +258,41 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
       })
     });
     
+    console.log('OpenAI API response received in', Date.now() - startTime, 'ms');
+    console.log('Response status:', response.status);
+    console.log('Response status text:', response.statusText);
+    
     if (!response.ok) {
+      console.error('======= OPENAI API ERROR =======');
+      console.error(`Status: ${response.status} ${response.statusText}`);
+      
       let errorData;
       try {
         errorData = await response.json();
-        console.error(`OpenAI API error (${response.status}):`, JSON.stringify(errorData));
+        console.error(`OpenAI API error details:`, JSON.stringify(errorData, null, 2));
+        
+        // Log specific error information if available
+        if (errorData.error) {
+          console.error('Error type:', errorData.error.type);
+          console.error('Error message:', errorData.error.message);
+          console.error('Error code:', errorData.error.code);
+        }
       } catch (parseError) {
         errorData = await response.text();
         console.error(`OpenAI API error (${response.status}) - couldn't parse JSON:`, errorData);
       }
       
       // Update feedback status to failed with more detailed error info
+      const errorMessage = typeof errorData === 'object' ? 
+        (errorData.error?.message || JSON.stringify(errorData)) : 
+        errorData;
+      
+      console.error('Saving error to feedback:', errorMessage);
+      
       await Feedback.update(
         { 
           status: 'failed', 
-          content: `API Error: ${response.status} - ${typeof errorData === 'object' ? JSON.stringify(errorData) : errorData}` 
+          content: `API Error: ${response.status} - ${errorMessage}` 
         },
         { where: { transcriptId } }
       );
