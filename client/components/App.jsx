@@ -293,7 +293,7 @@ export default function App() {
                     <div className="absolute top-6 left-6 w-1/5 aspect-square rounded-lg overflow-hidden shadow-md border-2 border-red-500 bg-white z-10">
                       {selectedRole ? (
                         <img 
-                          src={`/attached_assets/${selectedRole.name.split(' ')[0].toLowerCase()}.jpg`}
+                          src={`${window.location.origin}/attached_assets/${selectedRole.name.split(' ')[0].toLowerCase()}.jpg`}
                           alt={`${selectedRole.name} avatar`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
