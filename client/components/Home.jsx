@@ -95,9 +95,9 @@ const Home = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
         >
-          <h1 className="text-4xl font-bold mb-4">Welcome to the Scenario Simulator</h1>
+          <h1 className="text-4xl font-bold mb-4">ConvoCoach</h1>
           <p className="text-xl mb-8">
-            Practice real-world scenarios with AI-powered role-playing
+            Get Real-Time Voice Insights & Communication Feedback by AI
           </p>
         </motion.div>
         
