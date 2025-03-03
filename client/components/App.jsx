@@ -311,8 +311,8 @@ export default function App() {
                           }}
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-sm text-red-500">
-                          No role selected
+                        <div className="w-full h-full bg-gray-300">
+                          {/* Empty gray screen when no role is selected */}
                         </div>
                       )}
                     </div>
