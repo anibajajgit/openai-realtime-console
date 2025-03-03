@@ -287,7 +287,17 @@ export default function App() {
                   <section className="w-full md:w-2/5 p-4">
                     {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
                   </section>
-                  <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg">
+                  <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg relative">
+                    {/* Avatar photo container */}
+                    {selectedRole && (
+                      <div className="absolute top-6 left-6 w-1/5 aspect-square rounded-lg overflow-hidden shadow-md border-2 border-white/50">
+                        <img 
+                          src={selectedRole.photoUrl} 
+                          alt={`${selectedRole.name} avatar`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
                     <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
                       <video
                         ref={(video) => {
