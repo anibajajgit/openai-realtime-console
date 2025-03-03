@@ -32,32 +32,47 @@ app.get('/api/scenarios', async (req, res) => {
 // Transcript routes
 app.post('/api/transcripts', async (req, res) => {
   try {
+    console.log('Received request to save transcript:', req.body);
     const { content, userId, roleId, scenarioId, title } = req.body;
     
     if (!content || !userId) {
+      console.error('Missing required fields:', { content: !!content, userId });
       return res.status(400).json({ error: 'Content and userId are required' });
     }
     
+    // First save the transcript - this should be the primary operation
     const transcript = await Transcript.create({
       content,
       userId,
-      roleId,
-      scenarioId,
+      roleId: roleId || null,
+      scenarioId: scenarioId || null,
       title: title || 'Conversation'
     });
     
-    // Create a pending feedback entry
-    await Feedback.create({
-      transcriptId: transcript.id,
-      status: 'pending'
-    });
+    console.log(`Transcript saved with ID: ${transcript.id}`);
     
-    // Trigger OpenAI feedback request (non-blocking)
-    generateOpenAIFeedback(transcript.id, content, roleId, scenarioId)
-      .catch(error => {
-        console.error('Error generating OpenAI feedback:', error);
+    // Create a pending feedback entry in a separate try-catch block
+    try {
+      await Feedback.create({
+        transcriptId: transcript.id,
+        status: 'pending',
+        content: 'Feedback generation pending...'
       });
+      
+      // Trigger OpenAI feedback request in the background
+      // We use setTimeout to ensure this runs after the response is sent
+      setTimeout(() => {
+        generateOpenAIFeedback(transcript.id, content, roleId, scenarioId)
+          .catch(error => {
+            console.error('Error generating OpenAI feedback:', error);
+          });
+      }, 100);
+    } catch (feedbackError) {
+      // Log the error but don't fail the main transcript save operation
+      console.error('Error creating feedback entry:', feedbackError);
+    }
     
+    // Always return success for the transcript save
     res.status(201).json({
       message: 'Transcript saved successfully',
       transcript: {
@@ -68,7 +83,8 @@ app.post('/api/transcripts', async (req, res) => {
     });
   } catch (error) {
     console.error('Error saving transcript:', error);
-    res.status(500).json({ error: 'Failed to save transcript' });
+    console.error('Error details:', error.message, error.stack);
+    res.status(500).json({ error: `Failed to save transcript: ${error.message}` });
   }
 });
 
@@ -157,6 +173,16 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
   try {
     console.log(`Generating OpenAI feedback for transcript ${transcriptId}...`);
     
+    // Check if API key is available
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OpenAI API key is missing');
+      await Feedback.update(
+        { status: 'failed', content: 'Error: OpenAI API key is missing' },
+        { where: { transcriptId } }
+      );
+      return;
+    }
+    
     // Fetch scenario information if available
     let scenarioContext = '';
     let rubric = [];
@@ -184,6 +210,17 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
       COMMUNICATION FEEDBACK: <give feedback on communication in bullets>
       IMPROVEMENT OPPORTUNITY: <give feedback on what they could have done better to achieve the objective and have better communication>`;
     
+    // Log request for debugging (without API key)
+    console.log('OpenAI request payload:', {
+      model: "gpt-4",
+      messages: [
+        { role: "system", content: "System prompt (length): " + systemPrompt.length },
+        { role: "user", content: "Transcript content (length): " + transcriptContent.length }
+      ],
+      temperature: 0.7,
+      max_tokens: 1000
+    });
+    
     // Make the OpenAI API call
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -192,7 +229,7 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o",
+        model: "gpt-4",  // Changed from gpt-4o to gpt-4 to match example
         messages: [
           {
             role: "system",
@@ -209,12 +246,21 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
     });
     
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error(`OpenAI API error (${response.status}):`, errorData);
+      let errorData;
+      try {
+        errorData = await response.json();
+        console.error(`OpenAI API error (${response.status}):`, JSON.stringify(errorData));
+      } catch (parseError) {
+        errorData = await response.text();
+        console.error(`OpenAI API error (${response.status}) - couldn't parse JSON:`, errorData);
+      }
       
-      // Update feedback status to failed
+      // Update feedback status to failed with more detailed error info
       await Feedback.update(
-        { status: 'failed', content: `API Error: ${response.status} - ${errorData}` },
+        { 
+          status: 'failed', 
+          content: `API Error: ${response.status} - ${typeof errorData === 'object' ? JSON.stringify(errorData) : errorData}` 
+        },
         { where: { transcriptId } }
       );
       
@@ -222,9 +268,9 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
     }
     
     const data = await response.json();
-    console.log('OpenAI feedback received:', data);
+    console.log('OpenAI feedback received - status:', data.object, 'model:', data.model);
     
-    if (data.choices && data.choices.length > 0) {
+    if (data.choices && data.choices.length > 0 && data.choices[0].message) {
       const feedbackContent = data.choices[0].message.content;
       
       // Update the feedback in the database
@@ -235,7 +281,8 @@ async function generateOpenAIFeedback(transcriptId, transcriptContent, roleId, s
       
       console.log(`Feedback saved for transcript ${transcriptId}`);
     } else {
-      throw new Error('No feedback content received from OpenAI');
+      console.error('Unexpected OpenAI response format:', JSON.stringify(data));
+      throw new Error('No feedback content received from OpenAI or unexpected response format');
     }
   } catch (error) {
     console.error('Error in OpenAI feedback generation:', error);
