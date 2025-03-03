@@ -1,0 +1,166 @@
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/events/event-info.mjs:1:33:
+      1 │ import { isPrimaryPointer } from 'motion-dom';
+        ╵                                  ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/interfaces/visual-element-target.mjs:1:35:
+      1 │ import { getValueTransition } from 'motion-dom';
+        ╵                                    ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/easing/utils/map.mjs:1:35:
+      1 │ import { isBezierDefinition } from 'motion-dom';
+        ╵                                    ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/gestures/press.mjs:1:22:
+      1 │ import { press } from 'motion-dom';
+        ╵                       ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/sequence/create.mjs:1:51:
+      1 │ import { isGenerator, createGeneratorEasing } from 'motion-dom';
+        ╵                                                    ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/animators/waapi/animate-elements.mjs:1:52:
+      1 │ import { resolveElements, getValueTransition } from 'motion-dom';
+        ╵                                                     ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/projection/node/create-projection-node.mjs:1:35:
+      1 │ import { getValueTransition } from 'motion-dom';
+        ╵                                    ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/render/dom/resize/handle-element.mjs:1:32:
+      1 │ import { resolveElements } from 'motion-dom';
+        ╵                                 ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/gestures/hover.mjs:1:22:
+      1 │ import { hover } from 'motion-dom';
+        ╵                       ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/interfaces/motion-value.mjs:1:58:
+      1 │ import { getValueTransition, GroupPlaybackControls } from 'motion-dom';
+        ╵                                                           ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/gestures/drag/VisualElementDragControls.mjs:1:28:
+      1 │ import { setDragLock } from 'motion-dom';
+        ╵                             ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/animators/waapi/index.mjs:1:40:
+      1 │ import { mapEasingToNativeEasing } from 'motion-dom';
+        ╵                                         ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/animate/resolve-subjects.mjs:1:32:
+      1 │ import { resolveElements } from 'motion-dom';
+        ╵                                 ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/animators/utils/can-animate.mjs:1:28:
+      1 │ import { isGenerator } from 'motion-dom';
+        ╵                             ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/gestures/pan/PanSession.mjs:1:49:
+      1 │ import { capturePointer, isPrimaryPointer } from 'motion-dom';
+        ╵                                                  ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+✘ [ERROR] Could not resolve "motion-dom"
+
+    node_modules/framer-motion/dist/es/animation/animators/waapi/NativeAnimation.mjs:1:98:
+      1 │ ...nControls, isGenerator, createGeneratorEasing, supportsLinearEasing } from 'motion-dom';
+        ╵                                                                               ~~~~~~~~~~~~
+
+  You can mark the path "motion-dom" as external to exclude it from the bundle, which will remove
+  this error and leave the unresolved path in the bundle.
+
+/home/runner/workspace/node_modules/esbuild/lib/main.js:1472
+  let error = new Error(text);
+              ^
+
+Error: Build failed with 24 errors:
+node_modules/framer-motion/dist/es/animation/animate/index.mjs:1:38: ERROR: Could not resolve "motion-dom"
+node_modules/framer-motion/dist/es/animation/animate/resolve-subjects.mjs:1:32: ERROR: Could not resolve "motion-dom"
+node_modules/framer-motion/dist/es/animation/animators/AcceleratedAnimation.mjs:1:90: ERROR: Could not resolve "motion-dom"
+node_modules/framer-motion/dist/es/animation/animators/MainThreadAnimation.mjs:1:51: ERROR: Could not resolve "motion-dom"
+node_modules/framer-motion/dist/es/animation/animators/utils/can-animate.mjs:1:28: ERROR: Could not resolve "motion-dom"
+...
+    at failureErrorWithLog (/home/runner/workspace/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:945:25
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:1353:9
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
