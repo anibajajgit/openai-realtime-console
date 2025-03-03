@@ -2,14 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Additional animations for the elegant background */
+@keyframes shapeAppear {
+  0% { opacity: 0; transform: translateY(-150px) rotate(var(--rotate-start, 0deg)); }
+  100% { opacity: 1; transform: translateY(0) rotate(var(--rotate-end, 0deg)); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0px); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(15px); }
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 12s ease-in-out infinite;
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 1s ease-out forwards;
+}
+
+.delay-1 {
+  animation-delay: 0.7s;
+}
+
+.delay-2 {
+  animation-delay: 0.9s;
+}
+
+.delay-3 {
+  animation-delay: 1.1s;
 }
 
 :root {
