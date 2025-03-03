@@ -47,7 +47,7 @@ export default function App() {
 
   useEffect(() => {
     console.log("App component mounted with user:", user);
-    
+
     // Check if we're in the login state but actually have a user in localStorage
     if (!user && typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('user');
@@ -293,15 +293,13 @@ export default function App() {
                     <div className="absolute top-6 left-6 w-1/5 aspect-square rounded-lg overflow-hidden shadow-md border-2 border-red-500 bg-white z-10">
                       {selectedRole ? (
                         <img 
-                          src={selectedRole?.photoUrl || ''}
-                          alt={`${selectedRole?.name || 'Role'} avatar`}
+                          src={`/attached_assets/${selectedRole.name.split(' ')[0].toLowerCase()}.jpg`}
+                          alt={`${selectedRole.name} avatar`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             console.error("Failed to load image:", e.target.src);
-                            // Add a console log to help debug
-                            console.log("Available roles data:", selectedRole);
-                            // Use data URI for fallback to ensure it works offline
-                            e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23f0f0f0'/%3E%3Ctext x='75' y='75' font-family='Arial' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23333'%3E" + (selectedRole?.name?.charAt(0) || '?') + "%3C/text%3E%3C/svg%3E";
+                            // Show first letter of name as fallback
+                            e.target.outerHTML = `<div class="w-full h-full flex items-center justify-center bg-blue-100 text-blue-800 text-4xl font-bold">${selectedRole.name.charAt(0)}</div>`;
                           }}
                         />
                       ) : (

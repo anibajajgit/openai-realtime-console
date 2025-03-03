@@ -13,6 +13,28 @@ app.use(express.json());
 // Serve attached_assets directory
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
 
+// Debug route for attached assets
+app.get('/debug-assets', (req, res) => {
+  const assetPath = path.join(__dirname, 'attached_assets');
+  const fs = require('fs');
+  
+  try {
+    const files = fs.readdirSync(assetPath);
+    res.json({
+      success: true,
+      basePath: assetPath,
+      files: files,
+      urls: files.map(file => `/attached_assets/${file}`)
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.message,
+      basePath: assetPath
+    });
+  }
+});
+
 // API endpoints
 const port = process.env.PORT || 3000;
 const fallbackPort = 3001;
