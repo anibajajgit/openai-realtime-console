@@ -137,4 +137,4 @@ function HeroGeometric({
     );
 }
 
-export { HeroGeometric };
+export { HeroGeometric, ElegantShape };
