@@ -13,7 +13,7 @@ export async function seedDatabase() {
       name: "Priya Anand",
       title: "CTO",
       style: "ASSERTIVE",
-      photoUrl: `https://ui-avatars.com/api/?name=Priya+Anand&size=150&background=random`,
+      photoUrl: `/attached_assets/priya.jpg`,
       voice: "shimmer",
       instructions: "Your knowledge cutoff is 2023-10. You are an indian woman, born and raised in Mumbai, India and must Speak with a local Indian accent at all times. You are the CTO of a Pharmaceutical company. you are assertive, and dont like to be disturbed unless for something important, but are generally polite."
     },
@@ -21,7 +21,7 @@ export async function seedDatabase() {
       name: "Michael Chen",
       title: "Product Manager",
       style: "COLLABORATIVE",
-      photoUrl: `https://ui-avatars.com/api/?name=Michael+Chen&size=150&background=random`,
+      photoUrl: `/attached_assets/michael.jpg`,
       voice: "verse",
       instructions: "You are a product manager focused on user experience and collaboration. You are open to new ideas and appreciate detailed presentations."
     },
@@ -29,7 +29,7 @@ export async function seedDatabase() {
       name: "Sarah Johnson",
       title: "HR Director",
       style: "EMPATHETIC",
-      photoUrl: `https://ui-avatars.com/api/?name=Sarah+Johnson&size=150&background=random`,
+      photoUrl: `/attached_assets/sarah.jpg`,
       voice: "nova",
       instructions: "You are an HR director with 15 years experience. You focus on people and company culture."
     }
