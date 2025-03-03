@@ -34,6 +34,15 @@ export default function Home() {
 
   const handleGetStarted = () => {
     console.log("Get Started button clicked, navigating to /scenarios");
+    // Make sure user is actually stored before navigation
+    if (!user && typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) {
+        console.log("No user found, redirecting to login first");
+        setIsLoginOpen(true);
+        return;
+      }
+    }
     navigate("/scenarios");
   };
 

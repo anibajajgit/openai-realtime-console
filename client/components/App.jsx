@@ -26,20 +26,46 @@ export default function App() {
 
 
   const loginApp = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    authContext.login(userData); // Use authContext.login here
+    if (userData) {
+      localStorage.setItem('user', JSON.stringify(userData));
+      // Only call login if authContext exists
+      if (authContext && authContext.login) {
+        authContext.login(userData);
+      }
+      console.log("User logged in:", userData);
+    }
   };
 
   const logoutApp = () => {
     localStorage.removeItem('user');
-    authContext.logout(); // Use authContext.logout here
+    // Only call logout if authContext exists
+    if (authContext && authContext.logout) {
+      authContext.logout();
+    }
+    console.log("User logged out");
   };
 
   useEffect(() => {
     console.log("App component mounted with user:", user);
-    // No need to check localStorage here since AuthContext already does this
-    // This prevents potential duplicate or conflicting user state
-  }, [user]);
+    
+    // Check if we're in the login state but actually have a user in localStorage
+    if (!user && typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          if (parsedUser && parsedUser.id) {
+            console.log("Found user in localStorage, restoring:", parsedUser);
+            if (authContext && authContext.login) {
+              authContext.login(parsedUser);
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing stored user:", error);
+        }
+      }
+    }
+  }, [user, authContext]);
 
   async function startSession() {
     try {

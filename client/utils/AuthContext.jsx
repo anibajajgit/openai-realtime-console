@@ -23,7 +23,9 @@ export function AuthProvider({ children }) {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         try {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          console.log("Auth context loading user from localStorage:", parsedUser);
+          setUser(parsedUser);
         } catch (e) {
           console.error("Error parsing stored user:", e);
           localStorage.removeItem('user');
@@ -31,6 +33,13 @@ export function AuthProvider({ children }) {
       }
     }
   }, []);
+
+  // Add another effect to help with debugging
+  useEffect(() => {
+    if (user) {
+      console.log("AuthContext user state updated:", user);
+    }
+  }, [user]);
 
   console.log("AuthContext Provider rendering with user:", user);
 
