@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/Button";
 import LoginDialog from "./LoginDialog";
+import { HeroGeometric } from "./ElegantBackground";
 
 export default function Home() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -53,7 +54,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6">
+      <HeroGeometric /> {/* Added geometric background */}
       <div className="max-w-2xl w-full text-center">
         <h1 className="text-4xl font-bold mb-4">Welcome to the Scenario Simulator</h1>
         <p className="text-xl mb-8">
