@@ -22,21 +22,34 @@ export async function initDatabase() {
     // Import models here to avoid circular dependency
     const { User, Role, Scenario, Transcript, Feedback } = await import('./schema.js');
 
-    // Sync models in a specific order to prevent foreign key issues
-    await User.sync({ alter: true });
-    await Role.sync({ alter: true });
-    await Scenario.sync({ alter: true });
-    await Transcript.sync({ alter: true });
+    try {
+      // Use force:false to keep existing data, just validate structure
+      console.log('Syncing User model...');
+      await User.sync({ force: false });
+      
+      console.log('Syncing Role model...');
+      await Role.sync({ force: false });
+      
+      console.log('Syncing Scenario model...');
+      await Scenario.sync({ force: false });
+      
+      console.log('Syncing Transcript model...');
+      await Transcript.sync({ force: false });
 
-    // Check if Feedback table exists
-    const tableExists = await sequelize.getQueryInterface().showAllTables()
-      .then(tables => tables.includes('Feedbacks'));
+      // Check if Feedback table exists
+      const tableExists = await sequelize.getQueryInterface().showAllTables()
+        .then(tables => tables.includes('Feedbacks'));
 
-    if (!tableExists) {
-      console.log('Creating Feedbacks table...');
-      await Feedback.sync({ force: true });
-    } else {
-      await Feedback.sync({ alter: true });
+      if (!tableExists) {
+        console.log('Creating Feedbacks table...');
+        await Feedback.sync({ force: true });
+      } else {
+        console.log('Syncing Feedback model...');
+        await Feedback.sync({ force: false });
+      }
+    } catch (syncError) {
+      console.error('Error during model sync:', syncError);
+      throw syncError;
     }
 
     console.log('All models were synchronized successfully.');
