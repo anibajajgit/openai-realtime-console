@@ -9,6 +9,7 @@ import { Role, Scenario, User, Transcript, Feedback } from './database/schema.js
 const app = express();
 app.use(express.json());
 const port = process.env.PORT || 3000;
+const fallbackPort = 3001;
 const hmrPort = process.env.HMR_PORT || 24678;
 const apiKey = process.env.OPENAI_API_KEY;
 
@@ -559,6 +560,15 @@ app.use("*", async (req, res, next) => {
   }
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Express server running on *:${port}`);
+}).on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.log(`Port ${port} is already in use, trying ${fallbackPort}`);
+    app.listen(fallbackPort, () => {
+      console.log(`Express server running on *:${fallbackPort}`);
+    });
+  } else {
+    console.error('Server error:', e);
+  }
 });
