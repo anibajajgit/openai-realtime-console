@@ -96,7 +96,7 @@ const Home = () => {
           transition={{ duration: 1, delay: 0.2 }}
         >
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-4 tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white/90 to-rose-300">
               ConvoCoach
             </span>
           </h1>
