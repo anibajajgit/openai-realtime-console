@@ -11,7 +11,7 @@ export default function SessionControls({
   isSessionActive,
 }) {
   return (
-    <div className="flex gap-4 border-t-2 border-gray-200 h-full rounded-md">
+    <div className="flex gap-4 border-t-2 border-gray-200 h-full rounded-md relative z-20">
       {isSessionActive ? (
         <SessionActive
           stopSession={stopSession}

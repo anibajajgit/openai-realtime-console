@@ -16,22 +16,29 @@ const app = express();
 app.use(express.json());
 
 // Serve attached_assets directory
+app.use('/assets', express.static(path.join(__dirname, 'client/assets')));
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
+
+// Serve MP3 files with the correct MIME type
+app.get('/assets/*.mp3', (req, res, next) => {
+  res.set('Content-Type', 'audio/mpeg');
+  next();
+});
 
 // Debug route for attached assets
 app.get('/debug-assets', (req, res) => {
   const assetPath = path.join(__dirname, 'attached_assets');
   const fs = require('fs');
-  
+
   try {
     const files = fs.readdirSync(assetPath);
-    
+
     // Check for image files specifically
     const imageFiles = files.filter(file => 
       file.endsWith('.jpg') || file.endsWith('.jpeg') || 
       file.endsWith('.png') || file.endsWith('.gif')
     );
-    
+
     // Get file stats for each image
     const imageStats = imageFiles.map(file => {
       const filePath = path.join(assetPath, file);
@@ -44,7 +51,7 @@ app.get('/debug-assets', (req, res) => {
         fullPath: filePath
       };
     });
-    
+
     res.json({
       success: true,
       basePath: assetPath,
@@ -66,7 +73,7 @@ app.get('/debug-assets', (req, res) => {
 app.get('/test-image/:name', (req, res) => {
   const imageName = req.params.name;
   const imagePath = path.join(__dirname, 'attached_assets', `${imageName}.jpg`);
-  
+
   if (fs.existsSync(imagePath)) {
     res.sendFile(imagePath);
   } else {

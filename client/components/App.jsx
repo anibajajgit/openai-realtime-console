@@ -301,7 +301,7 @@ export default function App() {
                             // Try direct test-image route as fallback
                             const firstName = selectedRole.name.split(' ')[0].toLowerCase();
                             e.target.src = `/test-image/${firstName}`;
-                            
+
                             // Add a second error handler for the fallback attempt
                             e.target.onerror = () => {
                               console.log(`Fallback image also failed: ${e.target.src}`);
@@ -316,7 +316,8 @@ export default function App() {
                         </div>
                       )}
                     </div>
-                    <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto">
+                    <div className={`bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto 
+                      ${isSessionActive ? 'ring-4 ring-blue-500 ring-opacity-75' : ''}`}>
                       <video
                         ref={(video) => {
                           if (video) {
