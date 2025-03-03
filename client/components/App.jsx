@@ -293,13 +293,21 @@ export default function App() {
                     <div className="absolute top-6 left-6 w-1/5 aspect-square rounded-lg overflow-hidden shadow-md border-2 border-red-500 bg-white z-10">
                       {selectedRole ? (
                         <img 
-                          src={`${window.location.origin}/attached_assets/${selectedRole.name.split(' ')[0].toLowerCase()}.jpg`}
+                          src={`/attached_assets/${selectedRole.name.split(' ')[0].toLowerCase()}.jpg`}
                           alt={`${selectedRole.name} avatar`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             console.log(`Failed to load image: ${e.target.src}`);
-                            // Use a data URI placeholder instead of external URL
-                            e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22150%22%20viewBox%3D%220%200%20150%20150%22%3E%3Crect%20fill%3D%22%23e0e0e0%22%20width%3D%22150%22%20height%3D%22150%22%2F%3E%3Ctext%20fill%3D%22%23999%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%2212%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fsvg%3E';
+                            // Try direct test-image route as fallback
+                            const firstName = selectedRole.name.split(' ')[0].toLowerCase();
+                            e.target.src = `/test-image/${firstName}`;
+                            
+                            // Add a second error handler for the fallback attempt
+                            e.target.onerror = () => {
+                              console.log(`Fallback image also failed: ${e.target.src}`);
+                              // Use a data URI placeholder as last resort
+                              e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22150%22%20viewBox%3D%220%200%20150%20150%22%3E%3Crect%20fill%3D%22%23e0e0e0%22%20width%3D%22150%22%20height%3D%22150%22%2F%3E%3Ctext%20fill%3D%22%23999%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%2230%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3E${firstName.charAt(0).toUpperCase()}%3C%2Ftext%3E%3C%2Fsvg%3E';
+                            };
                           }}
                         />
                       ) : (
