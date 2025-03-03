@@ -112,7 +112,7 @@ export default function Review() {
           if (data.Feedbacks && data.Feedbacks.length > 0) {
             const feedbackData = data.Feedbacks[0];
             setFeedbackStatus(feedbackData.status);
-
+            
             console.log("Feedback data:", feedbackData);
 
             if (feedbackData.status === 'completed' && feedbackData.content) {

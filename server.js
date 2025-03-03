@@ -141,6 +141,8 @@ app.get('/api/transcripts/:id', async (req, res) => {
     const transcriptId = req.params.id;
     const userId = req.query.userId;
     
+    console.log(`Retrieving transcript ID ${transcriptId} for user ${userId}`);
+    
     if (!userId) {
       return res.status(400).json({ error: 'userId query parameter is required' });
     }
@@ -151,9 +153,9 @@ app.get('/api/transcripts/:id', async (req, res) => {
         userId: userId 
       },
       include: [
-        { model: Role, attributes: ['name'] },
-        { model: Scenario, attributes: ['name'] },
-        { model: Feedback }
+        { model: Role, attributes: ['name'], required: false },
+        { model: Scenario, attributes: ['name'], required: false },
+        { model: Feedback, required: false }
       ]
     });
     
@@ -164,7 +166,8 @@ app.get('/api/transcripts/:id', async (req, res) => {
     res.json(transcript);
   } catch (error) {
     console.error('Error fetching transcript:', error);
-    res.status(500).json({ error: 'Failed to fetch transcript' });
+    console.error('Error details:', error.message, error.stack);
+    res.status(500).json({ error: `Failed to fetch transcript: ${error.message}` });
   }
 });
 
