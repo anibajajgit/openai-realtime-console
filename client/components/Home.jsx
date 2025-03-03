@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/Button";
 import LoginDialog from "./LoginDialog";
-import { HeroGeometric } from "./ElegantBackground";
 
 export default function Home() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -55,14 +53,10 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-      {/* Background elements */}
-      <HeroGeometric />
-      
-      {/* Content */}
-      <div className="relative z-10 max-w-2xl w-full text-center px-6">
-        <h1 className="text-4xl font-bold mb-4 text-white">Welcome to the Scenario Simulator</h1>
-        <p className="text-xl mb-8 text-white/80">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
+      <div className="max-w-2xl w-full text-center">
+        <h1 className="text-4xl font-bold mb-4">Welcome to the Scenario Simulator</h1>
+        <p className="text-xl mb-8">
           Practice real-world scenarios with AI-powered role-playing
         </p>
 
@@ -70,19 +64,19 @@ export default function Home() {
           <>
             {user ? (
               <div className="space-y-4">
-                <p className="text-white/90">Logged in as: {user.username}</p>
+                <p className="text-gray-700">Logged in as: {user.username}</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button 
                     size="lg" 
                     onClick={handleGetStarted} 
-                    className="w-full sm:w-auto bg-primary hover:bg-primary/90"
+                    className="w-full sm:w-auto"
                   >
                     Get Started
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={handleLogout} 
-                    className="w-full sm:w-auto border-white text-white hover:bg-white/20"
+                    className="w-full sm:w-auto"
                   >
                     Logout
                   </Button>
@@ -92,13 +86,14 @@ export default function Home() {
               <Button 
                 size="lg" 
                 onClick={() => setIsLoginOpen(true)}
-                className="px-8 bg-primary hover:bg-primary/90"
+                className="px-8"
               >
                 Login to Get Started
               </Button>
             )}
           </>
         )}
+
       </div>
 
       <LoginDialog 
