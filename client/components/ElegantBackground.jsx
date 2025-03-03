@@ -63,9 +63,9 @@ function ElegantShape({
 }
 
 function HeroGeometric({
-    badge = "Scenario Simulator",
-    title1 = "Practice Real-World",
-    title2 = "AI-Powered Role-Playing",
+    badge = "ConvoCoach",
+    title1 = "Real-Time Voice Insights",
+    title2 = "& Communication Feedback for Success",
 }) {
     const fadeUpVariants = {
         hidden: { opacity: 0, y: 30 },
