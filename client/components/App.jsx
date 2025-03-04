@@ -1,3 +1,13 @@
+
+// Find the component that renders the scenario page and add these className adjustments
+// This is a sample - you'll need to locate the exact component that renders the scenario content
+// This might be in a ScenarioSelector.jsx or similar file
+
+// Example addition to the component's container div:
+// <div className="scenario-section">
+//   {/* Your scenario card and video components */}
+// </div>
+
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";

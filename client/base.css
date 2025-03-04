@@ -65,21 +65,53 @@ body,
 
 /* Main content layout with sidebar */
 .main-content {
-  margin-left: 80px; /* Increased from 60px to add more space */
+  margin-left: 80px; /* Space for collapsed sidebar */
   transition: margin-left 0.3s ease;
   min-height: 100vh;
-  width: calc(100% - 80px); /* Adjust width to match new margin */
+  width: calc(100% - 80px); /* Adjust width to match margin */
   position: relative;
+  padding-left: 20px; /* Add padding to prevent content from touching sidebar */
 }
 
 .sidebar-expanded .main-content {
-  margin-left: 320px; /* Increased from 300px to add more space */
-  width: calc(100% - 320px); /* Adjust width to match new margin */
+  margin-left: 320px; /* Space for expanded sidebar */
+  width: calc(100% - 320px); /* Adjust width to match margin */
 }
 
-/* Fix for scenario selector specifically */
-section > div.bg-white\/90 {
-  margin-left: 100px; /* Add specific margin to scenario container */
+/* Style for scenario page */
+h2:first-of-type {
+  margin-left: 20px; /* Ensure page title is visible */
+  position: relative;
+  z-index: 1; /* Ensure title is above other elements */
+}
+
+/* Fix card layout - make card widths responsive */
+.scenario-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  padding-left: 20px; /* Consistent padding */
+}
+
+/* Card layout adjustment */
+.scenario-section > div {
+  width: calc(35% - 20px); /* Smaller scenario card */
+  margin-left: 0 !important; /* Override any previous margin */
+}
+
+.scenario-section > div + div {
+  width: calc(65% - 20px); /* Larger video card */
+}
+
+/* Make cards responsive */
+@media (max-width: 1200px) {
+  .scenario-section > div,
+  .scenario-section > div + div {
+    width: 100%; /* Full width on smaller screens */
+  }
 }
 
 /* Sidebar overlay when expanded */
