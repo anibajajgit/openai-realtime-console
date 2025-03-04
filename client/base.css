@@ -104,16 +104,15 @@ body,
 /* Fixed sidebar styles */
 @media (min-width: 768px) {
   .main-content {
-    padding-left: 20px; /* Add padding to ensure content is visible */
+    padding-left: 80px; /* Increase padding to account for collapsed sidebar width (60px) + extra space */
+  }
+  
+  .sidebar-expanded .main-content {
+    padding-left: 320px; /* Increase padding when sidebar is expanded (300px width + extra space) */
   }
 }
 
-/* Simple targeted selectors for scenario page */
-h2:first-of-type,
-select,
-[role="button"] {
-  margin-left: 20px; /* Add minimal margin to these elements */
-}
+/* Simple targeted selectors for scenario page - removed as they're redundant with the main content padding */
 
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
