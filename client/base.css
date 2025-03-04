@@ -65,16 +65,16 @@ body,
 
 /* Main content layout with sidebar */
 .main-content {
-  margin-left: 60px; /* Width of collapsed sidebar */
+  margin-left: 80px; /* Increased from 60px to add more space */
   transition: margin-left 0.3s ease;
   min-height: 100vh;
-  width: calc(100% - 60px); /* Adjust width to account for sidebar */
+  width: calc(100% - 80px); /* Adjust width to match new margin */
   position: relative;
 }
 
 .sidebar-expanded .main-content {
-  margin-left: 300px; /* Width of expanded sidebar */
-  width: calc(100% - 300px); /* Adjust width when sidebar is expanded */
+  margin-left: 320px; /* Increased from 300px to add more space */
+  width: calc(100% - 320px); /* Adjust width to match new margin */
 }
 
 /* Sidebar overlay when expanded */
@@ -103,16 +103,10 @@ body,
 
 /* Fixed sidebar styles */
 @media (min-width: 768px) {
-  .main-content {
-    padding-left: 80px; /* Increase padding to account for collapsed sidebar width (60px) + extra space */
-  }
-  
-  .sidebar-expanded .main-content {
-    padding-left: 320px; /* Increase padding when sidebar is expanded (300px width + extra space) */
-  }
+  /* Removed redundant padding rules as we're using margin-left instead */
 }
 
-/* Simple targeted selectors for scenario page - removed as they're redundant with the main content padding */
+/* No targeted selectors needed as we're handling positioning with margin-left */
 
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
