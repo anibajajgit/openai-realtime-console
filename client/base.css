@@ -67,6 +67,7 @@ body,
 .main-content {
   margin-left: 60px; /* Width of collapsed sidebar */
   transition: margin-left 0.3s ease;
+  min-height: 100vh;
 }
 
 .sidebar-expanded .main-content {
@@ -78,6 +79,13 @@ body,
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Fixed sidebar styles */
+@media (min-width: 768px) {
+  .main-content {
+    padding-left: 0; /* Adjusts for the fixed sidebar */
+  }
 }
 
 select {
