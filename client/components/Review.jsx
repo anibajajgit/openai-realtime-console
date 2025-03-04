@@ -29,6 +29,8 @@ export default function Review() {
       }
 
       console.log(`Fetching transcripts for user ID: ${user.id}`);
+      // Add a small delay to ensure API is ready after navigation
+      await new Promise(resolve => setTimeout(resolve, 200));
       const response = await fetch(`/api/transcripts/user/${user.id}`);
 
       if (!response.ok) {
