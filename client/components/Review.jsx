@@ -213,8 +213,8 @@ export default function Review() {
                   {transcripts.length === 0 ? (
                     <p>You don't have any saved conversations yet.</p>
                   ) : (
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="mb-4">
+                    <div className="w-full gap-4">
+                      <div className="mb-4 w-full">
                         <label htmlFor="transcript-select" className="block text-sm font-medium text-gray-700 mb-2">
                           Select a conversation
                         </label>
@@ -234,13 +234,13 @@ export default function Review() {
                       </div>
 
                       {selectedTranscript && (
-                        <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                          <div className="flex justify-between items-center mb-4">
+                        <div className="bg-gray-50 p-4 rounded-lg mt-4 w-full">
+                          <div className="flex justify-between items-center mb-4 w-full">
                             <h3 className="text-lg font-medium">{selectedTranscript.title}</h3>
                             <span className="text-sm text-gray-500">{formatDate(selectedTranscript.createdAt)}</span>
                           </div>
 
-                          <div className="bg-white p-4 rounded-lg shadow-sm">
+                          <div className="bg-white p-4 rounded-lg shadow-sm w-full">
                             {(() => {
                               try {
                                 return selectedTranscript.content.split('\n\n').map((paragraph, index) => (

@@ -113,14 +113,25 @@ h2:first-of-type {
 .review-section {
   position: relative;
   z-index: 10;
-  margin-left: 20px; /* Base margin */
+  width: calc(100% - 20px); /* Full width minus small margin */
+  padding-right: 20px; /* Add right padding for balance */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Apply same treatment as scenario card to ensure it's not hidden behind sidebar */
 .review-section > div {
-  margin-left: 100px !important; /* Match scenario card positioning */
   position: relative;
   z-index: 20;
+  width: calc(100% - 100px); /* Full width minus left margin */
+  margin-left: 100px !important; /* Match scenario card positioning */
+  max-width: 1200px; /* Prevent excessive stretching on large screens */
+}
+
+/* Ensure transcript content takes full width */
+.review-section .bg-white,
+.review-section .bg-gray-50 {
+  width: 100%;
 }
 
 /* Make cards responsive */
