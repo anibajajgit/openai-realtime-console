@@ -101,7 +101,7 @@ h2:first-of-type {
 /* Card layout adjustment - fully responsive */
 .scenario-section > div {
   flex: 1; /* Allow flexible growth */
-  min-width: 300px; /* Smaller minimum width to be more responsive */
+  min-width: 200px; /* Smaller minimum width to be more responsive */
   margin-left: 0 !important; /* Override any previous margin */
 }
 
