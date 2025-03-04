@@ -307,7 +307,8 @@ export default function App() {
       
       // Attempt to play audio after a short delay to ensure DOM is ready
       setTimeout(playSound, 500);
-      }, 100);
+      // No comma here
+      setTimeout(playSound, 500);
     } else if (!isSessionActive && audioRef.current) {
       // Stop audio when session ends
       console.log("Stopping audio playback");
