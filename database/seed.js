@@ -31,9 +31,7 @@ export async function seedDatabase() {
       style: "EMPATHETIC",
       photoUrl: `/attached_assets/sarah.jpg`,
       voice: "nova",
-      instructions: "when my mouse pointer is on the bottom left of the screen. - the sidebar does not hover open because it is really short - what are the dimensions and how can i fix this? i want the sidebar to extend to the entire length of my left screen
-
-        make the profile icon as left as possible - remove all padding and spacing."
+      instructions: "You are an HR director with an empathetic communication style. You focus on employee wellbeing and professional development."
     }
   ];
 
