@@ -14,5 +14,11 @@ export default {
   },
   optimizeDeps: {
     exclude: ['motion-dom']
+  },
+  resolve: {
+    alias: {
+      '@': resolve(dirname(path), 'client'),
+      '@lib': resolve(dirname(path), 'client/lib')
+    }
   }
 };
