@@ -46,7 +46,6 @@ export default function ScenarioSelector() {
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-md w-full mb-4 md:mb-0">
-      <h2 className="text-lg font-semibold mb-6">Choose a scenario</h2>
 
       <div className="space-y-4">
         <div className="relative">
