@@ -99,16 +99,18 @@ h2:first-of-type {
 }
 
 /* Card layout adjustment - fully responsive */
+.scenario-section {
+  justify-content: space-between; /* Distribute space between items */
+}
+
 .scenario-section > div {
-  flex: 1; /* Allow flexible growth */
+  flex: 0 0 38%; /* Fixed width for scenario card - no grow, no shrink, 38% width */
   min-width: 200px; /* Smaller minimum width to be more responsive */
   margin-left: 0 !important; /* Override any previous margin */
-  max-width: 40%; /* Limit scenario card width to 40% */
 }
 
 .scenario-section > div + div {
-  flex: 2; /* Give more space to the video container */
-  min-width: 60%; /* Ensure video takes at least 60% of width */
+  flex: 0 0 60%; /* Fixed width for video container - no grow, no shrink, 60% width */
 }
 
 /* Make cards responsive */
