@@ -203,7 +203,7 @@ export default function AppSidebar() {
           </div>
           {user && (
             <div className="mt-auto p-2 border-t border-gray-200">
-              <div className="flex items-center gap-3 px-2 py-3">
+              <div className="flex items-center gap-1 px-2 py-3">
                 <div className="bg-white p-2 rounded-full shadow-sm border border-gray-200">
                   <User size={18} className="text-gray-700" />
                 </div>
@@ -220,7 +220,7 @@ export default function AppSidebar() {
               </div>
               <div
                 onClick={handleLogout}
-                className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-gray-100"
+                className="flex items-center gap-1 p-2 rounded cursor-pointer hover:bg-gray-100"
               >
                 <LogOut size={18} className="text-black" />
                 <span
@@ -247,7 +247,7 @@ export default function AppSidebar() {
           </div>
           {user && (
             <div className="mt-auto p-2 border-t border-gray-200">
-              <div className="flex items-center gap-3 px-2 py-3">
+              <div className="flex items-center gap-1 px-2 py-3">
                 <div className="bg-white p-2 rounded-full shadow-sm border border-gray-200">
                   <User size={18} className="text-gray-700" />
                 </div>
@@ -264,7 +264,7 @@ export default function AppSidebar() {
               </div>
               <div
                 onClick={handleLogout}
-                className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-gray-100"
+                className="flex items-center gap-1 p-2 rounded cursor-pointer hover:bg-gray-100"
               >
                 <LogOut size={18} className="text-black" />
                 <span
