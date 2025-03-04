@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { CloudLightning, CloudOff, MessageSquare } from "react-feather";
 import Button from "./Button";
@@ -94,7 +93,7 @@ function SessionActive({ stopSession, sendTextMessage }) {
       >
         send text
       </Button>
-      
+
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button icon={<CloudOff height={16} />}>
@@ -116,22 +115,20 @@ function SessionActive({ stopSession, sendTextMessage }) {
                 // Show the confirmation dialog after ending the session
                 setTimeout(() => {
                   const confirmDialog = document.createElement('div');
-                  // Store the current location's origin for proper navigation
+                  // Get the current origin
                   const currentOrigin = window.location.origin;
                   confirmDialog.innerHTML = `
                     <div class="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center">
                       <div class="bg-white p-6 rounded-lg max-w-md w-full">
-                        <h3 class="text-lg font-semibold">Session Ended</h3>
+                        <h3 class="text-xl font-semibold">Session Ended</h3>
                         <p class="text-gray-500 my-2">Feedback on this conversation will be processed and can be reviewed in the Review pane.</p>
                         <div class="flex justify-end gap-2 mt-4">
                           <button class="px-4 py-2 border rounded" onclick="this.closest('.fixed').remove()">Try Again</button>
-                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="window.location.replace(currentOrigin + '/review')">Review Feedback</button>
+                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="window.location.href = '/review'">Review Feedback</button>
                         </div>
                       </div>
                     </div>
                   `;
-                  // Pass the current origin to the dialog
-                  confirmDialog.setAttribute('data-origin', currentOrigin);
                   document.body.appendChild(confirmDialog);
                 }, 500);
               }} 
