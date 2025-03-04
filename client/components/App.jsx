@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate, useNavigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import ScenarioSelector from "./ScenarioSelector";
 import EventLog from "./EventLog";
@@ -24,7 +24,7 @@ export default function App() {
   const location = useLocation();
   const [selectedRole, setSelectedRole] = useState(null); // Add state for selected role
   const [selectedScenario, setSelectedScenario] = useState(null); // Add state for selected scenario
-
+  const navigate = useNavigate(); //Import and use useNavigate
 
   const loginApp = (userData) => {
     if (userData) {
@@ -67,6 +67,22 @@ export default function App() {
       }
     }
   }, [user, authContext]);
+
+  // Listen for the custom navigation event
+  useEffect(() => {
+    const handleNavigateToReview = () => {
+      // Use React Router's navigate function
+      navigate('/review');
+    };
+
+    // Add event listener
+    window.addEventListener('navigateToReview', handleNavigateToReview);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('navigateToReview', handleNavigateToReview);
+    };
+  }, [navigate]);
 
   async function startSession() {
     try {
