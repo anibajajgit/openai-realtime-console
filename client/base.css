@@ -113,8 +113,8 @@ h2:first-of-type {
 .review-section {
   position: relative;
   z-index: 10;
-  width: calc(100% - 20px); /* Full width minus small margin */
-  padding-right: 20px; /* Add right padding for balance */
+  width: 100%; /* Full width */
+  padding-right: 40px; /* Increased right padding for balance */
   display: flex;
   flex-direction: column;
 }
@@ -123,8 +123,8 @@ h2:first-of-type {
 .review-section > div {
   position: relative;
   z-index: 20;
-  width: calc(100% - 100px); /* Full width minus left margin */
-  margin-left: 100px !important; /* Match scenario card positioning */
+  width: calc(100% - 20px); /* Full width with slight margin */
+  margin-left: 0 !important; /* Remove left margin as we already have padding */
   max-width: 1200px; /* Prevent excessive stretching on large screens */
 }
 
