@@ -114,22 +114,39 @@ function SessionActive({ stopSession, sendTextMessage }) {
                 stopSession();
                 // Show the confirmation dialog after ending the session
                 setTimeout(() => {
+                  // Create a React-based dialog instead of direct DOM manipulation
+                  // Import React components we need at the top of the file
+                  const { useNavigate } = require('react-router-dom');
+                  const navigate = useNavigate();
+                  
+                  // Create a dialog element using React's approach
                   const confirmDialog = document.createElement('div');
-                  // Get the current origin
-                  const currentOrigin = window.location.origin;
+                  confirmDialog.className = "fixed inset-0 bg-black/80 z-[200] flex items-center justify-center";
+                  
+                  // Add the dialog content
                   confirmDialog.innerHTML = `
-                    <div class="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center">
-                      <div class="bg-white p-6 rounded-lg max-w-md w-full">
-                        <h3 class="text-xl font-semibold">Session Ended</h3>
-                        <p class="text-gray-500 my-2">Feedback on this conversation will be processed and can be reviewed in the Review pane.</p>
-                        <div class="flex justify-end gap-2 mt-4">
-                          <button class="px-4 py-2 border rounded" onclick="this.closest('.fixed').remove()">Try Again</button>
-                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="window.location.href = '/review'">Review Feedback</button>
-                        </div>
+                    <div class="bg-white p-6 rounded-lg max-w-md w-full">
+                      <h3 class="text-xl font-semibold">Session Ended</h3>
+                      <p class="text-gray-500 my-2">Feedback on this conversation will be processed and can be reviewed in the Review pane.</p>
+                      <div class="flex justify-end gap-2 mt-4">
+                        <button id="try-again-btn" class="px-4 py-2 border rounded">Try Again</button>
+                        <button id="review-btn" class="px-4 py-2 bg-red-600 text-white rounded">Review Feedback</button>
                       </div>
                     </div>
                   `;
+                  
                   document.body.appendChild(confirmDialog);
+                  
+                  // Add event listeners with proper React Router navigation
+                  document.getElementById('try-again-btn').addEventListener('click', () => {
+                    confirmDialog.remove();
+                  });
+                  
+                  document.getElementById('review-btn').addEventListener('click', () => {
+                    confirmDialog.remove();
+                    // Use window.location with complete URL instead of relative path
+                    window.location.href = window.location.origin + '/review';
+                  });
                 }, 500);
               }} 
               className="bg-red-600 text-white hover:bg-red-700"
