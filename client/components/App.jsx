@@ -352,7 +352,7 @@ export default function App() {
                       )}
                     </div>
                     <div className={`bg-white/90 backdrop-blur-sm shadow-md rounded-xl p-5 h-[400px] md:h-[500px] w-4/5 ml-auto 
-                      ${isSessionActive ? 'ring-4 ring-blue-500 ring-opacity-75' : ''}`}>
+                      ${isSessionActive ? '' : ''}`}>
                       <video
                         ref={(video) => {
                           if (video) {
