@@ -1,6 +1,18 @@
+
 import React, { useState } from "react";
 import { CloudLightning, CloudOff, MessageSquare } from "react-feather";
 import Button from "./Button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 export default function SessionControls({
   startSession,
@@ -82,9 +94,28 @@ function SessionActive({ stopSession, sendTextMessage }) {
       >
         send text
       </Button>
-      <Button onClick={stopSession} icon={<CloudOff height={16} />}>
-        disconnect
-      </Button>
+      
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button icon={<CloudOff height={16} />}>
+            disconnect
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="z-50">
+          <AlertDialogHeader>
+            <AlertDialogTitle>End Session</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to end this session? Your conversation will be saved for review.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={stopSession} className="bg-red-600 text-white hover:bg-red-700">
+              End Session
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
