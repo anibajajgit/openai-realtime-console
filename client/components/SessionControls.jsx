@@ -73,14 +73,19 @@ function SessionActive({ stopSession, sendTextMessage }) {
   }
 
   function handleEndSession() {
+    console.log("handleEndSession called");
     stopSession();
-    // Show the feedback dialog
-    setShowFeedbackDialog(true);
+    // Show the feedback dialog - forced delay to ensure it runs after stopSession is complete
+    setTimeout(() => {
+      console.log("Setting showFeedbackDialog to true");
+      setShowFeedbackDialog(true);
+    }, 100);
   }
 
   function handleNavigateToReview() {
     // Close the dialog and navigate to review page
     setShowFeedbackDialog(false);
+    console.log("Navigating to /review");
     navigate('/review');
   }
 
@@ -127,7 +132,10 @@ function SessionActive({ stopSession, sendTextMessage }) {
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction 
-                onClick={handleEndSession}
+                onClick={() => {
+                  console.log("End session clicked, calling handleEndSession");
+                  handleEndSession();
+                }}
                 className="bg-red-600 text-white hover:bg-red-700"
               >
                 End Session
@@ -155,7 +163,10 @@ function SessionActive({ stopSession, sendTextMessage }) {
               <Link 
                 to="/review" 
                 className="px-4 py-2 bg-red-600 text-white rounded inline-block"
-                onClick={() => setShowFeedbackDialog(false)}
+                onClick={() => {
+                  console.log("Review Feedback clicked");
+                  setShowFeedbackDialog(false);
+                }}
               >
                 Review Feedback
               </Link>
