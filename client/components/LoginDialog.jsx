@@ -163,11 +163,7 @@ export default function LoginDialog({ isOpen, onClose, onLoginSuccess }) {
               {isRegister ? "Already have an account?" : "Create account"}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading
-                ? "Loading..."
-                : isRegister
-                ? "Register"
-                : "Login"}
+              {loading ? "Loading..." : (isRegister ? "Register" : "Login")}
             </Button>
           </DialogFooter>
         </form>
