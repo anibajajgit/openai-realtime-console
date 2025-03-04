@@ -22,7 +22,7 @@ export default {
     }
   },
   server: {
-    hmr: process.env.NODE_ENV === 'production' ? false : {
+    hmr: {
       protocol: 'wss',
       clientPort: 443,
       port: 24678
