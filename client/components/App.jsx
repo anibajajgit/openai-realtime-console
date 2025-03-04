@@ -339,13 +339,13 @@ export default function App() {
                 <div className={`flex flex-col md:flex-row h-full bg-gray-50 relative ${isSessionActive ? 'border border-transparent rounded-lg p-2' : ''}`}> 
                   {isSessionActive && <BorderTrail className="bg-blue-500" size={10} />}
                   <AppSidebar />
-                  <div className="w-full overflow-auto">
+                  <div className="w-full md:w-2/5 overflow-auto">
                     <h2 className="text-xl font-semibold">Choose a scenario</h2>
                     <section className="w-full p-4 scenario-section">
                       {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
                     </section>
                   </div>
-                  <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg relative">
+                  <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg relative flex-grow">
                     {/* Avatar photo container */}
                     {console.log("Selected role:", selectedRole)}
                     <div className="absolute top-6 left-6 w-1/5 aspect-square rounded-lg overflow-hidden shadow-md border-2 border-red-500 bg-white z-10">
