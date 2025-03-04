@@ -1,3 +1,4 @@
+
 import express from "express";
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -562,18 +563,18 @@ app.post('/api/login', async (req, res) => {
 const vite = await createViteServer({
   server: { 
     middlewareMode: true,
-    hmr: false // Disable HMR WebSocket to prevent connection errors
+    hmr: false
   },
   appType: "custom",
+  optimizeDeps: {
+    disabled: process.env.NODE_ENV === 'production'
+  }
 });
 
+// Allow CORS for API requests
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
-  if (req.headers.upgrade === 'websocket') {
-    res.header('Connection', 'Upgrade');
-    res.header('Upgrade', 'websocket');
-  }
   next();
 });
 
