@@ -30,6 +30,33 @@ app.get('/assets/*.mp3', (req, res, next) => {
   next();
 });
 
+// Also set MIME type for MP3 files in attached_assets
+app.get('/attached_assets/*.mp3', (req, res, next) => {
+  res.set('Content-Type', 'audio/mpeg');
+  next();
+});
+
+// Debug route for call sound
+app.get('/debug-call-sound', (req, res) => {
+  const soundPath = path.join(__dirname, 'attached_assets', 'call-sound.mp3');
+  
+  if (fs.existsSync(soundPath)) {
+    const stats = fs.statSync(soundPath);
+    res.json({
+      exists: true,
+      size: stats.size,
+      path: soundPath,
+      url: '/attached_assets/call-sound.mp3'
+    });
+  } else {
+    res.json({
+      exists: false,
+      path: soundPath,
+      message: 'Call sound file not found'
+    });
+  }
+});
+
 // Debug route for attached assets
 app.get('/debug-assets', (req, res) => {
   const assetPath = path.join(__dirname, 'attached_assets');

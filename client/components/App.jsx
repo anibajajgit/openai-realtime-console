@@ -259,17 +259,36 @@ export default function App() {
   }, [dataChannel]);
 
   useEffect(() => {
+    console.log("Session active state changed:", isSessionActive);
+    
     if (isSessionActive && audioRef.current) {
+      console.log("Attempting to play call sound");
       // Reset audio and try to play call sound
       audioRef.current.currentTime = 0;
       audioRef.current.volume = 0.5;
-      const playPromise = audioRef.current.play();
-
-      if (playPromise !== undefined) {
-        playPromise.catch(err => {
-          console.error("Error playing audio:", err);
-        });
-      }
+      
+      // First, try to load the audio
+      audioRef.current.load();
+      
+      // Then play after a short delay to ensure loading
+      setTimeout(() => {
+        const playPromise = audioRef.current.play();
+        
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log("Audio is playing successfully");
+            })
+            .catch(err => {
+              console.error("Error playing audio:", err);
+            });
+        }
+      }, 100);
+    } else if (!isSessionActive && audioRef.current) {
+      // Stop audio when session ends
+      console.log("Stopping audio playback");
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
   }, [isSessionActive]);
 
@@ -372,7 +391,12 @@ export default function App() {
         } />
       </Routes>
       {/* Audio element for call sound */}
-      <audio ref={audioRef} src="/attached_assets/call-sound.mp3" />
+      <audio 
+        ref={audioRef} 
+        src="/attached_assets/call-sound.mp3"
+        preload="auto"
+        id="callSound"
+      />
 
       {/* Overlay when session is active */}
       {isSessionActive && (
