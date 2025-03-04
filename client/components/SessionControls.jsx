@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { CloudLightning, CloudOff, MessageSquare } from "react-feather";
 import Button from "./Button";
@@ -13,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
+import { Link } from "react-router-dom"; // Import Link component
 
 export default function SessionControls({
   startSession,
@@ -94,7 +94,7 @@ function SessionActive({ stopSession, sendTextMessage }) {
       >
         send text
       </Button>
-      
+
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button icon={<CloudOff height={16} />}>
@@ -123,7 +123,7 @@ function SessionActive({ stopSession, sendTextMessage }) {
                         <p class="text-gray-500 my-2">Feedback on this conversation will be processed and can be reviewed in the Review pane.</p>
                         <div class="flex justify-end gap-2 mt-4">
                           <button class="px-4 py-2 border rounded" onclick="this.closest('.fixed').remove()">Try Again</button>
-                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="window.location.href='/review'">Review Feedback</button>
+                          <Link to="/review" className="px-4 py-2 bg-red-600 text-white rounded inline-block">Review Feedback</Link>
                         </div>
                       </div>
                     </div>
