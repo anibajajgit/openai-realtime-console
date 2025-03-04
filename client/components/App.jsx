@@ -335,7 +335,7 @@ export default function App() {
                   <h1>Scenarios</h1>
                 </div>
               </nav>
-              <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-10"> {/* Lowered z-index to work with overlay */}
+              <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-20"> {/* Increased z-index to stay above overlay */}
                 <div className={`flex flex-col md:flex-row h-full bg-gray-50 relative ${isSessionActive ? 'border border-transparent rounded-lg p-2' : ''}`}> 
                   {isSessionActive && <BorderTrail className="bg-blue-500" size={10} />}
                   <AppSidebar />
@@ -426,8 +426,8 @@ export default function App() {
 
       {/* Overlay when session is active */}
       {isSessionActive && (
-        <div className="absolute inset-0 bg-black/40 pointer-events-none z-10">
-          {/* This overlay covers everything except the main container */}
+        <div className="absolute inset-0 bg-black/40 pointer-events-none z-5">
+          {/* This overlay should have a lower z-index than the main container */}
         </div>
       )}
     </AuthContext.Provider>

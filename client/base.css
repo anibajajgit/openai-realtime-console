@@ -18,6 +18,12 @@
 }
 
 .dark\:text-neutral-200 {
+
+/* Z-index utility for overlay */
+.z-5 {
+  z-index: 5;
+}
+
   color: rgb(229, 229, 229);
 }
 
