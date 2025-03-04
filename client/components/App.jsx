@@ -263,34 +263,50 @@ export default function App() {
 
     if (isSessionActive && audioRef.current) {
       console.log("Attempting to play call sound");
-      // Reset audio and try to play call sound
+      
+      // Reset audio and prepare for playback
       audioRef.current.currentTime = 0;
       audioRef.current.volume = 0.5;
+      audioRef.current.muted = false;
       
-      // Use user interaction to explicitly enable audio
-      const playAudio = () => {
-        console.log("Playing audio from user interaction");
-        audioRef.current.play()
-          .then(() => {
-            console.log("Audio started successfully");
-          })
-          .catch(err => {
-            console.error("Error playing audio:", err);
-          });
-      };
+      // First make sure the audio is loaded
+      audioRef.current.load();
       
-      // Try to play immediately
-      const playPromise = audioRef.current.play();
-
+      // Define a function to handle audio playback
+      const playSound = () => {
+        console.log("Playing sound with explicit interaction");
+        const playPromise = audioRef.current.play();
+        
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
               console.log("Audio is playing successfully");
+              // Create a small beep as backup in case the audio file doesn't play
+              try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.connect(audioContext.destination);
+                oscillator.start();
+                setTimeout(() => oscillator.stop(), 200);
+              } catch (e) {
+                console.log("Backup sound also failed:", e);
+              }
             })
             .catch(err => {
               console.error("Error playing audio:", err);
+              // Try unmuting and playing again
+              audioRef.current.muted = false;
+              setTimeout(() => {
+                audioRef.current.play().catch(e => console.error("Second attempt failed:", e));
+              }, 500);
             });
         }
+      };
+      
+      // Attempt to play audio after a short delay to ensure DOM is ready
+      setTimeout(playSound, 500);
       }, 100);
     } else if (!isSessionActive && audioRef.current) {
       // Stop audio when session ends
