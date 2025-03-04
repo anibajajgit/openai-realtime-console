@@ -110,7 +110,7 @@ body,
   /* Adjust selector cards to be visible with collapsed sidebar */
   .scenario-selector-card,
   .transcript-selector-card {
-    margin-left: 20px; /* Additional margin to ensure visibility */
+    margin-left: 80px; /* Increased margin to avoid overlap with collapsed sidebar */
   }
 }
 
