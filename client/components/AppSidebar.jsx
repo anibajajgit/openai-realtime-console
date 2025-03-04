@@ -202,16 +202,25 @@ export default function AppSidebar() {
             ))}
           </div>
           {user && (
-            <div className="mt-auto p-2 border-t border-gray-700">
-              <div className="flex items-center gap-2 px-2 py-3">
-                <div className="bg-gray-700 p-2 rounded-full">
-                  <User size={18} />
+            <div className="mt-auto p-2 border-t border-gray-200">
+              <div className="flex items-center gap-3 px-2 py-3">
+                <div className="bg-white p-2 rounded-full shadow-sm border border-gray-200">
+                  <User size={18} className="text-gray-700" />
                 </div>
-                <span className="text-sm font-medium text-black">{user.username}</span>
+                <span 
+                  style={{
+                    display: open ? "inline-block" : "none",
+                    opacity: open ? 1 : 0,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-sm font-medium text-black"
+                >
+                  {user.username}
+                </span>
               </div>
               <div
                 onClick={handleLogout}
-                className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-700"
+                className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-gray-100"
               >
                 <LogOut size={18} className="text-black" />
                 <span
@@ -237,16 +246,25 @@ export default function AppSidebar() {
             ))}
           </div>
           {user && (
-            <div className="mt-auto p-2 border-t border-gray-700">
-              <div className="flex items-center gap-2 px-2 py-3">
-                <div className="bg-gray-700 p-2 rounded-full">
-                  <User size={18} />
+            <div className="mt-auto p-2 border-t border-gray-200">
+              <div className="flex items-center gap-3 px-2 py-3">
+                <div className="bg-white p-2 rounded-full shadow-sm border border-gray-200">
+                  <User size={18} className="text-gray-700" />
                 </div>
-                <span className="text-sm font-medium text-black">{user.username}</span>
+                <span 
+                  style={{
+                    display: open ? "inline-block" : "none",
+                    opacity: open ? 1 : 0,
+                    transition: "opacity 0.3s ease"
+                  }}
+                  className="text-sm font-medium text-black"
+                >
+                  {user.username}
+                </span>
               </div>
               <div
                 onClick={handleLogout}
-                className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-700"
+                className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-gray-100"
               >
                 <LogOut size={18} className="text-black" />
                 <span
