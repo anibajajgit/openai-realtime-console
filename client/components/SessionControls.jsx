@@ -101,17 +101,39 @@ function SessionActive({ stopSession, sendTextMessage }) {
             disconnect
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="z-50" onOpenAutoFocus={() => stopSession()}>
+        <AlertDialogContent className="z-50">
           <AlertDialogHeader>
-            <AlertDialogTitle>Session Ended</AlertDialogTitle>
+            <AlertDialogTitle>End Session</AlertDialogTitle>
             <AlertDialogDescription>
-              Feedback on this conversation will be processed and can be reviewed in the Review pane.
+              Are you sure you want to end this session? Your conversation will be saved for review.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Try Again</AlertDialogCancel>
-            <AlertDialogAction onClick={() => window.location.href = '/review'} className="bg-red-600 text-white hover:bg-red-700">
-              Review Feedback
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                stopSession();
+                // Show the confirmation dialog after ending the session
+                setTimeout(() => {
+                  const confirmDialog = document.createElement('div');
+                  confirmDialog.innerHTML = `
+                    <div class="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center">
+                      <div class="bg-white p-6 rounded-lg max-w-md w-full">
+                        <h3 class="text-lg font-semibold">Session Ended</h3>
+                        <p class="text-gray-500 my-2">Feedback on this conversation will be processed and can be reviewed in the Review pane.</p>
+                        <div class="flex justify-end gap-2 mt-4">
+                          <button class="px-4 py-2 border rounded" onclick="this.closest('.fixed').remove()">Try Again</button>
+                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="window.location.href='/review'">Review Feedback</button>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                  document.body.appendChild(confirmDialog);
+                }, 500);
+              }} 
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              End Session
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
