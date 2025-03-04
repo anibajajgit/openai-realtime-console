@@ -109,6 +109,20 @@ h2:first-of-type {
   margin-left: 0 !important; /* Override any previous margin */
 }
 
+/* Targeted styling for review section */
+.review-section {
+  position: relative;
+  z-index: 10;
+  margin-left: 20px; /* Base margin */
+}
+
+/* Apply same treatment as scenario card to ensure it's not hidden behind sidebar */
+.review-section > div {
+  margin-left: 100px !important; /* Match scenario card positioning */
+  position: relative;
+  z-index: 20;
+}
+
 /* Make cards responsive */
 @media (max-width: 1200px) {
   .scenario-section > div,
