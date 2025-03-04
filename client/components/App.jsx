@@ -317,7 +317,8 @@ export default function App() {
                 </div>
               </nav>
               <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-20"> {/*Added relative and z-20 */}
-                <div className={`flex flex-col md:flex-row h-full bg-gray-50 ${isSessionActive ? 'border border-blue-500/20 rounded-lg p-2' : ''}`}> {/*Added conditional class */}
+                <div className={`flex flex-col md:flex-row h-full bg-gray-50 relative ${isSessionActive ? 'border border-transparent rounded-lg p-2' : ''}`}> 
+                  {isSessionActive && <BorderTrail className="bg-blue-500" size={10} />}
                   <AppSidebar />
                   <section className="w-full md:w-2/5 p-4">
                     {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
