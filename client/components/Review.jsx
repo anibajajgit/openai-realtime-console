@@ -40,6 +40,7 @@ export default function Review() {
       const data = await response.json();
       console.log(`Received ${data.length} transcripts`);
       setTranscripts(data);
+      setTranscripts(data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching transcripts:', error);
