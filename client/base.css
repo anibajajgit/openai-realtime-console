@@ -110,7 +110,12 @@ body,
   /* Adjust selector cards to be visible with collapsed sidebar */
   .scenario-selector-card,
   .transcript-selector-card {
-    margin-left: 80px; /* Increased margin to avoid overlap with collapsed sidebar */
+    margin-left: 120px; /* Further increased margin to prevent overlap with collapsed sidebar */
+  }
+  
+  /* Target specific container elements that might be used for cards */
+  .main-content > div > div:first-child {
+    margin-left: 20px; /* Add margin to first child containers within main content */
   }
 }
 
