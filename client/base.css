@@ -65,10 +65,11 @@ body,
 
 /* Main content layout with sidebar */
 .main-content {
-  margin-left: 60px; /* Width of collapsed sidebar */
+  margin-left: 80px; /* Increased margin for collapsed sidebar */
+  padding-left: 30px; /* Additional padding to ensure content is visible */
   transition: margin-left 0.3s ease;
   min-height: 100vh;
-  width: calc(100% - 60px); /* Adjust width to account for sidebar */
+  width: calc(100% - 80px); /* Adjust width to account for sidebar */
   position: relative;
 }
 
@@ -104,18 +105,21 @@ body,
 /* Fixed sidebar styles */
 @media (min-width: 768px) {
   .main-content {
-    padding-left: 20px; /* Add padding to ensure content is visible */
+    padding-left: 30px; /* Increased padding to ensure content is visible */
   }
 
-  /* Adjust selector cards to be visible with collapsed sidebar */
-  .scenario-selector-card,
-  .transcript-selector-card {
-    margin-left: 120px; /* Further increased margin to prevent overlap with collapsed sidebar */
-  }
-  
-  /* Target specific container elements that might be used for cards */
-  .main-content > div > div:first-child {
-    margin-left: 20px; /* Add margin to first child containers within main content */
+  /* Directly target all possible card containers and scenario content */
+  .main-content > div, 
+  .main-content > div > div,
+  .main-content section,
+  .main-content form,
+  [class*="scenario"],
+  [class*="card"],
+  [class*="selector"],
+  [class*="container"] {
+    position: relative;
+    z-index: 1; /* Ensure content appears above sidebar */
+    min-width: 200px; /* Set minimum width for content */
   }
 }
 

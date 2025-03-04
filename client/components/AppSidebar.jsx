@@ -45,7 +45,7 @@ const DesktopSidebar = ({
   return (
     <div
       className={cn(
-        "h-screen fixed top-0 left-0 px-4 py-4 hidden md:flex md:flex-col bg-white flex-shrink-0 z-10", 
+        "h-screen fixed top-0 left-0 px-4 py-4 hidden md:flex md:flex-col bg-white flex-shrink-0 z-1", 
         className
       )}
       style={{
