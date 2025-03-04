@@ -401,7 +401,7 @@ export default function App() {
 
       {/* Overlay when session is active */}
       {isSessionActive && (
-        <div className="absolute inset-0 bg-gray-500/40 pointer-events-none z-10">
+        <div className="absolute inset-0 bg-black/40 pointer-events-none z-10">
           {/* This overlay covers everything except the main container */}
         </div>
       )}
