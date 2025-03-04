@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { CloudLightning, CloudOff, MessageSquare } from "react-feather";
 import Button from "./Button";
-import { Link, useNavigate } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,116 +63,81 @@ function SessionStopped({ startSession }) {
 
 function SessionActive({ stopSession, sendTextMessage }) {
   const [message, setMessage] = useState("");
-  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
-  const navigate = useNavigate();
 
   function handleSendClientEvent() {
     sendTextMessage(message);
     setMessage("");
   }
 
-  function handleEndSession() {
-    console.log("handleEndSession called");
-    stopSession();
-    // Show the feedback dialog - forced delay to ensure it runs after stopSession is complete
-    setTimeout(() => {
-      console.log("Setting showFeedbackDialog to true");
-      setShowFeedbackDialog(true);
-    }, 100);
-  }
-
-  function handleNavigateToReview() {
-    // Close the dialog and navigate to review page
-    setShowFeedbackDialog(false);
-    console.log("Navigating to /review");
-    navigate('/review');
-  }
-
   return (
-    <>
-      <div className="flex items-center justify-center w-full h-full gap-4">
-        <input
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && message.trim()) {
-              handleSendClientEvent();
-            }
-          }}
-          type="text"
-          placeholder="send a text message..."
-          className="border border-gray-200 rounded-full p-4 flex-1"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <Button
-          onClick={() => {
-            if (message.trim()) {
-              handleSendClientEvent();
-            }
-          }}
-          icon={<MessageSquare height={16} />}
-          className="bg-blue-400"
-        >
-          send text
-        </Button>
-        
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button icon={<CloudOff height={16} />}>
-              disconnect
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="z-50">
-            <AlertDialogHeader>
-              <AlertDialogTitle>End Session</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to end this session? Your conversation will be saved for review.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={() => {
-                  console.log("End session clicked, calling handleEndSession");
-                  handleEndSession();
-                }}
-                className="bg-red-600 text-white hover:bg-red-700"
-              >
-                End Session
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-
-      {/* Second dialog for Review Feedback */}
-      {showFeedbackDialog && (
-        <div className="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full">
-            <h3 className="text-xl font-semibold">Session Ended</h3>
-            <p className="text-gray-500 my-2">
-              Feedback on this conversation will be processed and can be reviewed in the Review pane.
-            </p>
-            <div className="flex justify-end gap-2 mt-4">
-              <button 
-                onClick={() => setShowFeedbackDialog(false)} 
-                className="px-4 py-2 border rounded"
-              >
-                Try Again
-              </button>
-              <Link 
-                to="/review" 
-                className="px-4 py-2 bg-red-600 text-white rounded inline-block"
-                onClick={() => {
-                  console.log("Review Feedback clicked");
-                  setShowFeedbackDialog(false);
-                }}
-              >
-                Review Feedback
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    <div className="flex items-center justify-center w-full h-full gap-4">
+      <input
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && message.trim()) {
+            handleSendClientEvent();
+          }
+        }}
+        type="text"
+        placeholder="send a text message..."
+        className="border border-gray-200 rounded-full p-4 flex-1"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <Button
+        onClick={() => {
+          if (message.trim()) {
+            handleSendClientEvent();
+          }
+        }}
+        icon={<MessageSquare height={16} />}
+        className="bg-blue-400"
+      >
+        send text
+      </Button>
+      
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button icon={<CloudOff height={16} />}>
+            disconnect
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="z-50">
+          <AlertDialogHeader>
+            <AlertDialogTitle>End Session</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to end this session? Your conversation will be saved for review.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                stopSession();
+                // Show the confirmation dialog after ending the session
+                setTimeout(() => {
+                  const confirmDialog = document.createElement('div');
+                  confirmDialog.innerHTML = `
+                    <div class="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center">
+                      <div class="bg-white p-6 rounded-lg max-w-md w-full">
+                        <h3 class="text-lg font-semibold">Session Ended</h3>
+                        <p class="text-gray-500 my-2">Feedback on this conversation will be processed and can be reviewed in the Review pane.</p>
+                        <div class="flex justify-end gap-2 mt-4">
+                          <button class="px-4 py-2 border rounded" onclick="this.closest('.fixed').remove()">Try Again</button>
+                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="window.location.href='/review'">Review Feedback</button>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                  document.body.appendChild(confirmDialog);
+                }, 500);
+              }} 
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              End Session
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }
