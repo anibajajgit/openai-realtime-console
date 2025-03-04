@@ -81,7 +81,7 @@ body,
 /* Style for scenario page */
 h2:first-of-type {
   margin-left: 100px; /* Increased margin to ensure visibility past sidebar */
-  position: relative;
+  position: relative; 
   z-index: 10; /* Higher z-index to ensure visibility */
   padding-top: 20px;
 }
@@ -95,28 +95,29 @@ h2:first-of-type {
   position: relative;
   z-index: 1;
   padding-left: 100px; /* Increased padding to match title */
+  padding-right: 20px; /* Add right padding for balance */
 }
 
-/* Card layout adjustment */
+/* Card layout adjustment - fully responsive */
 .scenario-section > div {
-  width: calc(45% - 20px); /* Wider scenario card */
+  flex: 1; /* Allow flexible growth */
+  min-width: 300px; /* Smaller minimum width to be more responsive */
   margin-left: 0 !important; /* Override any previous margin */
-  min-width: 400px; /* Ensure minimum width */
 }
 
 .scenario-section > div + div {
-  width: calc(55% - 20px); /* Adjust video card width */
+  flex: 1.2; /* Give slightly more space to the video container */
 }
 
 /* Make cards responsive */
 @media (max-width: 1200px) {
   .scenario-section > div,
   .scenario-section > div + div {
-    width: 100%; /* Full width on smaller screens */
+    flex-basis: 100%; /* Full width on smaller screens */
   }
 }
 
-/* Sidebar overlay when expanded */
+/* Sidebar overlay when expanded - increased z-index */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -125,7 +126,7 @@ h2:first-of-type {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 5;
+  z-index: 25; /* Increased z-index to ensure it's above all content */
   transition: opacity 0.3s ease;
 }
 

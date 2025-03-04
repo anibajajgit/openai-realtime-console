@@ -345,7 +345,7 @@ export default function App() {
                   <h1>Scenarios</h1>
                 </div>
               </nav>
-              <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-20"> {/*Added relative and z-20 */}
+              <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-10"> {/* Lowered z-index to work with overlay */}
                 <div className={`flex flex-col md:flex-row h-full bg-gray-50 relative ${isSessionActive ? 'border border-transparent rounded-lg p-2' : ''}`}> 
                   {isSessionActive && <BorderTrail className="bg-blue-500" size={10} />}
                   <AppSidebar />
