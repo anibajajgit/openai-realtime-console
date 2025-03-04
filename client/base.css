@@ -50,7 +50,8 @@
 }
 
 html,
-body {
+body, 
+#root {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -60,6 +61,23 @@ body {
   font-size: 0.9rem;
   background-color: var(--color-base);
   color: #1a1a1a;
+}
+
+/* Main content layout with sidebar */
+.main-content {
+  margin-left: 60px; /* Width of collapsed sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-expanded .main-content {
+  margin-left: 300px; /* Width of expanded sidebar */
+}
+
+/* Ensure content fills available space */
+.content-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 select {

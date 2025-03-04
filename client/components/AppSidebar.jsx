@@ -202,9 +202,9 @@ export default function AppSidebar() {
             ))}
           </div>
           {user && (
-            <div className="mt-auto p-2 border-t border-gray-200">
-              <div className="flex items-center gap-1 px-0 py-3">
-                <div className="bg-white p-2 rounded-full shadow-sm border border-gray-200">
+            <div className="mt-auto p-0 border-t border-gray-200 w-full">
+              <div className="flex items-center gap-1 px-0 py-3 pl-0">
+                <div className="bg-white p-1 rounded-full shadow-sm border border-gray-200">
                   <User size={18} className="text-gray-700" />
                 </div>
                 <span 
@@ -246,9 +246,9 @@ export default function AppSidebar() {
             ))}
           </div>
           {user && (
-            <div className="mt-auto p-2 border-t border-gray-200">
-              <div className="flex items-center gap-1 px-0 py-3">
-                <div className="bg-white p-2 rounded-full shadow-sm border border-gray-200">
+            <div className="mt-auto p-0 border-t border-gray-200 w-full">
+              <div className="flex items-center gap-1 px-0 py-3 pl-0">
+                <div className="bg-white p-1 rounded-full shadow-sm border border-gray-200">
                   <User size={18} className="text-gray-700" />
                 </div>
                 <span 
