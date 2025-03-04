@@ -340,7 +340,7 @@ export default function App() {
                   {isSessionActive && <BorderTrail className="bg-blue-500" size={15} />}
                   <AppSidebar />
                   <div className="w-full md:w-2/5 overflow-auto">
-                    <h2 className="text-xl font-semibold">Choose a scenario</h2>
+                    {!isSessionActive && <h2 className="text-xl font-semibold">Choose a scenario</h2>}
                     <section className="w-full p-4 scenario-section">
                       {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
                     </section>
