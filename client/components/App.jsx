@@ -266,13 +266,21 @@ export default function App() {
       // Reset audio and try to play call sound
       audioRef.current.currentTime = 0;
       audioRef.current.volume = 0.5;
-
-      // First, try to load the audio
-      audioRef.current.load();
-
-      // Then play after a short delay to ensure loading
-      setTimeout(() => {
-        const playPromise = audioRef.current.play();
+      
+      // Use user interaction to explicitly enable audio
+      const playAudio = () => {
+        console.log("Playing audio from user interaction");
+        audioRef.current.play()
+          .then(() => {
+            console.log("Audio started successfully");
+          })
+          .catch(err => {
+            console.error("Error playing audio:", err);
+          });
+      };
+      
+      // Try to play immediately
+      const playPromise = audioRef.current.play();
 
         if (playPromise !== undefined) {
           playPromise
@@ -397,6 +405,8 @@ export default function App() {
         src="/attached_assets/call-sound.mp3"
         preload="auto"
         id="callSound"
+        muted={false}
+        crossOrigin="anonymous"
       />
 
       {/* Overlay when session is active */}
