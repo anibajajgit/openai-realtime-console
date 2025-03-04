@@ -122,7 +122,13 @@ function SessionActive({ stopSession, sendTextMessage }) {
                         <p class="text-gray-500 my-2">Feedback on this conversation will be processed and can be reviewed in the Review pane.</p>
                         <div class="flex justify-end gap-2 mt-4">
                           <button class="px-4 py-2 border rounded" onclick="this.closest('.fixed').remove()">Try Again</button>
-                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="window.location.href = window.location.origin + '/review'">Review Feedback</button>
+                          <button class="px-4 py-2 bg-red-600 text-white rounded" onclick="(() => {
+                            // Get the current pathname without /scenarios
+                            const basePath = window.location.pathname.includes('/scenarios') ? 
+                              window.location.pathname.replace('/scenarios', '') : '';
+                            // Navigate to review preserving the base path
+                            window.location.href = window.location.origin + basePath + '/review';
+                          })()">Review Feedback</button>
                         </div>
                       </div>
                     </div>
