@@ -103,10 +103,12 @@ h2:first-of-type {
   flex: 1; /* Allow flexible growth */
   min-width: 200px; /* Smaller minimum width to be more responsive */
   margin-left: 0 !important; /* Override any previous margin */
+  max-width: 40%; /* Limit scenario card width to 40% */
 }
 
 .scenario-section > div + div {
-  flex: 1.2; /* Give slightly more space to the video container */
+  flex: 2; /* Give more space to the video container */
+  min-width: 60%; /* Ensure video takes at least 60% of width */
 }
 
 /* Make cards responsive */

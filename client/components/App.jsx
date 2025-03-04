@@ -1,13 +1,3 @@
-
-// Find the component that renders the scenario page and add these className adjustments
-// This is a sample - you'll need to locate the exact component that renders the scenario content
-// This might be in a ScenarioSelector.jsx or similar file
-
-// Example addition to the component's container div:
-// <div className="scenario-section">
-//   {/* Your scenario card and video components */}
-// </div>
-
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
@@ -273,38 +263,38 @@ export default function App() {
 
     if (isSessionActive && audioRef.current) {
       console.log("Attempting to play call sound");
-      
+
       // Use Web Audio API as a more reliable solution
       try {
         // Create a simple beep sound using Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        
+
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // 800 Hz tone
         gainNode.gain.setValueAtTime(0.5, audioContext.currentTime); // 50% volume
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        
+
         oscillator.start();
         setTimeout(() => {
           oscillator.stop();
           console.log("Beep sound completed");
         }, 500); // Play for 500ms
-        
+
         console.log("Playing beep sound with Web Audio API");
       } catch (e) {
         console.error("Web Audio API failed:", e);
-        
+
         // Fallback to standard audio element
         try {
           audioRef.current.currentTime = 0;
           audioRef.current.volume = 0.5;
           audioRef.current.muted = false;
           audioRef.current.load();
-          
+
           console.log("Attempting standard audio playback");
           audioRef.current.play()
             .then(() => console.log("Standard audio playback succeeded"))
