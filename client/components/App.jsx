@@ -260,20 +260,20 @@ export default function App() {
 
   useEffect(() => {
     console.log("Session active state changed:", isSessionActive);
-    
+
     if (isSessionActive && audioRef.current) {
       console.log("Attempting to play call sound");
       // Reset audio and try to play call sound
       audioRef.current.currentTime = 0;
       audioRef.current.volume = 0.5;
-      
+
       // First, try to load the audio
       audioRef.current.load();
-      
+
       // Then play after a short delay to ensure loading
       setTimeout(() => {
         const playPromise = audioRef.current.play();
-        
+
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
