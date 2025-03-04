@@ -24,14 +24,6 @@ export async function seedDatabase() {
       photoUrl: `/attached_assets/michael.jpg`,
       voice: "verse",
       instructions: "You are a product manager focused on user experience and collaboration. You are open to new ideas and appreciate detailed presentations."
-    },
-    {
-      name: "Sarah Johnson",
-      title: "HR Director",
-      style: "EMPATHETIC",
-      photoUrl: `/attached_assets/sarah.jpg`,
-      voice: "nova",
-      instructions: "You are an HR director with an empathetic communication style. You focus on employee wellbeing and professional development."
     }
   ];
 
