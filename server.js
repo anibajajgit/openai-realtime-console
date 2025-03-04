@@ -567,6 +567,7 @@ const vite = await createViteServer({
       host: '0.0.0.0',
       port: 24678,
       clientPort: 443,
+      server: app, // Let Vite use the same HTTPS server
       secure: true
     }
   },
