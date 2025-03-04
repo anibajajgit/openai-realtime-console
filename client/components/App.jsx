@@ -20,6 +20,7 @@ export default function App() {
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+  const audioRef = useRef(null); // Added audioRef
   const location = useLocation();
   const [selectedRole, setSelectedRole] = useState(null); // Add state for selected role
   const [selectedScenario, setSelectedScenario] = useState(null); // Add state for selected scenario
@@ -257,6 +258,22 @@ export default function App() {
     }
   }, [dataChannel]);
 
+  useEffect(() => {
+    if (isSessionActive && audioRef.current) {
+      // Reset audio and try to play call sound
+      audioRef.current.currentTime = 0;
+      audioRef.current.volume = 0.5;
+      const playPromise = audioRef.current.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.error("Error playing audio:", err);
+        });
+      }
+    }
+  }, [isSessionActive]);
+
+
   return (
     <AuthContext.Provider value={{ user, login: loginApp, logout: logoutApp }}>
       {console.log("AuthContext Provider rendering with user:", user)}
@@ -280,8 +297,8 @@ export default function App() {
                   <h1>Scenarios</h1>
                 </div>
               </nav>
-              <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden">
-                <div className="flex flex-col md:flex-row h-full bg-gray-50">
+              <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-20"> {/*Added relative and z-20 */}
+                <div className={`flex flex-col md:flex-row h-full bg-gray-50 ${isSessionActive ? 'border-4 border-blue-500 rounded-lg p-2' : ''}`}> {/*Added conditional class */}
                   <AppSidebar />
                   <section className="w-full md:w-2/5 p-4">
                     {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
@@ -354,6 +371,15 @@ export default function App() {
           )
         } />
       </Routes>
+      {/* Audio element for call sound */}
+      <audio ref={audioRef} src="/attached_assets/call-sound.mp3" />
+
+      {/* Overlay when session is active */}
+      {isSessionActive && (
+        <div className="absolute inset-0 bg-gray-500/40 pointer-events-none z-10">
+          {/* This overlay covers everything except the main container */}
+        </div>
+      )}
     </AuthContext.Provider>
   );
 }
