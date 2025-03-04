@@ -78,7 +78,7 @@ body,
   width: calc(100% - 320px); /* Adjust width to match margin */
 }
 
-/* Style for scenario page */
+/* Style for scenario and review pages */
 h2:first-of-type {
   margin-left: 100px; /* Increased margin to ensure visibility past sidebar */
   position: relative; 
@@ -87,7 +87,7 @@ h2:first-of-type {
 }
 
 /* Fix card layout - make card widths responsive */
-.scenario-section {
+.scenario-section, .review-section {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -99,11 +99,11 @@ h2:first-of-type {
 }
 
 /* Card layout adjustment - fully responsive */
-.scenario-section {
+.scenario-section, .review-section {
   justify-content: flex-start; /* Align items to the start */
 }
 
-.scenario-section > div {
+.scenario-section > div, .review-section > div {
   flex: 1; /* Allow card to grow */
   min-width: 200px; /* Minimum width to be responsive */
   margin-left: 0 !important; /* Override any previous margin */
