@@ -264,51 +264,45 @@ export default function App() {
     if (isSessionActive && audioRef.current) {
       console.log("Attempting to play call sound");
       
-      // Reset audio and prepare for playback
-      audioRef.current.currentTime = 0;
-      audioRef.current.volume = 0.5;
-      audioRef.current.muted = false;
-      
-      // First make sure the audio is loaded
-      audioRef.current.load();
-      
-      // Define a function to handle audio playback
-      const playSound = () => {
-        console.log("Playing sound with explicit interaction");
-        const playPromise = audioRef.current.play();
+      // Use Web Audio API as a more reliable solution
+      try {
+        // Create a simple beep sound using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
         
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              console.log("Audio is playing successfully");
-              // Create a small beep as backup in case the audio file doesn't play
-              try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                oscillator.connect(audioContext.destination);
-                oscillator.start();
-                setTimeout(() => oscillator.stop(), 200);
-              } catch (e) {
-                console.log("Backup sound also failed:", e);
-              }
-            })
-            .catch(err => {
-              console.error("Error playing audio:", err);
-              // Try unmuting and playing again
-              audioRef.current.muted = false;
-              setTimeout(() => {
-                audioRef.current.play().catch(e => console.error("Second attempt failed:", e));
-              }, 500);
-            });
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // 800 Hz tone
+        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime); // 50% volume
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.start();
+        setTimeout(() => {
+          oscillator.stop();
+          console.log("Beep sound completed");
+        }, 500); // Play for 500ms
+        
+        console.log("Playing beep sound with Web Audio API");
+      } catch (e) {
+        console.error("Web Audio API failed:", e);
+        
+        // Fallback to standard audio element
+        try {
+          audioRef.current.currentTime = 0;
+          audioRef.current.volume = 0.5;
+          audioRef.current.muted = false;
+          audioRef.current.load();
+          
+          console.log("Attempting standard audio playback");
+          audioRef.current.play()
+            .then(() => console.log("Standard audio playback succeeded"))
+            .catch(err => console.error("Standard audio playback failed:", err));
+        } catch (audioError) {
+          console.error("All audio playback methods failed:", audioError);
         }
-      };
-      
-      // Attempt to play audio after a short delay to ensure DOM is ready
-      setTimeout(playSound, 500);
-      // No comma here
-      setTimeout(playSound, 500);
+      }
     } else if (!isSessionActive && audioRef.current) {
       // Stop audio when session ends
       console.log("Stopping audio playback");
@@ -419,12 +413,13 @@ export default function App() {
       {/* Audio element for call sound */}
       <audio 
         ref={audioRef} 
-        src="/attached_assets/call-sound.mp3"
         preload="auto"
         id="callSound"
         muted={false}
-        crossOrigin="anonymous"
-      />
+      >
+        <source src="/attached_assets/call-sound.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
 
       {/* Overlay when session is active */}
       {isSessionActive && (
