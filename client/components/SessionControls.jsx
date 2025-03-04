@@ -97,21 +97,21 @@ function SessionActive({ stopSession, sendTextMessage }) {
       
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button icon={<CloudOff height={16} />}>
+          <Button icon={<CloudOff height={16} />} onClick={stopSession}>
             disconnect
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent className="z-50">
           <AlertDialogHeader>
-            <AlertDialogTitle>End Session</AlertDialogTitle>
+            <AlertDialogTitle>Session Ended</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to end this session? Your conversation will be saved for review.
+              Feedback on this conversation will be processed and can be reviewed in the Review pane.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={stopSession} className="bg-red-600 text-white hover:bg-red-700">
-              End Session
+            <AlertDialogCancel>Try Again</AlertDialogCancel>
+            <AlertDialogAction onClick={() => window.location.href = '/review'} className="bg-red-600 text-white hover:bg-red-700">
+              Review Feedback
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
