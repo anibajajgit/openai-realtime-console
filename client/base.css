@@ -106,17 +106,13 @@ body,
   .main-content {
     padding-left: 20px; /* Add padding to ensure content is visible */
   }
+}
 
-  /* Adjust selector cards to be visible with collapsed sidebar */
-  .scenario-selector-card,
-  .transcript-selector-card {
-    margin-left: 120px; /* Further increased margin to prevent overlap with collapsed sidebar */
-  }
-  
-  /* Target specific container elements that might be used for cards */
-  .main-content > div > div:first-child {
-    margin-left: 20px; /* Add margin to first child containers within main content */
-  }
+/* Simple targeted selectors for scenario page */
+h2:first-of-type,
+select,
+[role="button"] {
+  margin-left: 20px; /* Add minimal margin to these elements */
 }
 
 select {
