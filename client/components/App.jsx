@@ -198,20 +198,37 @@ export default function App() {
 
 
   const endSession = () => {
+    console.log("Ending session...");
     setIsSessionActive(false);
+
+    // Close data channel if it exists
     if (dataChannel) {
+      console.log("Closing data channel");
       dataChannel.close();
       setDataChannel(null);
     }
 
+    // Close peer connection if it exists
+    if (peerConnection.current) {
+      console.log("Closing peer connection");
+      peerConnection.current.close();
+      peerConnection.current = null;
+    }
+
     // Save transcript when session ends
     if (events.length > 0) {
+      console.log("Saving transcript, events length:", events.length);
       const role = JSON.parse(localStorage.getItem('selectedRole') || '{"id":1}');
       const scenario = JSON.parse(localStorage.getItem('selectedScenario') || '{"id":1}');
       saveTranscript(events, user, role.id, scenario.id);
+    } else {
+      console.log("No events to save");
     }
 
+    // Force update events array to trigger re-render
     setEvents(prevEvents => [...prevEvents]);
+
+    console.log("Session ended successfully");
   };
 
   function sendClientEvent(message) {

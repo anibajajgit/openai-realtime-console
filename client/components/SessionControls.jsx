@@ -113,6 +113,9 @@ function SessionActive({ stopSession, sendTextMessage }) {
             <AlertDialogAction 
               onClick={() => {
                 stopSession();
+                console.log("Session end initiated from dialog");
+
+                // Wait a moment for the session to end properly
                 setTimeout(() => {
                   const confirmDialog = document.createElement('div');
                   confirmDialog.innerHTML = `
@@ -127,9 +130,10 @@ function SessionActive({ stopSession, sendTextMessage }) {
                             class="px-4 py-2 bg-red-600 text-white rounded" 
                             onclick="
                               (() => {
+                                console.log('Review feedback button clicked');
                                 // Close the dialog
                                 this.closest('.fixed').remove();
-                                
+
                                 // Dispatch a custom event that React components can listen for
                                 const event = new CustomEvent('navigateToReview');
                                 window.dispatchEvent(event);
