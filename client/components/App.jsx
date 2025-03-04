@@ -9,7 +9,7 @@ import Review from "./Review"; //Review Component
 import "../base.css";
 import SessionControls from "./SessionControls";
 import { AuthContext, AuthProvider } from "../utils/AuthContext"; // Assuming AuthContext is in ../utils
-
+import { BorderTrail } from './BorderTrail';
 
 export default function App() {
   // Get user from context if available, otherwise null
@@ -317,7 +317,7 @@ export default function App() {
                 </div>
               </nav>
               <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-20"> {/*Added relative and z-20 */}
-                <div className={`flex flex-col md:flex-row h-full bg-gray-50 ${isSessionActive ? 'border-4 border-blue-500 rounded-lg p-2' : ''}`}> {/*Added conditional class */}
+                <div className={`flex flex-col md:flex-row h-full bg-gray-50 ${isSessionActive ? 'border border-blue-500/20 rounded-lg p-2' : ''}`}> {/*Added conditional class */}
                   <AppSidebar />
                   <section className="w-full md:w-2/5 p-4">
                     {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
