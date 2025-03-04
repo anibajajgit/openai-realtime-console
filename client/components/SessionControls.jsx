@@ -97,11 +97,11 @@ function SessionActive({ stopSession, sendTextMessage }) {
       
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button icon={<CloudOff height={16} />} onClick={stopSession}>
+          <Button icon={<CloudOff height={16} />}>
             disconnect
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="z-50">
+        <AlertDialogContent className="z-50" onOpenAutoFocus={() => stopSession()}>
           <AlertDialogHeader>
             <AlertDialogTitle>Session Ended</AlertDialogTitle>
             <AlertDialogDescription>
