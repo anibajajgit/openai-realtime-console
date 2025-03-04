@@ -143,9 +143,16 @@ function SessionActive({ stopSession, sendTextMessage }) {
                   });
                   
                   document.getElementById('review-btn').addEventListener('click', () => {
-                    confirmDialog.remove();
-                    // Use window.location with complete URL instead of relative path
-                    window.location.href = window.location.origin + '/review';
+                    try {
+                      confirmDialog.remove();
+                      console.log("Navigating to review page...");
+                      // Use window.location.pathname which is more reliable
+                      window.location.pathname = '/review';
+                    } catch (error) {
+                      console.error("Navigation error:", error);
+                      // Fallback in case of error
+                      window.location.href = window.location.origin + '/review';
+                    }
                   });
                 }, 500);
               }} 
