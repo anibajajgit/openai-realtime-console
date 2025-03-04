@@ -563,11 +563,10 @@ const vite = await createViteServer({
   server: { 
     middlewareMode: true,
     hmr: {
-      protocol: 'wss',
+      protocol: 'ws',
       host: '0.0.0.0',
       port: 24678,
-      clientPort: 443,
-      secure: true
+      clientPort: 24678
     }
   },
   appType: "custom",

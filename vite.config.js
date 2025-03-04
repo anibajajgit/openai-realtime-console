@@ -20,12 +20,5 @@ export default {
       '@': resolve(dirname(path), 'client'),
       '@lib': resolve(dirname(path), 'client/lib')
     }
-  },
-  server: {
-    hmr: {
-      protocol: 'wss',
-      clientPort: 443,
-      port: 24678
-    }
   }
 };
