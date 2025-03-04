@@ -20,5 +20,8 @@ export default {
       '@': resolve(dirname(path), 'client'),
       '@lib': resolve(dirname(path), 'client/lib')
     }
+  },
+  server: {
+    hmr: false // Disable HMR completely to prevent WebSocket errors
   }
 };

@@ -39,7 +39,7 @@ app.get('/attached_assets/*.mp3', (req, res, next) => {
 // Debug route for call sound
 app.get('/debug-call-sound', (req, res) => {
   const soundPath = path.join(__dirname, 'attached_assets', 'call-sound.mp3');
-  
+
   if (fs.existsSync(soundPath)) {
     const stats = fs.statSync(soundPath);
     res.json({
@@ -562,12 +562,7 @@ app.post('/api/login', async (req, res) => {
 const vite = await createViteServer({
   server: { 
     middlewareMode: true,
-    hmr: {
-      protocol: 'ws',
-      host: '0.0.0.0',
-      port: 24678,
-      clientPort: 24678
-    }
+    hmr: false // Disable HMR WebSocket to prevent connection errors
   },
   appType: "custom",
 });
