@@ -49,12 +49,14 @@ const DesktopSidebar = ({
   return (
     <div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-white flex-shrink-0", 
+        "h-screen fixed top-0 left-0 px-4 py-4 hidden md:flex md:flex-col bg-white flex-shrink-0 z-10", 
         className
       )}
       style={{
         width: animate ? (open ? "300px" : "60px") : "300px",
-        transition: "width 0.3s ease"
+        transition: "width 0.3s ease",
+        height: "100vh", // Ensure full viewport height
+        overflowY: "auto" // Add scrolling if content is too long
       }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}

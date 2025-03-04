@@ -68,10 +68,12 @@ body,
   margin-left: 60px; /* Width of collapsed sidebar */
   transition: margin-left 0.3s ease;
   min-height: 100vh;
+  width: calc(100% - 60px); /* Adjust width to account for sidebar */
 }
 
 .sidebar-expanded .main-content {
   margin-left: 300px; /* Width of expanded sidebar */
+  width: calc(100% - 300px); /* Adjust width when sidebar is expanded */
 }
 
 /* Ensure content fills available space */
