@@ -69,11 +69,29 @@ body,
   transition: margin-left 0.3s ease;
   min-height: 100vh;
   width: calc(100% - 60px); /* Adjust width to account for sidebar */
+  position: relative;
 }
 
 .sidebar-expanded .main-content {
   margin-left: 300px; /* Width of expanded sidebar */
   width: calc(100% - 300px); /* Adjust width when sidebar is expanded */
+}
+
+/* Sidebar overlay when expanded */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-expanded .sidebar-overlay {
+  display: block;
 }
 
 /* Ensure content fills available space */
@@ -86,7 +104,13 @@ body,
 /* Fixed sidebar styles */
 @media (min-width: 768px) {
   .main-content {
-    padding-left: 0; /* Adjusts for the fixed sidebar */
+    padding-left: 20px; /* Add padding to ensure content is visible */
+  }
+
+  /* Adjust selector cards to be visible with collapsed sidebar */
+  .scenario-selector-card,
+  .transcript-selector-card {
+    margin-left: 20px; /* Additional margin to ensure visibility */
   }
 }
 

@@ -1,10 +1,9 @@
 import React, { useState, createContext, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Home, List, User, LogOut, FileText } from "lucide-react"; // Added FileText icon for Review
-import { AuthContext } from "../utils/AuthContext"; // Import AuthContext
+import { Home, List, User, LogOut, FileText } from "lucide-react"; 
+import { AuthContext } from "../utils/AuthContext"; 
 
-// Create a context for sidebar
 const SidebarContext = createContext(undefined);
 
 const useSidebar = () => {
@@ -15,12 +14,10 @@ const useSidebar = () => {
   return context;
 };
 
-// Utility function for classNames
 const cn = (...classes) => {
   return classes.filter(Boolean).join(' ');
 };
 
-// SidebarProvider component
 const SidebarProvider = ({
   children,
   open: openProp,
@@ -39,7 +36,6 @@ const SidebarProvider = ({
   );
 };
 
-// Desktop sidebar implementation
 const DesktopSidebar = ({
   className,
   children,
@@ -55,8 +51,8 @@ const DesktopSidebar = ({
       style={{
         width: animate ? (open ? "300px" : "60px") : "300px",
         transition: "width 0.3s ease",
-        height: "100vh", // Ensure full viewport height
-        overflowY: "auto" // Add scrolling if content is too long
+        height: "100vh", 
+        overflowY: "auto" 
       }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
@@ -67,7 +63,6 @@ const DesktopSidebar = ({
   );
 };
 
-// Mobile sidebar implementation
 const MobileSidebar = ({
   className,
   children,
@@ -123,7 +118,6 @@ const MobileSidebar = ({
   );
 };
 
-// SidebarLink component
 const SidebarLink = ({
   link,
   className,
@@ -158,9 +152,7 @@ const SidebarLink = ({
   );
 };
 
-// Main AppSidebar component
 export default function AppSidebar() {
-  // Changed default state to false so sidebar starts collapsed
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -186,104 +178,103 @@ export default function AppSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    console.log("AppSidebar: Logging out user");
     logout();
-    // Force a complete refresh to clear all React state
-    if (typeof window !== 'undefined') {
-      window.location.href = '/';
-    }
+    navigate("/login");
   };
 
   return (
     <SidebarProvider open={open} setOpen={setOpen} animate={true}>
-      <MobileSidebar>
-        <div className="flex flex-col gap-4 h-full">
-          <div className="flex-grow">
-            {links.map((link, index) => (
-              <SidebarLink key={index} link={link} />
-            ))}
-          </div>
-          {user && (
-            <div className="mt-auto p-0 border-t border-gray-200 w-full sticky bottom-0 bg-white">
-              <div className="flex items-center gap-1 px-0 py-3 pl-0">
-                <div className="bg-white p-1 rounded-full shadow-sm border border-gray-200">
-                  <User size={18} className="text-gray-700" />
-                </div>
-                <span
-                  style={{
-                    display: open ? "inline-block" : "none",
-                    opacity: open ? 1 : 0,
-                    transition: "opacity 0.3s ease"
-                  }}
-                  className="text-sm font-medium text-black"
-                >
-                  {user.username}
-                </span>
-              </div>
-              <div
-                onClick={handleLogout}
-                className="flex items-center gap-1 p-0 pl-0 rounded cursor-pointer hover:bg-gray-100"
-              >
-                <LogOut size={18} className="text-black" />
-                <span
-                  style={{
-                    display: open ? "inline-block" : "none",
-                    opacity: open ? 1 : 0,
-                    transition: "opacity 0.3s ease"
-                  }}
-                  className="text-black text-sm whitespace-pre transition duration-150"
-                >
-                  Logout
-                </span>
-              </div>
+      <div className={open ? "sidebar-expanded" : ""}>
+        <div className="sidebar-overlay" onClick={() => setOpen(false)}></div> {/* Added overlay */}
+        <MobileSidebar>
+          <div className="flex flex-col gap-4 h-full">
+            <div className="flex-grow">
+              {links.map((link, index) => (
+                <SidebarLink key={index} link={link} />
+              ))}
             </div>
-          )}
-        </div>
-      </MobileSidebar>
-      <DesktopSidebar className="bg-gray-800 text-black">
-        <div className="flex flex-col gap-4 h-full">
-          <div className="flex-grow">
-            {links.map((link, index) => (
-              <SidebarLink key={index} link={link} />
-            ))}
-          </div>
-          {user && (
-            <div className="mt-auto p-0 border-t border-gray-200 w-full sticky bottom-0 bg-white">
-              <div className="flex items-center gap-1 px-0 py-3 pl-0">
-                <div className="bg-white p-1 rounded-full shadow-sm border border-gray-200">
-                  <User size={18} className="text-gray-700" />
+            {user && (
+              <div className="mt-auto p-0 border-t border-gray-200 w-full sticky bottom-0 bg-white">
+                <div className="flex items-center gap-1 px-0 py-3 pl-0">
+                  <div className="bg-white p-1 rounded-full shadow-sm border border-gray-200">
+                    <User size={18} className="text-gray-700" />
+                  </div>
+                  <span
+                    style={{
+                      display: open ? "inline-block" : "none",
+                      opacity: open ? 1 : 0,
+                      transition: "opacity 0.3s ease"
+                    }}
+                    className="text-sm font-medium text-black"
+                  >
+                    {user.username}
+                  </span>
                 </div>
-                <span
-                  style={{
-                    display: open ? "inline-block" : "none",
-                    opacity: open ? 1 : 0,
-                    transition: "opacity 0.3s ease"
-                  }}
-                  className="text-sm font-medium text-black"
+                <div
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 p-0 pl-0 rounded cursor-pointer hover:bg-gray-100"
                 >
-                  {user.username}
-                </span>
+                  <LogOut size={18} className="text-black" />
+                  <span
+                    style={{
+                      display: open ? "inline-block" : "none",
+                      opacity: open ? 1 : 0,
+                      transition: "opacity 0.3s ease"
+                    }}
+                    className="text-black text-sm whitespace-pre transition duration-150"
+                  >
+                    Logout
+                  </span>
+                </div>
               </div>
-              <div
-                onClick={handleLogout}
-                className="flex items-center gap-1 p-0 pl-0 rounded cursor-pointer hover:bg-gray-100"
-              >
-                <LogOut size={18} className="text-black" />
-                <span
-                  style={{
-                    display: open ? "inline-block" : "none",
-                    opacity: open ? 1 : 0,
-                    transition: "opacity 0.3s ease"
-                  }}
-                  className="text-black text-sm whitespace-pre transition duration-150"
-                >
-                  Logout
-                </span>
-              </div>
+            )}
+          </div>
+        </MobileSidebar>
+        <DesktopSidebar className="bg-gray-800 text-black">
+          <div className="flex flex-col gap-4 h-full">
+            <div className="flex-grow">
+              {links.map((link, index) => (
+                <SidebarLink key={index} link={link} />
+              ))}
             </div>
-          )}
-        </div>
-      </DesktopSidebar>
+            {user && (
+              <div className="mt-auto p-0 border-t border-gray-200 w-full sticky bottom-0 bg-white">
+                <div className="flex items-center gap-1 px-0 py-3 pl-0">
+                  <div className="bg-white p-1 rounded-full shadow-sm border border-gray-200">
+                    <User size={18} className="text-gray-700" />
+                  </div>
+                  <span
+                    style={{
+                      display: open ? "inline-block" : "none",
+                      opacity: open ? 1 : 0,
+                      transition: "opacity 0.3s ease"
+                    }}
+                    className="text-sm font-medium text-black"
+                  >
+                    {user.username}
+                  </span>
+                </div>
+                <div
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 p-0 pl-0 rounded cursor-pointer hover:bg-gray-100"
+                >
+                  <LogOut size={18} className="text-black" />
+                  <span
+                    style={{
+                      display: open ? "inline-block" : "none",
+                      opacity: open ? 1 : 0,
+                      transition: "opacity 0.3s ease"
+                    }}
+                    className="text-black text-sm whitespace-pre transition duration-150"
+                  >
+                    Logout
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </DesktopSidebar>
+      </div>
     </SidebarProvider>
   );
 }
