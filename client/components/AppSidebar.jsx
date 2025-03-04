@@ -49,7 +49,7 @@ const DesktopSidebar = ({
   return (
     <div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-white w-[300px] flex-shrink-0",
+        "h-full px-4 py-4 hidden md:flex md:flex-col bg-white flex-shrink-0", 
         className
       )}
       style={{
@@ -158,7 +158,8 @@ const SidebarLink = ({
 
 // Main AppSidebar component
 export default function AppSidebar() {
-  const [open, setOpen] = useState(true);
+  // Changed default state to false so sidebar starts collapsed
+  const [open, setOpen] = useState(false);
   const location = useLocation();
 
   const links = [
