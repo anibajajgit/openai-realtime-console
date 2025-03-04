@@ -77,6 +77,11 @@ body,
   width: calc(100% - 320px); /* Adjust width to match new margin */
 }
 
+/* Fix for scenario selector specifically */
+section > div.bg-white\/90 {
+  margin-left: 100px; /* Add specific margin to scenario container */
+}
+
 /* Sidebar overlay when expanded */
 .sidebar-overlay {
   display: none;
@@ -106,7 +111,17 @@ body,
   /* Removed redundant padding rules as we're using margin-left instead */
 }
 
-/* No targeted selectors needed as we're handling positioning with margin-left */
+/* Targeted styling for scenario section */
+.scenario-section {
+  position: relative;
+  z-index: 10;
+}
+
+.scenario-section .bg-white\/90 {
+  margin-left: 100px; /* This ensures the card is pushed away from the collapsed sidebar */
+  position: relative;
+  z-index: 20;
+}
 
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");

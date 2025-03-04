@@ -339,7 +339,7 @@ export default function App() {
                 <div className={`flex flex-col md:flex-row h-full bg-gray-50 relative ${isSessionActive ? 'border border-transparent rounded-lg p-2' : ''}`}> 
                   {isSessionActive && <BorderTrail className="bg-blue-500" size={10} />}
                   <AppSidebar />
-                  <section className="w-full md:w-2/5 p-4">
+                  <section className="w-full md:w-2/5 p-4 scenario-section">
                     {isSessionActive ? <EventLog events={events} /> : <ScenarioSelector />}
                   </section>
                   <section className="w-full md:w-3/5 p-6 flex flex-col gap-6 bg-blue-50 rounded-lg relative">
