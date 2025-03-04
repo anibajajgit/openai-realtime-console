@@ -4,7 +4,7 @@ import { cn } from "../utils/styleUtils.js";
 
 export function BorderTrail({
   className,
-  size = 60,
+  size = 80, // Increased from 60 to 80
   transition,
   delay,
   onAnimationComplete,
@@ -17,7 +17,7 @@ export function BorderTrail({
   };
 
   return (
-    <div className="pointer-events-none absolute inset-0 rounded-[inherit] border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#3b82f6,#3b82f6)]">
+    <div className="pointer-events-none absolute inset-0 rounded-[inherit] border-2 border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#3b82f6,#3b82f6)]">
       <motion.div
         className={cn("absolute aspect-square bg-blue-500", className)}
         style={{
