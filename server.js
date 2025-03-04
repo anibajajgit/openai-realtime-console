@@ -566,7 +566,8 @@ const vite = await createViteServer({
       protocol: 'wss',
       host: '0.0.0.0',
       port: 24678,
-      clientPort: 24678
+      clientPort: 443,
+      secure: true
     }
   },
   appType: "custom",
