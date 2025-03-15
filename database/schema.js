@@ -91,6 +91,18 @@ const Transcript = sequelize.define('Transcript', {
       model: 'Users',
       key: 'id'
     }
+  },
+  hasRecording: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  recordingUrl: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  recordingStoragePath: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   timestamps: true
