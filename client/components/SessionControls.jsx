@@ -48,30 +48,32 @@ function SessionStopped({ startSession }) {
       console.log("Importing AudioRecorder module...");
       const AudioRecorder = (await import('../utils/AudioRecorder')).default;
 
-      if (AudioRecorder && typeof AudioRecorder.startRecording === 'function') {
-        console.log("Requesting microphone access...");
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          audio: { 
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-            channelCount: 1 // Mono audio is usually more compatible
-          } 
-        });
+      if (!AudioRecorder || typeof AudioRecorder.startRecording !== 'function') {
+        throw new Error("AudioRecorder module not available or missing startRecording method");
+      }
 
-        console.log("Microphone access granted, stream details:", {
-          active: stream.active,
-          id: stream.id,
-          tracks: stream.getAudioTracks().map(t => ({
-            enabled: t.enabled,
-            muted: t.muted,
-            label: t.label,
-            kind: t.kind
-          }))
-        });
+      console.log("Requesting microphone access...");
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: { 
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          channelCount: 1
+        } 
+      });
 
-        await AudioRecorder.startRecording(stream);
-        console.log("Audio recording started for session");
+      if (!stream || !stream.active) {
+        throw new Error("Failed to get active audio stream");
+      }
+
+      const tracks = stream.getAudioTracks();
+      if (!tracks || tracks.length === 0) {
+        throw new Error("No audio tracks available in stream");
+      }
+
+      console.log("Microphone access granted, initializing recording...");
+      await AudioRecorder.startRecording(stream);
+      console.log("Audio recording started successfully");
       } else {
         console.error("AudioRecorder module not available or missing startRecording method");
       }

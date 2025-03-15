@@ -108,20 +108,6 @@ export default function App() {
       audioElement.current.autoplay = true;
       pc.ontrack = (e) => {
         audioElement.current.srcObject = e.streams[0];
-        
-        // Start recording the audio from microphone
-        // This records only the microphone input for now
-        const tracks = e.streams[0].getAudioTracks();
-        if (tracks && tracks.length > 0) {
-          try {
-            // Start recording with the microphone stream
-            AudioRecorder.startRecording(e.streams[0]);
-            console.log("Audio recording started with session");
-          } catch (error) {
-            console.error("Failed to start audio recording:", error);
-            // Continue with session even if recording fails
-          }
-        }
       };
 
       const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
