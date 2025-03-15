@@ -584,11 +584,27 @@ app.use(vite.middlewares);
 import { Client } from '@replit/object-storage';
 let objectStorageClient;
 try {
-  objectStorageClient = new Client();
-  console.log("Object Storage client initialized successfully");
+  // Check if we have a bucket ID in environment before initializing
+  if (process.env.BUCKET_ID) {
+    objectStorageClient = new Client({
+      bucketId: process.env.BUCKET_ID
+    });
+    console.log("Object Storage client initialized successfully with bucket:", process.env.BUCKET_ID);
+  } else {
+    // Try to initialize with default bucket
+    try {
+      objectStorageClient = new Client();
+      console.log("Object Storage client initialized with default bucket");
+    } catch (innerError) {
+      console.warn("No default bucket found. Will fall back to local storage.");
+      objectStorageClient = null;
+    }
+  }
 } catch (error) {
   console.warn("Failed to initialize Object Storage client. Will fall back to local storage.", error);
+  objectStorageClient = null;
 }
+</old_str>
 
 // Handle recording uploads
 app.post('/api/recordings/upload', async (req, res) => {
