@@ -744,6 +744,119 @@ app.post('/api/recordings/upload', async (req, res) => {
   }
 });
 
+// Handle recording uploads
+app.post('/api/recordings/upload', async (req, res) => {
+  try {
+    // Check if multer or busboy is installed for file handling
+    const multer = await import('multer');
+    const storage = multer.default.memoryStorage();
+    const upload = multer.default({ 
+      storage: storage,
+      limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit
+    }).single('recording');
+
+    upload(req, res, async function(err) {
+      if (err) {
+        console.error('Error in file upload middleware:', err);
+        return res.status(500).json({ error: `File upload failed: ${err.message}` });
+      }
+
+      // Get transcriptId from the request body
+      const { transcriptId } = req.body;
+
+      if (!transcriptId) {
+        return res.status(400).json({ error: 'Missing transcriptId parameter' });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No recording file provided' });
+      }
+
+      console.log(`Received recording for transcript ${transcriptId}. File size: ${req.file.size} bytes`);
+
+      try {
+        // Generate a unique filename with timestamp
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `recording-${transcriptId}-${timestamp}.webm`;
+        let publicUrl;
+        let storagePath;
+
+        // Try to store in object storage first, fall back to local storage
+        if (objectStorageClient) {
+          try {
+            // Store in Replit Object Storage
+            const objectStoragePath = `recordings/${filename}`;
+            await objectStorageClient.uploadBuffer(objectStoragePath, req.file.buffer);
+
+            // Get the public URL for the object
+            publicUrl = await objectStorageClient.getSignedUrl(objectStoragePath, {
+              expiresIn: 31536000 // URL valid for 1 year (in seconds)
+            });
+
+            storagePath = objectStoragePath;
+            console.log(`Recording saved to object storage at ${objectStoragePath}`);
+
+          } catch (objectStorageError) {
+            console.error('Error saving to object storage, falling back to local storage:', objectStorageError);
+            // Fall back to local storage if object storage fails
+            objectStorageClient = null;
+          }
+        }
+
+        // Fall back to local storage if object storage is not available or failed
+        if (!objectStorageClient) {
+          // Create directory for recordings if it doesn't exist
+          const recordingsDir = path.join(__dirname, 'client', 'assets', 'recordings');
+          if (!fs.existsSync(recordingsDir)) {
+            fs.mkdirSync(recordingsDir, { recursive: true });
+          }
+
+          const filePath = path.join(recordingsDir, filename);
+          // Save the file to disk
+          fs.writeFileSync(filePath, req.file.buffer);
+          console.log(`Recording saved to local storage at ${filePath}`);
+
+          // Local URL path
+          publicUrl = `/assets/recordings/${filename}`;
+          storagePath = filePath;
+        }
+
+        // Update the transcript with recording information
+        await Transcript.update(
+          {
+            hasRecording: true,
+            recordingUrl: publicUrl,
+            recordingStoragePath: storagePath
+          },
+          { where: { id: transcriptId } }
+        );
+
+        res.status(200).json({
+          message: 'Recording uploaded successfully',
+          url: publicUrl,
+          transcriptId: transcriptId,
+          isObjectStorage: !!objectStorageClient
+        });
+      } catch (error) {
+        console.error('Error saving recording:', error);
+        res.status(500).json({ error: `Failed to save recording: ${error.message}` });
+      }
+    });
+  } catch (error) {
+    console.error('Error in recording upload endpoint:', error);
+
+    // Check if the error is about missing multer
+    if (error.code === 'MODULE_NOT_FOUND') {
+      return res.status(500).json({ 
+        error: 'File upload module not available. Please install multer package.',
+        details: error.message
+      });
+    }
+
+    res.status(500).json({ error: `Recording upload failed: ${error.message}` });
+  }
+});
+
 
 // Initialize database and seed data
 console.log("Initializing database...");

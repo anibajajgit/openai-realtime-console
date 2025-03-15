@@ -92,59 +92,63 @@ export default function App() {
 
   async function startSession() {
     try {
-      if (isSessionActive) {
-        console.log("Session already active, not starting a new one");
+      setIsSessionActive(true);
+
+      if (!selectedRole || !selectedScenario) {
+        console.error("Role or scenario not selected");
         return;
       }
 
-      if (!selectedRole) {
-        alert("Please select a role");
-        return;
-      }
-
-      if (!selectedScenario) {
-        alert("Please select a scenario");
-        return;
-      }
-
-      console.log(`Starting session with role ID: ${selectedRole.id} and scenario ID: ${selectedScenario.id}`);
-
-      // Use the local variables instead of state since state updates are asynchronous
-      const role = selectedRole;
-      const scenario = selectedScenario;
-
-      // Request token from server
-      const tokenResponse = await fetch(`/token?roleId=${role.id}&scenarioId=${scenario.id}`);
-
+      // Fetch the token using selected role and scenario
+      const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
       if (!tokenResponse.ok) {
-        const errorText = await tokenResponse.text();
-        console.error('Token request failed:', tokenResponse.status, errorText);
-        throw new Error(`Failed to get token: ${tokenResponse.status} ${errorText}`);
+        const errorData = await tokenResponse.json();
+        throw new Error(errorData.error || "Failed to generate token");
       }
 
-      const data = await tokenResponse.json();
+      const { token } = await tokenResponse.json();
 
-      if (!data || !data.client_secret || !data.client_secret.value) {
-        console.error('Invalid token response:', data);
-        throw new Error('Invalid token response from server');
+      // Use RTCPeerConnection to establish a media connection
+      peerConnection.current = new RTCPeerConnection({
+        iceServers: [
+          { urls: ["stun:stun.l.google.com:19302"] },
+        ],
+      });
+
+      // Get the user's video and audio stream for display
+      try {
+        const userStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+
+        // Store the stream reference for later use
+        userVideoStream.current = userStream;
+
+        // Initialize the session recorder with the video stream
+        const SessionRecorder = (await import('../utils/SessionRecorder')).default;
+        sessionRecorder.current = new SessionRecorder();
+        await sessionRecorder.current.initialize(userStream);
+
+        // Add the microphone audio to the recorder
+        sessionRecorder.current.addMicrophoneAudio(userStream);
+
+        // Start recording
+        sessionRecorder.current.startRecording();
+        console.log('Session recording started');
+      } catch (mediaError) {
+        console.error("Error accessing media devices:", mediaError);
+        // Continue without recording if media access fails
       }
-
-      const EPHEMERAL_KEY = data.client_secret.value;
-      console.log('Received valid token with client_secret');
-
-      const pc = new RTCPeerConnection();
-      audioElement.current = document.createElement("audio");
-      audioElement.current.autoplay = true;
-      pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
       const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
-      pc.addTrack(ms.getTracks()[0]);
+      peerConnection.current.addTrack(ms.getTracks()[0]);
 
-      const dc = pc.createDataChannel("oai-events");
+      const dc = peerConnection.current.createDataChannel("oai-events");
       setDataChannel(dc);
 
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
+      const offer = await peerConnection.current.createOffer();
+      await peerConnection.current.setLocalDescription(offer);
 
       const baseUrl = "https://api.openai.com/v1/realtime";
       const model = "gpt-4o-realtime-preview-2024-12-17";
@@ -152,7 +156,7 @@ export default function App() {
         method: "POST",
         body: offer.sdp,
         headers: {
-          Authorization: `Bearer ${EPHEMERAL_KEY}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/sdp",
         },
       });
@@ -161,9 +165,58 @@ export default function App() {
         type: "answer",
         sdp: await sdpResponse.text(),
       };
-      await pc.setRemoteDescription(answer);
+      await peerConnection.current.setRemoteDescription(answer);
 
-      peerConnection.current = pc;
+      // Add event listeners to the data channel to handle the responses
+      dataChannel.addEventListener("open", () => {
+        console.log("Data channel opened");
+        // Send an initial message to start the conversation
+        sendClientEvent({
+          type: "conversation.create",
+        });
+      });
+
+      // Set up AI audio capture for recording
+      if (audioElement.current && sessionRecorder.current) {
+        // Wait for the audio to start playing
+        audioElement.current.addEventListener('playing', () => {
+          try {
+            // Get the audio stream from the audio element for recording
+            const audioStream = audioElement.current.captureStream 
+              ? audioElement.current.captureStream() 
+              : audioElement.current.mozCaptureStream();
+
+            // Add the AI audio to the recorder
+            sessionRecorder.current.addAIAudio(audioStream);
+            console.log('AI audio added to recording');
+          } catch (error) {
+            console.error('Error capturing AI audio for recording:', error);
+          }
+        }, { once: true });
+      }
+
+      dataChannel.addEventListener("message", (e) => {
+        try {
+          const event = JSON.parse(e.data);
+          console.log("Raw event data:", e.data);
+          console.log("Parsed event:", event);
+
+          if (event.type === "audio.transcription") {
+            console.log("Audio transcription event:", event);
+            setEvents(prev => [event, ...prev]);
+          } else {
+            console.log("Non-transcription event:", event.type);
+            setEvents(prev => [event, ...prev]);
+          }
+        } catch (error) {
+          console.error("Error processing event:", error);
+          console.error("Raw event data:", e.data);
+        }
+      });
+
+
+      peerConnection.current.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
+
       setEvents((prev) => [...prev, { type: "system", message: "Starting session..." }]);
       setIsSessionActive(true);
 
@@ -177,44 +230,29 @@ export default function App() {
         setEvents(events);
       };
 
-
-      // Set up session recording with AI audio when session becomes active
-      if (!sessionRecorder.current && audioElement.current) {
-        sessionRecorder.current = new SessionRecorder(
-          await navigator.mediaDevices.getUserMedia({ video: true }), // Get user video stream
-          audioElement.current, // AI audio source
-          ms // user microphone audio source
-        );
-        userVideoStream.current = await navigator.mediaDevices.getUserMedia({ video: true });
-
-        // Start recording
-        sessionRecorder.current.startRecording();
-        console.log("Session recording started");
-      }
-
-      const localAnswer = await pc.createOffer();
-      await pc.setLocalDescription(localAnswer);
+      const localAnswer = await peerConnection.current.createOffer();
+      await peerConnection.current.setLocalDescription(localAnswer);
 
       // Wait for ICE gathering to complete
       let offerSdp;
-      if (pc.localDescription.sdp) {
-        offerSdp = pc.localDescription.sdp;
+      if (peerConnection.current.localDescription.sdp) {
+        offerSdp = peerConnection.current.localDescription.sdp;
       } else {
         offerSdp = await new Promise((resolve) => {
           const maxAttempts = 30; // give up eventually
           let attempts = 0;
           const intervalId = setInterval(() => {
             if (
-              pc.localDescription &&
-              pc.localDescription.sdp &&
-              pc.iceGatheringState === "complete"
+              peerConnection.current.localDescription &&
+              peerConnection.current.localDescription.sdp &&
+              peerConnection.current.iceGatheringState === "complete"
             ) {
               clearInterval(intervalId);
-              resolve(pc.localDescription.sdp);
+              resolve(peerConnection.current.localDescription.sdp);
             }
             if (attempts >= maxAttempts) {
               clearInterval(intervalId);
-              resolve(pc.localDescription?.sdp || "");
+              resolve(peerConnection.current.localDescription?.sdp || "");
               console.error("Gave up waiting for ICE gathering to complete");
             }
             attempts++;
@@ -659,6 +697,20 @@ class SessionRecorder {
 
   addAIAudioSource(aiAudio) {
     this.aiAudio = aiAudio;
+    this.aiAudio.connect(this.gainNodeAI);
+  }
+
+  async initialize(userStream) {
+    this.userStream = userStream;
+  }
+
+  addMicrophoneAudio(userStream) {
+    this.micAudio = this.audioContext.createMediaStreamSource(userStream);
+    this.micAudio.connect(this.gainNodeMic);
+  }
+
+  addAIAudio(audioStream) {
+    this.aiAudio = this.audioContext.createMediaStreamSource(audioStream);
     this.aiAudio.connect(this.gainNodeAI);
   }
 

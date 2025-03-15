@@ -172,3 +172,176 @@ export class SessionRecorder {
     console.log('Session recorder resources disposed');
   }
 }
+/**
+ * SessionRecorder - Utility class to handle recording of video and audio streams
+ * 
+ * Handles:
+ * - Camera video recording
+ * - Microphone audio recording
+ * - AI response audio recording and mixing
+ */
+export default class SessionRecorder {
+  constructor() {
+    this.mediaRecorder = null;
+    this.recordedChunks = [];
+    this.isRecording = false;
+    this.audioContext = null;
+    this.microphoneSource = null;
+    this.aiAudioSource = null;
+    this.mixedDestination = null;
+  }
+
+  /**
+   * Initialize the recorder with video and audio streams
+   * @param {MediaStream} videoStream - The camera video stream
+   */
+  async initialize(videoStream) {
+    if (!videoStream) {
+      throw new Error('Video stream is required');
+    }
+
+    console.log('Initializing session recorder...');
+
+    // Create audio context for mixing
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Create a destination for the mixed audio
+    this.mixedDestination = this.audioContext.createMediaStreamDestination();
+    
+    // Combine video tracks with the mixed audio destination
+    const videoTracks = videoStream.getVideoTracks();
+    const combinedStream = new MediaStream([
+      ...videoTracks,
+      ...this.mixedDestination.stream.getAudioTracks()
+    ]);
+
+    // Create MediaRecorder with the combined stream
+    this.mediaRecorder = new MediaRecorder(combinedStream, {
+      mimeType: 'video/webm;codecs=vp9,opus',
+      videoBitsPerSecond: 1000000, // 1 Mbps
+      audioBitsPerSecond: 128000   // 128 kbps
+    });
+
+    // Set up recording event handlers
+    this.mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        this.recordedChunks.push(event.data);
+      }
+    };
+
+    console.log('Session recorder initialized successfully');
+    return this;
+  }
+
+  /**
+   * Add microphone audio to the recording
+   * @param {MediaStream} microphoneStream - The user's microphone stream
+   */
+  addMicrophoneAudio(microphoneStream) {
+    if (!this.audioContext) {
+      throw new Error('Initialize recorder first');
+    }
+
+    if (!microphoneStream) {
+      console.warn('No microphone stream provided');
+      return;
+    }
+
+    // Connect microphone to the mixed destination
+    this.microphoneSource = this.audioContext.createMediaStreamSource(microphoneStream);
+    this.microphoneSource.connect(this.mixedDestination);
+    console.log('Microphone audio added to recorder');
+  }
+
+  /**
+   * Add AI audio to the recording
+   * @param {MediaStream} aiAudioStream - The AI's audio stream
+   */
+  addAIAudio(aiAudioStream) {
+    if (!this.audioContext) {
+      throw new Error('Initialize recorder first');
+    }
+
+    if (!aiAudioStream) {
+      console.warn('No AI audio stream provided');
+      return;
+    }
+
+    // Connect AI audio to the mixed destination
+    this.aiAudioSource = this.audioContext.createMediaStreamSource(aiAudioStream);
+    this.aiAudioSource.connect(this.mixedDestination);
+    console.log('AI audio added to recorder');
+  }
+
+  /**
+   * Start the recording
+   */
+  startRecording() {
+    if (this.isRecording) {
+      console.warn('Already recording');
+      return;
+    }
+
+    if (!this.mediaRecorder) {
+      throw new Error('Recorder not initialized');
+    }
+
+    this.recordedChunks = [];
+    this.mediaRecorder.start(1000); // Capture in 1-second chunks
+    this.isRecording = true;
+    console.log('Recording started');
+  }
+
+  /**
+   * Stop recording and return the recorded data as a Blob
+   * @returns {Promise<Blob>} The recorded video blob
+   */
+  stopRecording() {
+    return new Promise((resolve, reject) => {
+      if (!this.isRecording || !this.mediaRecorder) {
+        console.warn('Cannot stop recording - not currently recording');
+        reject(new Error('Not recording'));
+        return;
+      }
+      
+      this.mediaRecorder.onstop = () => {
+        try {
+          const recordedBlob = new Blob(this.recordedChunks, { type: 'video/webm' });
+          this.isRecording = false;
+          console.log(`Recording stopped. Size: ${recordedBlob.size} bytes`);
+          resolve(recordedBlob);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      this.mediaRecorder.stop();
+    });
+  }
+
+  /**
+   * Clean up resources
+   */
+  dispose() {
+    if (this.isRecording) {
+      this.mediaRecorder.stop();
+    }
+    
+    if (this.microphoneSource) {
+      this.microphoneSource.disconnect();
+    }
+    
+    if (this.aiAudioSource) {
+      this.aiAudioSource.disconnect();
+    }
+    
+    if (this.audioContext) {
+      this.audioContext.close();
+    }
+    
+    this.mediaRecorder = null;
+    this.recordedChunks = [];
+    this.isRecording = false;
+    console.log('Session recorder resources disposed');
+  }
+}
