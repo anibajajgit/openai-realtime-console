@@ -3,14 +3,8 @@ import AppSidebar from "./AppSidebar";
 import { AuthContext } from "../utils/AuthContext";
 
 // Placeholder RecordingsList component -  Requires backend implementation for functionality
-const RecordingsList = () => {
-  return (
-    <div>
-      <h2>Recordings</h2>
-      <p>This section will list audio recordings once backend support is implemented.</p>
-    </div>
-  );
-};
+// Import the actual RecordingsList component
+import RecordingsList from './RecordingsList';
 
 
 export default function Review() {

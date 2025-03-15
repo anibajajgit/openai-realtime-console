@@ -148,6 +148,48 @@ class AudioRecorder {
       throw error;
     }
   }
+
+  // Utility method to debug and list all stored recordings
+  debugStoredRecordings() {
+    try {
+      console.log('--- Stored Recordings Debug Info ---');
+      // Check localStorage for recordings list
+      const recordingsData = localStorage.getItem('recordings');
+      if (recordingsData) {
+        const recordings = JSON.parse(recordingsData);
+        console.log(`Found ${recordings.length} recordings in localStorage:`);
+        recordings.forEach((rec, index) => {
+          console.log(`[${index + 1}] ${rec.fileName} (${Math.round(rec.size / 1024)} KB) - ${new Date(rec.timestamp).toLocaleString()}`);
+          // Verify the actual recording data exists
+          const hasData = localStorage.getItem(rec.fileName) !== null;
+          console.log(`   Data exists: ${hasData ? 'Yes' : 'No'}`);
+        });
+      } else {
+        console.log('No recordings list found in localStorage');
+      }
+      
+      // Look for other recording-related keys
+      const recordingKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('recording-')) {
+          recordingKeys.push(key);
+        }
+      }
+      
+      if (recordingKeys.length > 0) {
+        console.log(`Found ${recordingKeys.length} recording files that may not be in the index:`);
+        recordingKeys.forEach(key => console.log(`  ${key}`));
+      }
+      
+      console.log('--- End Debug Info ---');
+    } catch (error) {
+      console.error('Error debugging recordings:', error);
+    }
+  }
 }
 
-export default new AudioRecorder();
+const recorder = new AudioRecorder();
+// Debug recordings on load
+setTimeout(() => recorder.debugStoredRecordings(), 1000);
+export default recorder;
