@@ -74,8 +74,6 @@ function SessionStopped({ startSession }) {
       console.log("Microphone access granted, initializing recording...");
       await AudioRecorder.startRecording(stream);
       console.log("Audio recording started successfully");
-      } else {
-        console.error("AudioRecorder module not available or missing startRecording method");
       }
     } catch (error) {
       console.error('Error starting audio recording:', error);
