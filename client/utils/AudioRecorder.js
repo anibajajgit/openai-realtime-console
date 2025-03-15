@@ -17,29 +17,26 @@ class AudioRecorder {
         return;
       }
 
-      // Create a new audio context to handle microphone input
-      const audioContext = new AudioContext();
-      const source = audioContext.createMediaStreamSource(stream);
-
-      // Create a destination for recording
-      const destination = audioContext.createMediaStreamDestination();
-      source.connect(destination);
-
-      // Create media recorder
-      this.mediaRecorder = new MediaRecorder(destination.stream);
+      console.log('Starting new recording...');
+      this.stream = stream;
+      
+      // Create media recorder directly from the stream
+      const options = { mimeType: 'audio/webm' };
+      this.mediaRecorder = new MediaRecorder(stream, options);
       this.audioChunks = [];
 
       // Event handler for data available
       this.mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
+          console.log(`Got audio chunk of size: ${event.data.size} bytes`);
           this.audioChunks.push(event.data);
         }
       };
 
-      // Start recording
-      this.mediaRecorder.start();
+      // Start recording with 1 second intervals to collect chunks
+      this.mediaRecorder.start(1000);
       this.isRecording = true;
-      console.log('Recording started');
+      console.log('Recording started successfully');
     } catch (error) {
       console.error('Error starting audio recording:', error);
     }
@@ -53,65 +50,127 @@ class AudioRecorder {
         return;
       }
 
+      console.log('Stopping recording...');
+      
       // Create event handler for recording stopped
       this.mediaRecorder.onstop = async () => {
         try {
-          console.log('Recording stopped, processing audio...');
+          console.log(`Recording stopped, processing ${this.audioChunks.length} audio chunks...`);
+          
+          if (this.audioChunks.length === 0) {
+            console.warn('No audio chunks were recorded');
+            this.isRecording = false;
+            resolve(null);
+            return;
+          }
+          
           const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-          const timestamp = new Date().toISOString();
+          console.log(`Created audio blob of size: ${audioBlob.size} bytes`);
+          
+          const timestamp = Date.now();
           const fileName = `recording-${timestamp}.webm`;
 
-          // Store in Replit Storage
-          await this.storeRecording(fileName, audioBlob);
-
-          this.isRecording = false;
-          this.audioChunks = [];
-          resolve(fileName);
+          // Store in localStorage
+          const success = await this.storeRecording(fileName, audioBlob);
+          
+          if (success) {
+            console.log(`Successfully saved recording as ${fileName}`);
+            // Clean up
+            if (this.stream) {
+              this.stream.getTracks().forEach(track => track.stop());
+              this.stream = null;
+            }
+            this.isRecording = false;
+            this.audioChunks = [];
+            resolve(fileName);
+          } else {
+            console.error('Failed to save recording');
+            reject(new Error('Failed to save recording'));
+          }
         } catch (error) {
           console.error('Error processing recording:', error);
           reject(error);
         }
       };
 
-      // Stop the recording
+      // Request final audio chunk then stop
+      this.mediaRecorder.requestData();
       this.mediaRecorder.stop();
     });
   }
 
   async storeRecording(fileName, blob) {
     try {
-      // Convert blob to base64
+      console.log(`Attempting to store recording ${fileName} (${blob.size} bytes)...`);
+      
+      // For larger files, use a more memory-efficient approach
+      // Read the blob as an array buffer
       const buffer = await blob.arrayBuffer();
-      const base64 = btoa(
-        new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-      );
-
-      // Store in localStorage
-      localStorage.setItem(fileName, base64);
-      console.log(`Recording saved to localStorage as ${fileName}`);
-
-      // Save a list of recordings
-      let recordings = [];
-      try {
-        const existingRecordings = localStorage.getItem('recordings');
-        if (existingRecordings) {
-          recordings = JSON.parse(existingRecordings);
-        }
-      } catch (e) {
-        console.log('No existing recordings found');
+      console.log(`Converted blob to array buffer of length: ${buffer.byteLength}`);
+      
+      // Convert array buffer to base64 string in chunks to avoid memory issues
+      const uint8Array = new Uint8Array(buffer);
+      const chunkSize = 1024 * 1024; // Process 1MB at a time
+      let base64 = '';
+      
+      for (let i = 0; i < uint8Array.length; i += chunkSize) {
+        const chunk = uint8Array.slice(i, i + chunkSize);
+        base64 += btoa(
+          Array.from(chunk)
+            .map(byte => String.fromCharCode(byte))
+            .join('')
+        );
       }
-
-      recordings.push({
-        fileName,
-        timestamp: new Date().toISOString(),
-        size: blob.size
-      });
-
-      localStorage.setItem('recordings', JSON.stringify(recordings));
-      return fileName;
+      
+      console.log(`Converted to base64 string of length: ${base64.length}`);
+      
+      try {
+        // Store in localStorage
+        localStorage.setItem(fileName, base64);
+        console.log(`Saved audio data to localStorage as ${fileName}`);
+        
+        // Update recordings list
+        let recordings = [];
+        const existingRecordings = localStorage.getItem('recordings');
+        
+        if (existingRecordings) {
+          try {
+            recordings = JSON.parse(existingRecordings);
+            console.log(`Found ${recordings.length} existing recordings`);
+          } catch (e) {
+            console.warn('Error parsing existing recordings:', e);
+          }
+        }
+        
+        // Add new recording to the list
+        recordings.push({
+          fileName,
+          timestamp: new Date().toISOString(),
+          size: blob.size
+        });
+        
+        localStorage.setItem('recordings', JSON.stringify(recordings));
+        console.log(`Updated recordings list, now has ${recordings.length} items`);
+        
+        // Debug info to verify storage
+        this.debugStoredRecordings();
+        
+        return true;
+      } catch (storageError) {
+        console.error('localStorage error:', storageError);
+        
+        // Check if it's a quota error
+        if (storageError.name === 'QuotaExceededError' || 
+            storageError.code === 22 || 
+            storageError.code === 1014) {
+          console.error('LocalStorage quota exceeded. Try clearing old recordings.');
+        }
+        
+        return false;
+      }
     } catch (error) {
-      console.error('Error storing recording:', error);
-      throw error;
+      console.error('Error in storeRecording:', error);
+      return false;
     }
   }
 

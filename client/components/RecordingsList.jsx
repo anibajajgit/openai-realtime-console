@@ -55,7 +55,17 @@ export default function RecordingsList() {
   }
 
   if (!recordings || recordings.length === 0) {
-    return <div className="p-4">No recordings found. Complete a session to create a recording.</div>;
+    return (
+      <div className="p-4">
+        <p>No recordings found. Complete a session to create a recording.</p>
+        <button 
+          onClick={() => AudioRecorder.debugStoredRecordings()} 
+          className="mt-3 px-3 py-1 bg-gray-200 rounded-md text-sm hover:bg-gray-300"
+        >
+          Check for Recordings
+        </button>
+      </div>
+    );
   }
 
   return (
