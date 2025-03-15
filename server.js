@@ -1,4 +1,3 @@
-
 import express from "express";
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -607,10 +606,6 @@ try {
 
 // Handle recording uploads
 app.post('/api/recordings/upload', async (req, res) => {
-</old_str>
-
-// Handle recording uploads
-app.post('/api/recordings/upload', async (req, res) => {
   try {
     // Check if multer or busboy is installed for file handling
     const multer = await import('multer');
@@ -652,22 +647,22 @@ app.post('/api/recordings/upload', async (req, res) => {
             // Store in Replit Object Storage
             const objectStoragePath = `recordings/${filename}`;
             await objectStorageClient.uploadBuffer(objectStoragePath, req.file.buffer);
-            
+
             // Get the public URL for the object
             publicUrl = await objectStorageClient.getSignedUrl(objectStoragePath, {
               expiresIn: 31536000 // URL valid for 1 year (in seconds)
             });
-            
+
             storagePath = objectStoragePath;
             console.log(`Recording saved to object storage at ${objectStoragePath}`);
-        
+
           } catch (objectStorageError) {
             console.error('Error saving to object storage, falling back to local storage:', objectStorageError);
             // Fall back to local storage if object storage fails
             objectStorageClient = null;
           }
         }
-        
+
         // Fall back to local storage if object storage is not available or failed
         if (!objectStorageClient) {
           // Create directory for recordings if it doesn't exist
@@ -709,7 +704,7 @@ app.post('/api/recordings/upload', async (req, res) => {
     });
   } catch (error) {
     console.error('Error in recording upload endpoint:', error);
-    
+
     // Check if the error is about missing multer
     if (error.code === 'MODULE_NOT_FOUND') {
       return res.status(500).json({ 
@@ -717,7 +712,7 @@ app.post('/api/recordings/upload', async (req, res) => {
         details: error.message
       });
     }
-    
+
     res.status(500).json({ error: `Recording upload failed: ${error.message}` });
   }
 });
