@@ -1,8 +1,6 @@
 
 import Client from '@replit/database';
 
-import { Client } from '@replit/storage';
-
 class AudioRecorder {
   constructor() {
     this.mediaRecorder = null;
@@ -87,9 +85,9 @@ class AudioRecorder {
         new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
       );
       
-      // Store in Replit Storage
+      // Store in Replit Database
       await this.storage.set(fileName, base64);
-      console.log(`Recording saved to object storage as ${fileName}`);
+      console.log(`Recording saved to database as ${fileName}`);
       
       // Save a list of recordings
       let recordings = [];
