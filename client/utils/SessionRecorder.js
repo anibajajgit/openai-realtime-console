@@ -14,6 +14,8 @@ export class SessionRecorder {
     this.aiAudioSource = null;
     this.mediaStream = null;
     this.outputStream = null;
+    
+    console.log('SessionRecorder instance created');
   }
 
   /**

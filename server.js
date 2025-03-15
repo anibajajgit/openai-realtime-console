@@ -762,6 +762,8 @@ app.get("/token", async (req, res) => {
     const roleId = req.query.roleId;
     const scenarioId = req.query.scenarioId;
     
+    console.log(`Token request received for roleId=${roleId} and scenarioId=${scenarioId}`);
+    
     // Use absolute URLs to avoid localhost issues
     const baseUrl = `http://${req.headers.host}`;
     const rolesResponse = await fetch(`${baseUrl}/api/roles`);
@@ -772,12 +774,22 @@ app.get("/token", async (req, res) => {
     const selectedRole = rolesData.find(r => r.id === Number(roleId));
     const selectedScenario = scenariosData.find(s => s.id === Number(scenarioId));
 
+    if (!selectedRole) {
+      console.error(`Role with ID ${roleId} not found`);
+      return res.status(400).json({ error: `Role with ID ${roleId} not found` });
+    }
+
+    if (!selectedScenario) {
+      console.error(`Scenario with ID ${scenarioId} not found`);
+      return res.status(400).json({ error: `Scenario with ID ${scenarioId} not found` });
+    }
+
     const combinedInstructions = selectedRole && selectedScenario ? 
       `${selectedRole.instructions}\n\nContext: ${selectedScenario.instructions}` : 
       (selectedRole?.instructions || '');
     console.log("Selected role:", selectedRole?.id);
     console.log("Selected scenario:", selectedScenario?.id);
-    console.log("Combined instructions:", combinedInstructions);
+    console.log("Combined instructions length:", combinedInstructions.length);
 
     // Make sure we have an API key
     if (!apiKey) {
@@ -787,6 +799,7 @@ app.get("/token", async (req, res) => {
       });
     }
 
+    console.log("Making request to OpenAI realtime sessions API...");
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
       {
@@ -809,15 +822,28 @@ app.get("/token", async (req, res) => {
       },
     );
 
+    console.log("OpenAI API response status:", response.status);
+    
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("OpenAI API error:", errorData);
+      let errorData;
+      try {
+        errorData = await response.json();
+        console.error("OpenAI API error:", errorData);
+      } catch (e) {
+        const errorText = await response.text();
+        console.error("OpenAI API error (non-JSON response):", errorText);
+        return res.status(response.status).json({
+          error: `OpenAI API error: ${response.status} ${response.statusText}. Response: ${errorText}`
+        });
+      }
+      
       return res.status(response.status).json({
         error: `OpenAI API error: ${errorData.error?.message || response.statusText}`
       });
     }
 
     const data = await response.json();
+    console.log("Successful token response received");
     res.json(data);
   } catch (error) {
     console.error("Token generation error:", error);

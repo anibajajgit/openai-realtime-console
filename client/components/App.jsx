@@ -92,21 +92,45 @@ export default function App() {
 
   async function startSession() {
     try {
-      // Get role and scenario from localStorage or use defaults
-      const roleFromStorage = localStorage.getItem('selectedRole');
-      const scenarioFromStorage = localStorage.getItem('selectedScenario');
+      if (isSessionActive) {
+        console.log("Session already active, not starting a new one");
+        return;
+      }
 
-      const role = roleFromStorage ? JSON.parse(roleFromStorage) : { id: 1 };
-      const scenario = scenarioFromStorage ? JSON.parse(scenarioFromStorage) : { id: 1 };
+      if (!selectedRole) {
+        alert("Please select a role");
+        return;
+      }
 
-      // Update state with these values
-      setSelectedRole(role);
-      setSelectedScenario(scenario);
+      if (!selectedScenario) {
+        alert("Please select a scenario");
+        return;
+      }
+
+      console.log(`Starting session with role ID: ${selectedRole.id} and scenario ID: ${selectedScenario.id}`);
 
       // Use the local variables instead of state since state updates are asynchronous
+      const role = selectedRole;
+      const scenario = selectedScenario;
+
+      // Request token from server
       const tokenResponse = await fetch(`/token?roleId=${role.id}&scenarioId=${scenario.id}`);
+
+      if (!tokenResponse.ok) {
+        const errorText = await tokenResponse.text();
+        console.error('Token request failed:', tokenResponse.status, errorText);
+        throw new Error(`Failed to get token: ${tokenResponse.status} ${errorText}`);
+      }
+
       const data = await tokenResponse.json();
+
+      if (!data || !data.client_secret || !data.client_secret.value) {
+        console.error('Invalid token response:', data);
+        throw new Error('Invalid token response from server');
+      }
+
       const EPHEMERAL_KEY = data.client_secret.value;
+      console.log('Received valid token with client_secret');
 
       const pc = new RTCPeerConnection();
       audioElement.current = document.createElement("audio");
