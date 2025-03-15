@@ -134,10 +134,22 @@ function SessionActive({ stopSession, sendTextMessage }) {
                                 // Close the dialog
                                 this.closest('.fixed').remove();
 
-                                // Dispatch a custom event that React components can listen for
-                                const event = new CustomEvent('navigateToReview');
-                                window.dispatchEvent(event);
-                              })()
+                                // Stop recording and store it before navigating
+                                (async () => {
+                                  try {
+                                    // Import and use the AudioRecorder
+                                    const AudioRecorder = (await import('../utils/AudioRecorder')).default;
+                                    const fileName = await AudioRecorder.stopRecording();
+                                    console.log(`Recording stopped and saved as ${fileName}`);
+                                  } catch (error) {
+                                    console.error('Error stopping recording:', error);
+                                    // Continue even if stopping recording fails
+                                  }
+                                  
+                                  // Dispatch navigate event after recording is handled
+                                  const event = new CustomEvent('navigateToReview');
+                                  window.dispatchEvent(event);
+                                })()
                             "
                           >Review Feedback</button>
                         </div>

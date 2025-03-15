@@ -10,6 +10,7 @@ import "../base.css";
 import SessionControls from "./SessionControls";
 import { AuthContext, AuthProvider } from "../utils/AuthContext"; // Assuming AuthContext is in ../utils
 import { BorderTrail } from './BorderTrail';
+import AudioRecorder from "../utils/AudioRecorder";
 
 export default function App() {
   // Get user from context if available, otherwise null
@@ -105,7 +106,23 @@ export default function App() {
       const pc = new RTCPeerConnection();
       audioElement.current = document.createElement("audio");
       audioElement.current.autoplay = true;
-      pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
+      pc.ontrack = (e) => {
+        audioElement.current.srcObject = e.streams[0];
+        
+        // Start recording the audio from microphone
+        // This records only the microphone input for now
+        const tracks = e.streams[0].getAudioTracks();
+        if (tracks && tracks.length > 0) {
+          try {
+            // Start recording with the microphone stream
+            AudioRecorder.startRecording(e.streams[0]);
+            console.log("Audio recording started with session");
+          } catch (error) {
+            console.error("Failed to start audio recording:", error);
+            // Continue with session even if recording fails
+          }
+        }
+      };
 
       const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
       pc.addTrack(ms.getTracks()[0]);
