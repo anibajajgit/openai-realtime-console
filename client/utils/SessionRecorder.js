@@ -1,9 +1,8 @@
-
 /**
  * SessionRecorder utility class
  * Handles recording of video feed and mixed audio streams
  */
-export class SessionRecorder {
+export default class SessionRecorder {
   constructor() {
     this.mediaRecorder = null;
     this.recordedChunks = [];
@@ -14,7 +13,7 @@ export class SessionRecorder {
     this.aiAudioSource = null;
     this.mediaStream = null;
     this.outputStream = null;
-    
+
     console.log('SessionRecorder instance created');
   }
 
@@ -28,32 +27,32 @@ export class SessionRecorder {
       // Create audio context for mixing
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
       this.audioDestination = this.audioContext.createMediaStreamDestination();
-      
+
       // Set up microphone audio source
       if (microphoneStream) {
         this.microphoneSource = this.audioContext.createMediaStreamSource(microphoneStream);
         this.microphoneSource.connect(this.audioDestination);
       }
-      
+
       // Create a composite stream with video from camera and mixed audio
       const videoTrack = videoStream.getVideoTracks()[0];
-      
+
       // Create a new stream with the video track and the audio destination stream
       this.outputStream = new MediaStream();
       if (videoTrack) {
         this.outputStream.addTrack(videoTrack);
       }
-      
+
       // Add the mixed audio track to the output stream
       this.audioDestination.stream.getAudioTracks().forEach(track => {
         this.outputStream.addTrack(track);
       });
-      
+
       console.log('Session recorder initialized with streams', {
         videoTracks: this.outputStream.getVideoTracks().length,
         audioTracks: this.outputStream.getAudioTracks().length
       });
-      
+
       this.mediaStream = this.outputStream;
     } catch (error) {
       console.error('Error initializing session recorder:', error);
@@ -61,26 +60,21 @@ export class SessionRecorder {
   }
 
   /**
-   * Add an AI audio element to be recorded
-   * @param {HTMLAudioElement} audioElement - The audio element playing AI responses
+   * Add AI audio to the recording
+   * @param {AudioNode} aiAudioNode - The AI audio node to add to the recording
    */
-  addAIAudioSource(audioElement) {
-    if (!audioElement || !this.audioContext || !this.audioDestination) {
-      console.warn('Cannot add AI audio source - recorder not fully initialized');
+  addAIAudio(aiAudioNode) {
+    if (!this.audioContext || !this.audioDestination) {
+      console.warn('Cannot add AI audio - recorder not initialized');
       return;
     }
-    
+
     try {
-      // Create a media element source from the audio element
-      this.aiAudioSource = this.audioContext.createMediaElementSource(audioElement);
-      
-      // Connect to both the audio destination (for recording) and the audio context destination (for playback)
+      this.aiAudioSource = aiAudioNode;
       this.aiAudioSource.connect(this.audioDestination);
-      this.aiAudioSource.connect(this.audioContext.destination);
-      
-      console.log('AI audio source added to recorder');
+      console.log('AI audio added to session recorder');
     } catch (error) {
-      console.error('Error adding AI audio source:', error);
+      console.error('Error adding AI audio to recorder:', error);
     }
   }
 
@@ -92,24 +86,24 @@ export class SessionRecorder {
       console.warn('Cannot start recording - already recording or not initialized');
       return;
     }
-    
+
     try {
       this.recordedChunks = [];
-      
+
       // Set up MediaRecorder with the output stream (video + mixed audio)
       this.mediaRecorder = new MediaRecorder(this.mediaStream, {
         mimeType: 'video/webm;codecs=vp9,opus',
         videoBitsPerSecond: 2500000,
         audioBitsPerSecond: 128000
       });
-      
+
       // Handle data available event
       this.mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           this.recordedChunks.push(event.data);
         }
       };
-      
+
       // Start recording
       this.mediaRecorder.start(1000); // Capture in 1-second chunks
       this.isRecording = true;
@@ -130,7 +124,7 @@ export class SessionRecorder {
         reject(new Error('Not recording'));
         return;
       }
-      
+
       this.mediaRecorder.onstop = () => {
         try {
           const recordedBlob = new Blob(this.recordedChunks, { type: 'video/webm' });
@@ -141,7 +135,7 @@ export class SessionRecorder {
           reject(error);
         }
       };
-      
+
       this.mediaRecorder.stop();
     });
   }
@@ -153,192 +147,19 @@ export class SessionRecorder {
     if (this.isRecording) {
       this.mediaRecorder.stop();
     }
-    
+
     if (this.microphoneSource) {
       this.microphoneSource.disconnect();
     }
-    
+
     if (this.aiAudioSource) {
       this.aiAudioSource.disconnect();
     }
-    
+
     if (this.audioContext) {
       this.audioContext.close();
     }
-    
-    this.mediaRecorder = null;
-    this.recordedChunks = [];
-    this.isRecording = false;
-    console.log('Session recorder resources disposed');
-  }
-}
-/**
- * SessionRecorder - Utility class to handle recording of video and audio streams
- * 
- * Handles:
- * - Camera video recording
- * - Microphone audio recording
- * - AI response audio recording and mixing
- */
-export default class SessionRecorder {
-  constructor() {
-    this.mediaRecorder = null;
-    this.recordedChunks = [];
-    this.isRecording = false;
-    this.audioContext = null;
-    this.microphoneSource = null;
-    this.aiAudioSource = null;
-    this.mixedDestination = null;
-  }
 
-  /**
-   * Initialize the recorder with video and audio streams
-   * @param {MediaStream} videoStream - The camera video stream
-   */
-  async initialize(videoStream) {
-    if (!videoStream) {
-      throw new Error('Video stream is required');
-    }
-
-    console.log('Initializing session recorder...');
-
-    // Create audio context for mixing
-    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // Create a destination for the mixed audio
-    this.mixedDestination = this.audioContext.createMediaStreamDestination();
-    
-    // Combine video tracks with the mixed audio destination
-    const videoTracks = videoStream.getVideoTracks();
-    const combinedStream = new MediaStream([
-      ...videoTracks,
-      ...this.mixedDestination.stream.getAudioTracks()
-    ]);
-
-    // Create MediaRecorder with the combined stream
-    this.mediaRecorder = new MediaRecorder(combinedStream, {
-      mimeType: 'video/webm;codecs=vp9,opus',
-      videoBitsPerSecond: 1000000, // 1 Mbps
-      audioBitsPerSecond: 128000   // 128 kbps
-    });
-
-    // Set up recording event handlers
-    this.mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        this.recordedChunks.push(event.data);
-      }
-    };
-
-    console.log('Session recorder initialized successfully');
-    return this;
-  }
-
-  /**
-   * Add microphone audio to the recording
-   * @param {MediaStream} microphoneStream - The user's microphone stream
-   */
-  addMicrophoneAudio(microphoneStream) {
-    if (!this.audioContext) {
-      throw new Error('Initialize recorder first');
-    }
-
-    if (!microphoneStream) {
-      console.warn('No microphone stream provided');
-      return;
-    }
-
-    // Connect microphone to the mixed destination
-    this.microphoneSource = this.audioContext.createMediaStreamSource(microphoneStream);
-    this.microphoneSource.connect(this.mixedDestination);
-    console.log('Microphone audio added to recorder');
-  }
-
-  /**
-   * Add AI audio to the recording
-   * @param {MediaStream} aiAudioStream - The AI's audio stream
-   */
-  addAIAudio(aiAudioStream) {
-    if (!this.audioContext) {
-      throw new Error('Initialize recorder first');
-    }
-
-    if (!aiAudioStream) {
-      console.warn('No AI audio stream provided');
-      return;
-    }
-
-    // Connect AI audio to the mixed destination
-    this.aiAudioSource = this.audioContext.createMediaStreamSource(aiAudioStream);
-    this.aiAudioSource.connect(this.mixedDestination);
-    console.log('AI audio added to recorder');
-  }
-
-  /**
-   * Start the recording
-   */
-  startRecording() {
-    if (this.isRecording) {
-      console.warn('Already recording');
-      return;
-    }
-
-    if (!this.mediaRecorder) {
-      throw new Error('Recorder not initialized');
-    }
-
-    this.recordedChunks = [];
-    this.mediaRecorder.start(1000); // Capture in 1-second chunks
-    this.isRecording = true;
-    console.log('Recording started');
-  }
-
-  /**
-   * Stop recording and return the recorded data as a Blob
-   * @returns {Promise<Blob>} The recorded video blob
-   */
-  stopRecording() {
-    return new Promise((resolve, reject) => {
-      if (!this.isRecording || !this.mediaRecorder) {
-        console.warn('Cannot stop recording - not currently recording');
-        reject(new Error('Not recording'));
-        return;
-      }
-      
-      this.mediaRecorder.onstop = () => {
-        try {
-          const recordedBlob = new Blob(this.recordedChunks, { type: 'video/webm' });
-          this.isRecording = false;
-          console.log(`Recording stopped. Size: ${recordedBlob.size} bytes`);
-          resolve(recordedBlob);
-        } catch (error) {
-          reject(error);
-        }
-      };
-      
-      this.mediaRecorder.stop();
-    });
-  }
-
-  /**
-   * Clean up resources
-   */
-  dispose() {
-    if (this.isRecording) {
-      this.mediaRecorder.stop();
-    }
-    
-    if (this.microphoneSource) {
-      this.microphoneSource.disconnect();
-    }
-    
-    if (this.aiAudioSource) {
-      this.aiAudioSource.disconnect();
-    }
-    
-    if (this.audioContext) {
-      this.audioContext.close();
-    }
-    
     this.mediaRecorder = null;
     this.recordedChunks = [];
     this.isRecording = false;
