@@ -232,22 +232,6 @@ export default function Review() {
                           ))}
                         </select>
                       </div>
-                      
-                      {/* Display recording if available */}
-                      {selectedTranscript?.recordingUrl ? (
-                        <div className="mt-4 rounded-lg overflow-hidden border border-gray-200">
-                          <h3 className="text-lg font-medium mb-2">Session Recording</h3>
-                          <video
-                            controls
-                            className="w-full rounded-lg"
-                            src={selectedTranscript.recordingUrl}
-                          >
-                            Your browser does not support HTML video.
-                          </video>
-                        </div>
-                      ) : (
-                        selectedTranscript && <p className="mt-4 text-gray-500 italic">No recording available for this conversation.</p>
-                      )}
 
                       {selectedTranscript && (
                         <div className="bg-gray-50 p-4 rounded-lg mt-4 w-full">

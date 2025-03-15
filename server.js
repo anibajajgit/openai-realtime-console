@@ -1,3 +1,4 @@
+
 import express from "express";
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -18,38 +19,6 @@ app.use(express.json());
 // Serve attached_assets directory
 app.use('/assets', express.static(path.join(__dirname, 'client/assets')));
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
-
-// Debug route to check recordings directory
-app.get('/debug-recordings', (req, res) => {
-  try {
-    const recordingsDir = path.join(__dirname, 'client', 'assets', 'recordings');
-    let files = [];
-    let dirExists = false;
-    
-    if (fs.existsSync(recordingsDir)) {
-      dirExists = true;
-      files = fs.readdirSync(recordingsDir);
-    }
-    
-    // Check if object storage client is initialized
-    const hasObjectStorage = !!process.env.BUCKET_ID;
-    
-    res.json({
-      localRecordings: {
-        directoryExists: dirExists,
-        directoryPath: recordingsDir,
-        fileCount: files.length,
-        files: files
-      },
-      objectStorage: {
-        configured: hasObjectStorage,
-        bucketId: process.env.BUCKET_ID || 'not set'
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Create client/assets directory if it doesn't exist
 if (!fs.existsSync(path.join(__dirname, 'client/assets'))) {
@@ -611,253 +580,6 @@ app.use((req, res, next) => {
 
 app.use(vite.middlewares);
 
-// Initialize Object Storage client
-import { Client } from '@replit/object-storage';
-let objectStorageClient = null;
-
-try {
-  // Check if we have a bucket ID in environment before initializing
-  if (process.env.BUCKET_ID) {
-    objectStorageClient = new Client({
-      bucketId: process.env.BUCKET_ID
-    });
-    console.log("Object Storage client initialized successfully with bucket:", process.env.BUCKET_ID);
-  } else {
-    // Log message about missing bucket ID
-    console.warn("No BUCKET_ID environment variable found. Falling back to local storage.");
-  }
-} catch (error) {
-  console.warn("Failed to initialize Object Storage client. Will fall back to local storage.", error);
-  objectStorageClient = null;
-}
-
-// Handle recording uploads
-app.post('/api/recordings/upload', async (req, res) => {
-  try {
-    // Check if multer or busboy is installed for file handling
-    const multer = await import('multer');
-    const storage = multer.default.memoryStorage();
-    const upload = multer.default({ 
-      storage: storage,
-      limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit
-    }).single('recording');
-
-    upload(req, res, async function(err) {
-      if (err) {
-        console.error('Error in file upload middleware:', err);
-        return res.status(500).json({ error: `File upload failed: ${err.message}` });
-      }
-
-      // Get transcriptId from the request body
-      const { transcriptId } = req.body;
-
-      if (!transcriptId) {
-        return res.status(400).json({ error: 'Missing transcriptId parameter' });
-      }
-
-      if (!req.file) {
-        return res.status(400).json({ error: 'No recording file provided' });
-      }
-
-      console.log(`Received recording for transcript ${transcriptId}. File size: ${req.file.size} bytes`);
-
-      try {
-        // Generate a unique filename with timestamp
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const filename = `recording-${transcriptId}-${timestamp}.webm`;
-        let publicUrl;
-        let storagePath;
-
-        // Try to store in object storage first, fall back to local storage
-        if (objectStorageClient) {
-          try {
-            // Store in Replit Object Storage
-            const objectStoragePath = `recordings/${filename}`;
-            await objectStorageClient.uploadBuffer(objectStoragePath, req.file.buffer);
-
-            // Get the public URL for the object
-            publicUrl = await objectStorageClient.getSignedUrl(objectStoragePath, {
-              expiresIn: 31536000 // URL valid for 1 year (in seconds)
-            });
-
-            storagePath = objectStoragePath;
-            console.log(`Recording saved to object storage at ${objectStoragePath}`);
-
-          } catch (objectStorageError) {
-            console.error('Error saving to object storage, falling back to local storage:', objectStorageError);
-            // Fall back to local storage if object storage fails
-            objectStorageClient = null;
-          }
-        }
-
-        // Fall back to local storage if object storage is not available or failed
-        if (!objectStorageClient) {
-          // Create directory for recordings if it doesn't exist
-          const recordingsDir = path.join(__dirname, 'client', 'assets', 'recordings');
-          if (!fs.existsSync(recordingsDir)) {
-            fs.mkdirSync(recordingsDir, { recursive: true });
-          }
-
-          const filePath = path.join(recordingsDir, filename);
-          // Save the file to disk
-          fs.writeFileSync(filePath, req.file.buffer);
-          console.log(`Recording saved to local storage at ${filePath}`);
-
-          // Local URL path
-          publicUrl = `/assets/recordings/${filename}`;
-          storagePath = filePath;
-        }
-
-        // Update the transcript with recording information
-        await Transcript.update(
-          {
-            hasRecording: true,
-            recordingUrl: publicUrl,
-            recordingStoragePath: storagePath
-          },
-          { where: { id: transcriptId } }
-        );
-
-        res.status(200).json({
-          message: 'Recording uploaded successfully',
-          url: publicUrl,
-          transcriptId: transcriptId,
-          isObjectStorage: !!objectStorageClient
-        });
-      } catch (error) {
-        console.error('Error saving recording:', error);
-        res.status(500).json({ error: `Failed to save recording: ${error.message}` });
-      }
-    });
-  } catch (error) {
-    console.error('Error in recording upload endpoint:', error);
-
-    // Check if the error is about missing multer
-    if (error.code === 'MODULE_NOT_FOUND') {
-      return res.status(500).json({ 
-        error: 'File upload module not available. Please install multer package.',
-        details: error.message
-      });
-    }
-
-    res.status(500).json({ error: `Recording upload failed: ${error.message}` });
-  }
-});
-
-// Handle recording uploads
-app.post('/api/recordings/upload', async (req, res) => {
-  try {
-    // Check if multer or busboy is installed for file handling
-    const multer = await import('multer');
-    const storage = multer.default.memoryStorage();
-    const upload = multer.default({ 
-      storage: storage,
-      limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit
-    }).single('recording');
-
-    upload(req, res, async function(err) {
-      if (err) {
-        console.error('Error in file upload middleware:', err);
-        return res.status(500).json({ error: `File upload failed: ${err.message}` });
-      }
-
-      // Get transcriptId from the request body
-      const { transcriptId } = req.body;
-
-      if (!transcriptId) {
-        return res.status(400).json({ error: 'Missing transcriptId parameter' });
-      }
-
-      if (!req.file) {
-        return res.status(400).json({ error: 'No recording file provided' });
-      }
-
-      console.log(`Received recording for transcript ${transcriptId}. File size: ${req.file.size} bytes`);
-
-      try {
-        // Generate a unique filename with timestamp
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const filename = `recording-${transcriptId}-${timestamp}.webm`;
-        let publicUrl;
-        let storagePath;
-
-        // Try to store in object storage first, fall back to local storage
-        if (objectStorageClient) {
-          try {
-            // Store in Replit Object Storage
-            const objectStoragePath = `recordings/${filename}`;
-            await objectStorageClient.uploadBuffer(objectStoragePath, req.file.buffer);
-
-            // Get the public URL for the object
-            publicUrl = await objectStorageClient.getSignedUrl(objectStoragePath, {
-              expiresIn: 31536000 // URL valid for 1 year (in seconds)
-            });
-
-            storagePath = objectStoragePath;
-            console.log(`Recording saved to object storage at ${objectStoragePath}`);
-
-          } catch (objectStorageError) {
-            console.error('Error saving to object storage, falling back to local storage:', objectStorageError);
-            // Fall back to local storage if object storage fails
-            objectStorageClient = null;
-          }
-        }
-
-        // Fall back to local storage if object storage is not available or failed
-        if (!objectStorageClient) {
-          // Create directory for recordings if it doesn't exist
-          const recordingsDir = path.join(__dirname, 'client', 'assets', 'recordings');
-          if (!fs.existsSync(recordingsDir)) {
-            fs.mkdirSync(recordingsDir, { recursive: true });
-          }
-
-          const filePath = path.join(recordingsDir, filename);
-          // Save the file to disk
-          fs.writeFileSync(filePath, req.file.buffer);
-          console.log(`Recording saved to local storage at ${filePath}`);
-
-          // Local URL path
-          publicUrl = `/assets/recordings/${filename}`;
-          storagePath = filePath;
-        }
-
-        // Update the transcript with recording information
-        await Transcript.update(
-          {
-            hasRecording: true,
-            recordingUrl: publicUrl,
-            recordingStoragePath: storagePath
-          },
-          { where: { id: transcriptId } }
-        );
-
-        res.status(200).json({
-          message: 'Recording uploaded successfully',
-          url: publicUrl,
-          transcriptId: transcriptId,
-          isObjectStorage: !!objectStorageClient
-        });
-      } catch (error) {
-        console.error('Error saving recording:', error);
-        res.status(500).json({ error: `Failed to save recording: ${error.message}` });
-      }
-    });
-  } catch (error) {
-    console.error('Error in recording upload endpoint:', error);
-
-    // Check if the error is about missing multer
-    if (error.code === 'MODULE_NOT_FOUND') {
-      return res.status(500).json({ 
-        error: 'File upload module not available. Please install multer package.',
-        details: error.message
-      });
-    }
-
-    res.status(500).json({ error: `Recording upload failed: ${error.message}` });
-  }
-});
-
-
 // Initialize database and seed data
 console.log("Initializing database...");
 await initDatabase();
@@ -874,45 +596,21 @@ app.get("/token", async (req, res) => {
   try {
     const roleId = req.query.roleId;
     const scenarioId = req.query.scenarioId;
-    
-    console.log(`Token request received for roleId=${roleId} and scenarioId=${scenarioId}`);
-    
-    // Use absolute URLs to avoid localhost issues
-    const baseUrl = `http://${req.headers.host}`;
-    const rolesResponse = await fetch(`${baseUrl}/api/roles`);
+    const rolesResponse = await fetch('http://localhost:3000/api/roles');
     const rolesData = await rolesResponse.json();
-    const scenariosResponse = await fetch(`${baseUrl}/api/scenarios`);
+    const scenariosResponse = await fetch('http://localhost:3000/api/scenarios');
     const scenariosData = await scenariosResponse.json();
 
     const selectedRole = rolesData.find(r => r.id === Number(roleId));
     const selectedScenario = scenariosData.find(s => s.id === Number(scenarioId));
-
-    if (!selectedRole) {
-      console.error(`Role with ID ${roleId} not found`);
-      return res.status(400).json({ error: `Role with ID ${roleId} not found` });
-    }
-
-    if (!selectedScenario) {
-      console.error(`Scenario with ID ${scenarioId} not found`);
-      return res.status(400).json({ error: `Scenario with ID ${scenarioId} not found` });
-    }
 
     const combinedInstructions = selectedRole && selectedScenario ? 
       `${selectedRole.instructions}\n\nContext: ${selectedScenario.instructions}` : 
       (selectedRole?.instructions || '');
     console.log("Selected role:", selectedRole?.id);
     console.log("Selected scenario:", selectedScenario?.id);
-    console.log("Combined instructions length:", combinedInstructions.length);
+    console.log("Combined instructions:", combinedInstructions);
 
-    // Make sure we have an API key
-    if (!apiKey) {
-      console.error("OpenAI API key is missing");
-      return res.status(500).json({ 
-        error: "OpenAI API key is missing. Please check your .env file." 
-      });
-    }
-
-    console.log("Making request to OpenAI realtime sessions API...");
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
       {
@@ -927,40 +625,16 @@ app.get("/token", async (req, res) => {
           instructions: combinedInstructions,
           input_audio_transcription: {
             model: "whisper-1"
-          },
-          // Explicitly enable features needed for conversation transcript
-          delta: true,
-          echo: true
+          }
         }),
       },
     );
 
-    console.log("OpenAI API response status:", response.status);
-    
-    if (!response.ok) {
-      let errorData;
-      try {
-        errorData = await response.json();
-        console.error("OpenAI API error:", errorData);
-      } catch (e) {
-        const errorText = await response.text();
-        console.error("OpenAI API error (non-JSON response):", errorText);
-        return res.status(response.status).json({
-          error: `OpenAI API error: ${response.status} ${response.statusText}. Response: ${errorText}`
-        });
-      }
-      
-      return res.status(response.status).json({
-        error: `OpenAI API error: ${errorData.error?.message || response.statusText}`
-      });
-    }
-
     const data = await response.json();
-    console.log("Successful token response received");
     res.json(data);
   } catch (error) {
     console.error("Token generation error:", error);
-    res.status(500).json({ error: `Failed to generate token: ${error.message}` });
+    res.status(500).json({ error: "Failed to generate token" });
   }
 });
 

@@ -25,12 +25,6 @@ export default function App() {
   const [selectedRole, setSelectedRole] = useState(null); // Add state for selected role
   const [selectedScenario, setSelectedScenario] = useState(null); // Add state for selected scenario
   const navigate = useNavigate(); //Import and use useNavigate
-  const sessionRecorder = useRef(null); // Reference for the session recorder
-  const userVideoStream = useRef(null); // Reference for the user's video stream
-  const [recordingBlob, setRecordingBlob] = useState(null); // State to hold the recorded blob
-  const [recordingUrl, setRecordingUrl] = useState(null); // State to hold the recorded blob URL
-  const currentTranscriptId = useRef(null); // Ref to store the transcript ID after saving
-  const [isUploading, setIsUploading] = useState(false); // State to track upload progress
 
   const loginApp = (userData) => {
     if (userData) {
@@ -92,62 +86,35 @@ export default function App() {
 
   async function startSession() {
     try {
-      setIsSessionActive(true);
+      // Get role and scenario from localStorage or use defaults
+      const roleFromStorage = localStorage.getItem('selectedRole');
+      const scenarioFromStorage = localStorage.getItem('selectedScenario');
 
-      if (!selectedRole || !selectedScenario) {
-        console.error("Role or scenario not selected");
-        return;
-      }
+      const role = roleFromStorage ? JSON.parse(roleFromStorage) : { id: 1 };
+      const scenario = scenarioFromStorage ? JSON.parse(scenarioFromStorage) : { id: 1 };
 
-      // Fetch the token using selected role and scenario
-      const tokenResponse = await fetch(`/token?roleId=${selectedRole.id}&scenarioId=${selectedScenario.id}`);
-      if (!tokenResponse.ok) {
-        const errorData = await tokenResponse.json();
-        throw new Error(errorData.error || "Failed to generate token");
-      }
+      // Update state with these values
+      setSelectedRole(role);
+      setSelectedScenario(scenario);
 
-      const { token } = await tokenResponse.json();
+      // Use the local variables instead of state since state updates are asynchronous
+      const tokenResponse = await fetch(`/token?roleId=${role.id}&scenarioId=${scenario.id}`);
+      const data = await tokenResponse.json();
+      const EPHEMERAL_KEY = data.client_secret.value;
 
-      // Use RTCPeerConnection to establish a media connection
-      peerConnection.current = new RTCPeerConnection({
-        iceServers: [
-          { urls: ["stun:stun.l.google.com:19302"] },
-        ],
-      });
-
-      // Get the user's video and audio stream for display
-      try {
-        const userStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true
-        });
-
-        // Store the stream reference for later use
-        userVideoStream.current = userStream;
-
-        // Initialize the session recorder with the video stream
-        const SessionRecorder = (await import('../utils/SessionRecorder')).default;
-        sessionRecorder.current = new SessionRecorder();
-        await sessionRecorder.current.initialize(userStream, userStream);
-
-        // We don't need to call addMicrophoneAudio separately as it's handled in initialize
-
-        // Start recording
-        sessionRecorder.current.startRecording();
-        console.log('Session recording started');
-      } catch (mediaError) {
-        console.error("Error accessing media devices:", mediaError);
-        // Continue without recording if media access fails
-      }
+      const pc = new RTCPeerConnection();
+      audioElement.current = document.createElement("audio");
+      audioElement.current.autoplay = true;
+      pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
       const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
-      peerConnection.current.addTrack(ms.getTracks()[0]);
+      pc.addTrack(ms.getTracks()[0]);
 
-      const dc = peerConnection.current.createDataChannel("oai-events");
+      const dc = pc.createDataChannel("oai-events");
       setDataChannel(dc);
 
-      const offer = await peerConnection.current.createOffer();
-      await peerConnection.current.setLocalDescription(offer);
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
 
       const baseUrl = "https://api.openai.com/v1/realtime";
       const model = "gpt-4o-realtime-preview-2024-12-17";
@@ -155,7 +122,7 @@ export default function App() {
         method: "POST",
         body: offer.sdp,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${EPHEMERAL_KEY}`,
           "Content-Type": "application/sdp",
         },
       });
@@ -164,272 +131,105 @@ export default function App() {
         type: "answer",
         sdp: await sdpResponse.text(),
       };
-      await peerConnection.current.setRemoteDescription(answer);
+      await pc.setRemoteDescription(answer);
 
-      // Add event listeners to the data channel to handle the responses
-      dataChannel.addEventListener("open", () => {
-        console.log("Data channel opened");
-        // Send an initial message to start the conversation
-        sendClientEvent({
-          type: "conversation.create",
-        });
-      });
-
-      // Set up AI audio capture for recording
-      if (audioElement.current && sessionRecorder.current) {
-        // Wait for the audio to start playing
-        audioElement.current.addEventListener('playing', () => {
-          try {
-            // Get the audio stream from the audio element for recording
-            const audioStream = audioElement.current.captureStream 
-              ? audioElement.current.captureStream() 
-              : audioElement.current.mozCaptureStream();
-
-            // Add the AI audio to the recorder
-            sessionRecorder.current.addAIAudio(audioStream);
-            console.log('AI audio added to recording');
-          } catch (error) {
-            console.error('Error capturing AI audio for recording:', error);
-          }
-        }, { once: true });
-      }
-
-      dataChannel.addEventListener("message", (e) => {
-        try {
-          const event = JSON.parse(e.data);
-          console.log("Raw event data:", e.data);
-          console.log("Parsed event:", event);
-
-          if (event.type === "audio.transcription") {
-            console.log("Audio transcription event:", event);
-            setEvents(prev => [event, ...prev]);
-          } else {
-            console.log("Non-transcription event:", event.type);
-            setEvents(prev => [event, ...prev]);
-          }
-        } catch (error) {
-          console.error("Error processing event:", error);
-          console.error("Raw event data:", e.data);
-        }
-      });
-
-
-      peerConnection.current.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
-
+      peerConnection.current = pc;
       setEvents((prev) => [...prev, { type: "system", message: "Starting session..." }]);
       setIsSessionActive(true);
-
-      dc.onopen = () => console.log("WebRTC Data Channel opened");
-      const events = [];
-      dc.onmessage = (messageEvent) => {
-        console.log(`Raw event data: ${messageEvent.data}`);
-        const data = JSON.parse(messageEvent.data);
-        console.log(`Parsed event:`, data);
-        events.push(data);
-        setEvents(events);
-      };
-
-      const localAnswer = await peerConnection.current.createOffer();
-      await peerConnection.current.setLocalDescription(localAnswer);
-
-      // Wait for ICE gathering to complete
-      let offerSdp;
-      if (peerConnection.current.localDescription.sdp) {
-        offerSdp = peerConnection.current.localDescription.sdp;
-      } else {
-        offerSdp = await new Promise((resolve) => {
-          const maxAttempts = 30; // give up eventually
-          let attempts = 0;
-          const intervalId = setInterval(() => {
-            if (
-              peerConnection.current.localDescription &&
-              peerConnection.current.localDescription.sdp &&
-              peerConnection.current.iceGatheringState === "complete"
-            ) {
-              clearInterval(intervalId);
-              resolve(peerConnection.current.localDescription.sdp);
-            }
-            if (attempts >= maxAttempts) {
-              clearInterval(intervalId);
-              resolve(peerConnection.current.localDescription?.sdp || "");
-              console.error("Gave up waiting for ICE gathering to complete");
-            }
-            attempts++;
-          }, 100);
-        });
-      }
     } catch (error) {
       console.error("Error starting session:", error);
       setEvents((prev) => [...prev, { type: "error", message: `Failed to start session: ${error.message}` }]);
     }
   }
 
-  async function saveTranscript() {
-    if (events.length === 0 || !user) {
-      console.log("No events to save or user not logged in");
-      return null;
+  async function saveTranscript(events, user, roleId, scenarioId) {
+    if (!user || !user.id) {
+      console.error('Cannot save transcript: No authenticated user');
+      return;
     }
 
+    // Format the transcript content
+    const formattedContent = events
+      .filter(event => {
+        return event.type === "conversation.item.input_audio_transcription.completed" || 
+               event.type === "response.text.done" ||
+               event.type === "response.audio_transcript.done";
+      })
+      .map(event => {
+        let prefix = "";
+        let text = "";
+
+        if (event.type === "conversation.item.input_audio_transcription.completed") {
+          prefix = "User:";
+          text = event.transcript;
+        } else if (event.type === "response.text.done" || event.type === "response.audio_transcript.done") {
+          prefix = "AI:";
+          text = event.type === "response.text.done" ? event.text : event.transcript;
+        }
+
+        return `${prefix} ${text}`;
+      })
+      .join('\n\n');
+
     try {
-      // Aggregate AI responses to form transcript content
-      const transcript = events
-        .filter(event => event.type === 'response_audio_transcript_delta')
-        .map(event => event?.payload?.text || '')
-        .join('');
-
-      if (!transcript.trim()) {
-        console.log("No transcript content to save");
-        return null;
-      }
-
-      // Extract role and scenario IDs
-      const roleId = selectedRole?.id;
-      const scenarioId = selectedScenario?.id;
-
-      // Create a request body with all necessary details
-      const requestBody = {
-        content: transcript,
-        userId: user.id,
-        roleId: roleId,
-        scenarioId: scenarioId,
-        title: `Conversation with ${selectedRole?.name || 'AI'}`,
-        hasRecording: true  // Flag to indicate this transcript will have a recording
-      };
-
-      console.log("Saving transcript:", requestBody);
-
-      // Send the transcript to the server
       const response = await fetch('/api/transcripts', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify({ 
+          content: formattedContent,
+          userId: user.id,
+          roleId: roleId || null,
+          scenarioId: scenarioId || null,
+          title: `Conversation on ${new Date().toLocaleDateString()}`
+        }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to save transcript: ${errorData.error || response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const responseData = await response.json();
-      console.log("Transcript saved successfully:", responseData);
-
-      // Store the transcript ID for the recording upload
-      currentTranscriptId.current = responseData.transcript.id;
-
-      // Create and dispatch a custom event to navigate to the review page
-      const customEvent = new CustomEvent('navigateToReview', {
-        detail: { transcriptId: responseData.transcript.id }
-      });
-      window.dispatchEvent(customEvent);
-
-      return responseData.transcript.id;
+      console.log('Transcript saved successfully!');
     } catch (error) {
-      console.error("Error saving transcript:", error);
-      return null;
+      console.error('Error saving transcript:', error);
     }
   }
 
 
-  async function stopSession() {
-    try {
-      if (peerConnection.current) {
-        peerConnection.current.close();
-        peerConnection.current = null;
-      }
+  const endSession = () => {
+    console.log("Ending session...");
+    setIsSessionActive(false);
 
-      if (dataChannel) {
-        dataChannel.close();
-        setDataChannel(null);
-      }
-
-      if (audioElement.current && audioElement.current.srcObject) {
-        audioElement.current.srcObject.getTracks().forEach((track) => track.stop());
-        audioElement.current.srcObject = null;
-      }
-
-      // Stop all tracks in the user video stream
-      if (userVideoStream.current) {
-        userVideoStream.current.getTracks().forEach(track => track.stop());
-      }
-
-      // Stop recording and get the recorded blob
-      if (sessionRecorder.current) {
-        try {
-          const recordedBlob = await sessionRecorder.current.stopRecording();
-          setRecordingBlob(recordedBlob);
-
-          // Store the blob URL for potential preview
-          const blobUrl = URL.createObjectURL(recordedBlob);
-          setRecordingUrl(blobUrl);
-
-          console.log("Session recording stopped, preparing to upload...");
-
-          // Save transcript first to get the transcript ID
-          const transcriptId = await saveTranscript();
-
-          // Upload the recording if we have a transcript ID
-          if (transcriptId) {
-            await uploadRecording(recordedBlob, transcriptId);
-          }
-
-          // Clean up recorder resources
-          sessionRecorder.current.dispose();
-          sessionRecorder.current = null;
-        } catch (recorderError) {
-          console.error("Error stopping recording:", recorderError);
-        }
-      }
-
-      setIsSessionActive(false);
-    } catch (error) {
-      console.error("Error stopping session:", error);
-      setIsSessionActive(false);
+    // Close data channel if it exists
+    if (dataChannel) {
+      console.log("Closing data channel");
+      dataChannel.close();
+      setDataChannel(null);
     }
-  }
 
-  /**
-   * Upload the recording to the server
-   * @param {Blob} blob - The recording blob to upload
-   * @param {string|number} transcriptId - The associated transcript ID
-   */
-  async function uploadRecording(blob, transcriptId) {
-    try {
-      setIsUploading(true);
-      console.log(`Uploading recording for transcript ${transcriptId}...`);
-
-      // Create a FormData object to send the file
-      const formData = new FormData();
-      formData.append('recording', blob, `session-${transcriptId}.webm`);
-      formData.append('transcriptId', transcriptId);
-
-      // Send the recording to the server
-      const response = await fetch('/api/recordings/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Upload failed with status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log("Recording uploaded successfully:", result);
-
-      // Clean up the blob URL
-      if (recordingUrl) {
-        URL.revokeObjectURL(recordingUrl);
-        setRecordingUrl(null);
-      }
-
-      setRecordingBlob(null);
-    } catch (error) {
-      console.error("Error uploading recording:", error);
-    } finally {
-      setIsUploading(false);
+    // Close peer connection if it exists
+    if (peerConnection.current) {
+      console.log("Closing peer connection");
+      peerConnection.current.close();
+      peerConnection.current = null;
     }
-  }
+
+    // Save transcript when session ends
+    if (events.length > 0) {
+      console.log("Saving transcript, events length:", events.length);
+      const role = JSON.parse(localStorage.getItem('selectedRole') || '{"id":1}');
+      const scenario = JSON.parse(localStorage.getItem('selectedScenario') || '{"id":1}');
+      saveTranscript(events, user, role.id, scenario.id);
+    } else {
+      console.log("No events to save");
+    }
+
+    // Force update events array to trigger re-render
+    setEvents(prevEvents => [...prevEvents]);
+
+    console.log("Session ended successfully");
+  };
 
   function sendClientEvent(message) {
     if (dataChannel) {
@@ -630,7 +430,7 @@ export default function App() {
                     <div className="h-24 md:h-32">
                       <SessionControls
                         startSession={startSession}
-                        stopSession={stopSession}  //Corrected stopSession call
+                        stopSession={endSession}  //Corrected stopSession call
                         sendClientEvent={sendClientEvent}
                         sendTextMessage={sendTextMessage}
                         serverEvents={events}

@@ -15,10 +15,6 @@ externalPort = 3000
 localPort = 3001
 externalPort = 3001
 
-[[ports]]
-localPort = 24678
-externalPort = 80
-
 # Disable HMR in production to avoid WebSocket connection issues
 
 [workflows]
