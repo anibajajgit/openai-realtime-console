@@ -1,12 +1,12 @@
 
-import { Storage } from '@replit/storage';
+import Client from '@replit/database';
 
 class AudioRecorder {
   constructor() {
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.isRecording = false;
-    this.storage = new Storage();
+    this.storage = new Client();
   }
 
   async startRecording(stream) {

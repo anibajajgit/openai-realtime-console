@@ -145,7 +145,7 @@ function SessionActive({ stopSession, sendTextMessage }) {
                                     console.error('Error stopping recording:', error);
                                     // Continue even if stopping recording fails
                                   }
-                                  
+
                                   // Dispatch navigate event after recording is handled
                                   const event = new CustomEvent('navigateToReview');
                                   window.dispatchEvent(event);
