@@ -1,12 +1,16 @@
-
 import Client from '@replit/database';
 
 class AudioRecorder {
   constructor() {
+    // Create database client for storing recordings
+    this.storage = new Client();
+    this.audioContext = null;
     this.mediaRecorder = null;
     this.audioChunks = [];
+    this.stream = null;
     this.isRecording = false;
-    this.storage = new Client();
+    // Define constants that might have been using process.env
+    this.STORAGE_PREFIX = 'recording_';
   }
 
   async startRecording(stream) {
@@ -19,7 +23,7 @@ class AudioRecorder {
       // Create a new audio context to handle microphone input
       const audioContext = new AudioContext();
       const source = audioContext.createMediaStreamSource(stream);
-      
+
       // Create a destination for recording
       const destination = audioContext.createMediaStreamDestination();
       source.connect(destination);
@@ -59,10 +63,10 @@ class AudioRecorder {
           const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
           const timestamp = new Date().toISOString();
           const fileName = `recording-${timestamp}.webm`;
-          
+
           // Store in Replit Storage
           await this.storeRecording(fileName, audioBlob);
-          
+
           this.isRecording = false;
           this.audioChunks = [];
           resolve(fileName);
@@ -84,11 +88,11 @@ class AudioRecorder {
       const base64 = btoa(
         new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
       );
-      
+
       // Store in Replit Database
       await this.storage.set(fileName, base64);
       console.log(`Recording saved to database as ${fileName}`);
-      
+
       // Save a list of recordings
       let recordings = [];
       try {
@@ -99,13 +103,13 @@ class AudioRecorder {
       } catch (e) {
         console.log('No existing recordings found');
       }
-      
+
       recordings.push({
         fileName,
         timestamp: new Date().toISOString(),
         size: blob.size
       });
-      
+
       await this.storage.set('recordings', JSON.stringify(recordings));
       return fileName;
     } catch (error) {
@@ -133,14 +137,14 @@ class AudioRecorder {
       if (!base64Data) {
         throw new Error('Recording not found');
       }
-      
+
       // Convert base64 back to blob
       const binaryString = atob(base64Data);
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
       }
-      
+
       return new Blob([bytes], { type: 'audio/webm' });
     } catch (error) {
       console.error('Error retrieving recording:', error);
