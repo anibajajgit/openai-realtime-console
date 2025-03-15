@@ -2,7 +2,7 @@
  * SessionRecorder utility class
  * Handles recording of video feed and mixed audio streams
  */
-export default class SessionRecorder {
+class SessionRecorder {
   constructor() {
     this.mediaRecorder = null;
     this.recordedChunks = [];
@@ -166,3 +166,5 @@ export default class SessionRecorder {
     console.log('Session recorder resources disposed');
   }
 }
+
+export default SessionRecorder;

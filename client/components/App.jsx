@@ -128,10 +128,9 @@ export default function App() {
         // Initialize the session recorder with the video stream
         const SessionRecorder = (await import('../utils/SessionRecorder')).default;
         sessionRecorder.current = new SessionRecorder();
-        await sessionRecorder.current.initialize(userStream);
+        await sessionRecorder.current.initialize(userStream, userStream);
 
-        // Add the microphone audio to the recorder
-        sessionRecorder.current.addMicrophoneAudio(userStream);
+        // We don't need to call addMicrophoneAudio separately as it's handled in initialize
 
         // Start recording
         sessionRecorder.current.startRecording();
@@ -669,50 +668,7 @@ export default function App() {
 }
 
 
-class SessionRecorder {
-  constructor(videoStream, aiAudio, micAudio) {
-    this.videoStream = videoStream;
-    this.aiAudio = aiAudio;
-    this.micAudio = micAudio;
-    this.mediaRecorder = null;
-    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    this.gainNodeMic = this.audioContext.createGain();
-    this.gainNodeAI = this.audioContext.createGain();
-    this.merger = this.audioContext.createChannelMerger(2);
-    this.destination = this.audioContext.createMediaStreamDestination();
-    this.mixedStream = this.destination.stream;
-
-
-    this.gainNodeMic.gain.setValueAtTime(0.5, this.audioContext.currentTime);
-    this.gainNodeAI.gain.setValueAtTime(0.5, this.audioContext.currentTime);
-
-    this.micAudio.connect(this.gainNodeMic);
-    this.gainNodeMic.connect(this.merger);
-    this.aiAudio.connect(this.gainNodeAI);
-    this.gainNodeAI.connect(this.merger);
-    this.merger.connect(this.destination);
-
-
-  }
-
-  addAIAudioSource(aiAudio) {
-    this.aiAudio = aiAudio;
-    this.aiAudio.connect(this.gainNodeAI);
-  }
-
-  async initialize(userStream) {
-    this.userStream = userStream;
-  }
-
-  addMicrophoneAudio(userStream) {
-    this.micAudio = this.audioContext.createMediaStreamSource(userStream);
-    this.micAudio.connect(this.gainNodeMic);
-  }
-
-  addAIAudio(audioStream) {
-    this.aiAudio = this.audioContext.createMediaStreamSource(audioStream);
-    this.aiAudio.connect(this.gainNodeAI);
-  }
+// SessionRecorder import is handled with dynamic import
 
   async startRecording() {
     const stream = new MediaStream([
