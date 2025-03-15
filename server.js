@@ -604,6 +604,9 @@ try {
   console.warn("Failed to initialize Object Storage client. Will fall back to local storage.", error);
   objectStorageClient = null;
 }
+
+// Handle recording uploads
+app.post('/api/recordings/upload', async (req, res) => {
 </old_str>
 
 // Handle recording uploads
