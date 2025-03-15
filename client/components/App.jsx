@@ -672,7 +672,7 @@ export default function App() {
 
   startRecording = async () => {
     const stream = new MediaStream([
-      ...this.videoStream.getVideoTracks(),
+      ...this.videoStream.getVideoTracks(), 
       ...this.mixedStream.getAudioTracks(),
     ]);
     this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9,opus' });
