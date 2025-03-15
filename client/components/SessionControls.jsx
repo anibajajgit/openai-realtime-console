@@ -45,14 +45,52 @@ function SessionStopped({ startSession }) {
 
     setIsActivating(true);
     try {
+      console.log("Importing AudioRecorder module...");
       const AudioRecorder = (await import('../utils/AudioRecorder')).default;
+
       if (AudioRecorder && typeof AudioRecorder.startRecording === 'function') {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log("Requesting microphone access...");
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          audio: { 
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            channelCount: 1 // Mono audio is usually more compatible
+          } 
+        });
+
+        console.log("Microphone access granted, stream details:", {
+          active: stream.active,
+          id: stream.id,
+          tracks: stream.getAudioTracks().map(t => ({
+            enabled: t.enabled,
+            muted: t.muted,
+            label: t.label,
+            kind: t.kind
+          }))
+        });
+
         await AudioRecorder.startRecording(stream);
         console.log("Audio recording started for session");
+      } else {
+        console.error("AudioRecorder module not available or missing startRecording method");
       }
     } catch (error) {
       console.error('Error starting audio recording:', error);
+      console.error('Error details:', error.name, error.message);
+
+      // Try to provide more specific error messages
+      if (error.name === 'NotAllowedError') {
+        console.error('Microphone access was denied by the user or system');
+      } else if (error.name === 'NotFoundError') {
+        console.error('No microphone was found on this device');
+      } else if (error.name === 'NotReadableError') {
+        console.error('Microphone is already in use or not functioning properly');
+      } else if (error.name === 'SecurityError') {
+        console.error('Media capture from this source is not permitted');
+      } else if (error.name === 'TypeError') {
+        console.error('Issue with the configuration of audio constraints');
+      }
       // Continue session even if recording fails
     }
     startSession();

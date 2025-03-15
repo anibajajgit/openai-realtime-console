@@ -32,16 +32,30 @@ class AudioRecorder {
       
       this.stream = stream;
       
-      // Create media recorder directly from the stream
-      const options = { mimeType: 'audio/webm' };
+      // Create media recorder with format fallbacks for better browser compatibility
+      let options;
+      const mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+      
+      // Find the first supported mime type
+      for (const mimeType of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(mimeType)) {
+          options = { mimeType };
+          console.log(`Using supported audio format: ${mimeType}`);
+          break;
+        }
+      }
+      
       this.mediaRecorder = new MediaRecorder(stream, options);
       this.audioChunks = [];
+      this.audioFormat = options?.mimeType || 'audio/webm'; // Store the format for later use
 
       // Event handler for data available
       this.mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          console.log(`Got audio chunk of size: ${event.data.size} bytes`);
+          console.log(`Got audio chunk of size: ${event.data.size} bytes, format: ${this.audioFormat}`);
           this.audioChunks.push(event.data);
+        } else {
+          console.warn('Received empty audio chunk');
         }
       };
 
@@ -77,11 +91,19 @@ class AudioRecorder {
             return;
           }
           
-          const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-          console.log(`Created audio blob of size: ${audioBlob.size} bytes`);
+          const audioBlob = new Blob(this.audioChunks, { type: this.audioFormat });
+          console.log(`Created audio blob of size: ${audioBlob.size} bytes, format: ${this.audioFormat}`);
+          
+          // If the blob is too small, it might be corrupted
+          if (audioBlob.size < 1000) {
+            console.warn('Audio blob is suspiciously small, might be corrupted');
+          }
           
           const timestamp = Date.now();
-          const fileName = `recording-${timestamp}.webm`;
+          const extension = this.audioFormat.includes('webm') ? 'webm' : 
+                           this.audioFormat.includes('mp4') ? 'mp4' : 
+                           this.audioFormat.includes('ogg') ? 'ogg' : 'audio';
+          const fileName = `recording-${timestamp}.${extension}`;
           
           // If stream exists, stop all tracks
           if (this.stream) {
@@ -213,6 +235,16 @@ class AudioRecorder {
         throw new Error('Recording not found');
       }
 
+      // Determine file format from extension
+      let format = 'audio/webm';
+      if (fileName.endsWith('.mp4')) {
+        format = 'audio/mp4';
+      } else if (fileName.endsWith('.ogg')) {
+        format = 'audio/ogg';
+      }
+      
+      console.log(`Retrieving recording ${fileName} with format ${format}`);
+
       // Convert base64 back to blob
       const binaryString = atob(base64Data);
       const bytes = new Uint8Array(binaryString.length);
@@ -220,7 +252,7 @@ class AudioRecorder {
         bytes[i] = binaryString.charCodeAt(i);
       }
 
-      return new Blob([bytes], { type: 'audio/webm' });
+      return new Blob([bytes], { type: format });
     } catch (error) {
       console.error('Error retrieving recording:', error);
       throw error;
