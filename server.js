@@ -580,6 +580,16 @@ app.use((req, res, next) => {
 
 app.use(vite.middlewares);
 
+// Initialize Object Storage client
+import { Client } from '@replit/object-storage';
+let objectStorageClient;
+try {
+  objectStorageClient = new Client();
+  console.log("Object Storage client initialized successfully");
+} catch (error) {
+  console.warn("Failed to initialize Object Storage client. Will fall back to local storage.", error);
+}
+
 // Handle recording uploads
 app.post('/api/recordings/upload', async (req, res) => {
   try {
@@ -611,28 +621,58 @@ app.post('/api/recordings/upload', async (req, res) => {
       console.log(`Received recording for transcript ${transcriptId}. File size: ${req.file.size} bytes`);
 
       try {
-        // Create directory for recordings if it doesn't exist
-        const recordingsDir = path.join(__dirname, 'client', 'assets', 'recordings');
-        if (!fs.existsSync(recordingsDir)) {
-          fs.mkdirSync(recordingsDir, { recursive: true });
-        }
-
         // Generate a unique filename with timestamp
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const filename = `recording-${transcriptId}-${timestamp}.webm`;
-        const filePath = path.join(recordingsDir, filename);
+        let publicUrl;
+        let storagePath;
 
-        // Save the file to disk
-        fs.writeFileSync(filePath, req.file.buffer);
-        console.log(`Recording saved to ${filePath}`);
+        // Try to store in object storage first, fall back to local storage
+        if (objectStorageClient) {
+          try {
+            // Store in Replit Object Storage
+            const objectStoragePath = `recordings/${filename}`;
+            await objectStorageClient.uploadBuffer(objectStoragePath, req.file.buffer);
+            
+            // Get the public URL for the object
+            publicUrl = await objectStorageClient.getSignedUrl(objectStoragePath, {
+              expiresIn: 31536000 // URL valid for 1 year (in seconds)
+            });
+            
+            storagePath = objectStoragePath;
+            console.log(`Recording saved to object storage at ${objectStoragePath}`);
+        
+          } catch (objectStorageError) {
+            console.error('Error saving to object storage, falling back to local storage:', objectStorageError);
+            // Fall back to local storage if object storage fails
+            objectStorageClient = null;
+          }
+        }
+        
+        // Fall back to local storage if object storage is not available or failed
+        if (!objectStorageClient) {
+          // Create directory for recordings if it doesn't exist
+          const recordingsDir = path.join(__dirname, 'client', 'assets', 'recordings');
+          if (!fs.existsSync(recordingsDir)) {
+            fs.mkdirSync(recordingsDir, { recursive: true });
+          }
+
+          const filePath = path.join(recordingsDir, filename);
+          // Save the file to disk
+          fs.writeFileSync(filePath, req.file.buffer);
+          console.log(`Recording saved to local storage at ${filePath}`);
+
+          // Local URL path
+          publicUrl = `/assets/recordings/${filename}`;
+          storagePath = filePath;
+        }
 
         // Update the transcript with recording information
-        const publicUrl = `/assets/recordings/${filename}`;
         await Transcript.update(
           {
             hasRecording: true,
             recordingUrl: publicUrl,
-            recordingStoragePath: filePath
+            recordingStoragePath: storagePath
           },
           { where: { id: transcriptId } }
         );
@@ -640,7 +680,8 @@ app.post('/api/recordings/upload', async (req, res) => {
         res.status(200).json({
           message: 'Recording uploaded successfully',
           url: publicUrl,
-          transcriptId: transcriptId
+          transcriptId: transcriptId,
+          isObjectStorage: !!objectStorageClient
         });
       } catch (error) {
         console.error('Error saving recording:', error);
