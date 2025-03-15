@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
-// Removed unnecessary import: import { Link } from "react-router-dom";
 
 export default function SessionControls({
   startSession,
@@ -41,12 +40,23 @@ export default function SessionControls({
 function SessionStopped({ startSession }) {
   const [isActivating, setIsActivating] = useState(false);
 
-  function handleStartSession() {
+  const handleStartSession = async () => {
     if (isActivating) return;
 
     setIsActivating(true);
+    try {
+      const AudioRecorder = (await import('../utils/AudioRecorder')).default;
+      if (AudioRecorder && typeof AudioRecorder.startRecording === 'function') {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        await AudioRecorder.startRecording(stream);
+        console.log("Audio recording started for session");
+      }
+    } catch (error) {
+      console.error('Error starting audio recording:', error);
+      // Continue session even if recording fails
+    }
     startSession();
-  }
+  };
 
   return (
     <div className="flex items-center justify-center w-full h-full">
@@ -115,7 +125,6 @@ function SessionActive({ stopSession, sendTextMessage }) {
                 stopSession();
                 console.log("Session end initiated from dialog");
 
-                // Wait a moment for the session to end properly
                 setTimeout(() => {
                   const confirmDialog = document.createElement('div');
                   confirmDialog.innerHTML = `
@@ -131,13 +140,10 @@ function SessionActive({ stopSession, sendTextMessage }) {
                             onclick="
                               (() => {
                                 console.log('Review feedback button clicked');
-                                // Close the dialog
                                 this.closest('.fixed').remove();
 
-                                // Stop recording and store it before navigating
                                 (async () => {
                                   try {
-                                    // Import and use the AudioRecorder
                                     const AudioRecorder = (await import('../utils/AudioRecorder')).default;
                                     if (AudioRecorder && typeof AudioRecorder.stopRecording === 'function') {
                                       const fileName = await AudioRecorder.stopRecording();
@@ -147,10 +153,8 @@ function SessionActive({ stopSession, sendTextMessage }) {
                                     }
                                   } catch (error) {
                                     console.error('Error stopping recording:', error);
-                                    // Continue even if stopping recording fails
                                   }
 
-                                  // Dispatch navigate event after recording is handled
                                   const event = new CustomEvent('navigateToReview');
                                   window.dispatchEvent(event);
                                 })()

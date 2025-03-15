@@ -18,6 +18,18 @@ class AudioRecorder {
       }
 
       console.log('Starting new recording...');
+      
+      // If no stream is provided, try to get user media
+      if (!stream) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          console.log('Obtained user media stream');
+        } catch (mediaError) {
+          console.error('Failed to get user media:', mediaError);
+          throw mediaError;
+        }
+      }
+      
       this.stream = stream;
       
       // Create media recorder directly from the stream
@@ -39,6 +51,7 @@ class AudioRecorder {
       console.log('Recording started successfully');
     } catch (error) {
       console.error('Error starting audio recording:', error);
+      throw error; // Re-throw to let caller handle it
     }
   }
 
@@ -69,6 +82,12 @@ class AudioRecorder {
           
           const timestamp = Date.now();
           const fileName = `recording-${timestamp}.webm`;
+          
+          // If stream exists, stop all tracks
+          if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+            console.log('Stopped all audio tracks');
+          }
 
           // Store in localStorage
           const success = await this.storeRecording(fileName, audioBlob);
