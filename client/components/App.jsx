@@ -670,7 +670,7 @@ export default function App() {
 
 // SessionRecorder import is handled with dynamic import
 
-  async startRecording() {
+  async startRecording = () => {
     const stream = new MediaStream([
       ...this.videoStream.getVideoTracks(),
       ...this.mixedStream.getAudioTracks(),
