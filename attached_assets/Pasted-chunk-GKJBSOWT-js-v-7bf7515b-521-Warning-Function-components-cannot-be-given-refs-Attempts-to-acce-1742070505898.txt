@@ -1,0 +1,26 @@
+chunk-GKJBSOWT.js?v=7bf7515b:521 Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?
+
+Check the render method of `SlotClone`.
+    at Button (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/Button.jsx:2:34)
+    at https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…unner/workspace/node_modules/.vite/deps/chunk-HXFBIAWL.js?v=7bf7515b:73:11
+    at https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…unner/workspace/node_modules/.vite/deps/chunk-HXFBIAWL.js?v=7bf7515b:54:11
+    at https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…nner/workspace/node_modules/.vite/deps/chunk-5QHXMFHD.js?v=7bf7515b:214:13
+    at https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…ner/workspace/node_modules/.vite/deps/chunk-5QHXMFHD.js?v=7bf7515b:1710:13
+    at https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…e/node_modules/.vite/deps/@radix-ui_react-alert-dialog.js?v=7bf7515b:48:13
+    at Provider (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…unner/workspace/node_modules/.vite/deps/chunk-5QHXMFHD.js?v=7bf7515b:58:15)
+    at Dialog (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…nner/workspace/node_modules/.vite/deps/chunk-5QHXMFHD.js?v=7bf7515b:1675:5)
+    at AlertDialog (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…e/node_modules/.vite/deps/@radix-ui_react-alert-dialog.js?v=7bf7515b:40:11)
+    at div
+    at SessionActive (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/SessionControls.jsx:83:26)
+    at div
+    at SessionControls (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/SessionControls.jsx:17:3)
+    at div
+    at section
+    at div
+    at main
+    at RenderedRoute (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…er/workspace/node_modules/.vite/deps/react-router-dom.js?v=7bf7515b:4069:5)
+    at Routes (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…er/workspace/node_modules/.vite/deps/react-router-dom.js?v=7bf7515b:4539:5)
+    at App (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/components/App.jsx:15:23)
+    at AuthProvider (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.dev:3000/utils/AuthContext.jsx:14:32)
+    at Router (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…r/workspace/node_modules/.vite/deps/react-router-dom.js?v=7bf7515b:4482:15)
+    at BrowserRouter (https://d9b7d94c-1c8d-406f-bcfc-59e4fafd857a-00-32nxgq96g2i20.kirk.replit.d…er/workspace/node_modules/.vite/deps/react-router-dom.js?v=7bf7515b:5228:5)
