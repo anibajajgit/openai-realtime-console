@@ -666,39 +666,3 @@ export default function App() {
     </AuthContext.Provider>
   );
 }
-
-
-// SessionRecorder import is handled with dynamic import
-
-  startRecording = async () => {
-    const stream = new MediaStream([
-      ...this.videoStream.getVideoTracks(), 
-      ...this.mixedStream.getAudioTracks(),
-    ]);
-    this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9,opus' });
-    this.mediaRecorder.start();
-    this.recordedChunks = [];
-    this.mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        this.recordedChunks.push(event.data);
-      }
-    };
-  }
-
-
-  async stopRecording() {
-    return new Promise((resolve, reject) => {
-      this.mediaRecorder.onstop = () => {
-        const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
-        resolve(blob);
-      };
-      this.mediaRecorder.onerror = (error) => reject(error);
-      this.mediaRecorder.stop();
-    });
-  }
-
-  dispose() {
-    this.mediaRecorder = null;
-    this.audioContext.close();
-  }
-}
