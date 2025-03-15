@@ -1,6 +1,8 @@
 
 import Client from '@replit/database';
 
+import { Client } from '@replit/storage';
+
 class AudioRecorder {
   constructor() {
     this.mediaRecorder = null;
