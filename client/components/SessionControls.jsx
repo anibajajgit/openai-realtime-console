@@ -76,10 +76,10 @@ function SessionStopped({ startSession }) {
       console.log("Audio recording started successfully");
     } catch (error) {
       console.error('Error starting audio recording:', error);
-    }
       console.error('Error details:', error.name, error.message);
+    }
 
-      // Try to provide more specific error messages
+    // Try to provide more specific error messages
       if (error.name === 'NotAllowedError') {
         console.error('Microphone access was denied by the user or system');
       } else if (error.name === 'NotFoundError') {
