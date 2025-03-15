@@ -74,9 +74,9 @@ function SessionStopped({ startSession }) {
       console.log("Microphone access granted, initializing recording...");
       await AudioRecorder.startRecording(stream);
       console.log("Audio recording started successfully");
-      }
     } catch (error) {
       console.error('Error starting audio recording:', error);
+    }
       console.error('Error details:', error.name, error.message);
 
       // Try to provide more specific error messages
