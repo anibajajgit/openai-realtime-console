@@ -1,9 +1,6 @@
-import Client from '@replit/database';
-
 class AudioRecorder {
   constructor() {
-    // Create database client for storing recordings
-    this.storage = new Client();
+    // Use localStorage instead of Replit database for browser compatibility
     this.audioContext = null;
     this.mediaRecorder = null;
     this.audioChunks = [];
@@ -89,14 +86,14 @@ class AudioRecorder {
         new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
       );
 
-      // Store in Replit Database
-      await this.storage.set(fileName, base64);
-      console.log(`Recording saved to database as ${fileName}`);
+      // Store in localStorage
+      localStorage.setItem(fileName, base64);
+      console.log(`Recording saved to localStorage as ${fileName}`);
 
       // Save a list of recordings
       let recordings = [];
       try {
-        const existingRecordings = await this.storage.get('recordings');
+        const existingRecordings = localStorage.getItem('recordings');
         if (existingRecordings) {
           recordings = JSON.parse(existingRecordings);
         }
@@ -110,7 +107,7 @@ class AudioRecorder {
         size: blob.size
       });
 
-      await this.storage.set('recordings', JSON.stringify(recordings));
+      localStorage.setItem('recordings', JSON.stringify(recordings));
       return fileName;
     } catch (error) {
       console.error('Error storing recording:', error);
@@ -120,7 +117,7 @@ class AudioRecorder {
 
   async getRecordings() {
     try {
-      const recordingsData = await this.storage.get('recordings');
+      const recordingsData = localStorage.getItem('recordings');
       if (recordingsData) {
         return JSON.parse(recordingsData);
       }
@@ -133,7 +130,7 @@ class AudioRecorder {
 
   async getRecording(fileName) {
     try {
-      const base64Data = await this.storage.get(fileName);
+      const base64Data = localStorage.getItem(fileName);
       if (!base64Data) {
         throw new Error('Recording not found');
       }
