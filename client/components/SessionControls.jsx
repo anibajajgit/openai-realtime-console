@@ -140,7 +140,7 @@ function SessionActive({ stopSession, sendTextMessage }) {
                                     // Import and use the AudioRecorder
                                     const AudioRecorder = (await import('../utils/AudioRecorder')).default;
                                     const fileName = await AudioRecorder.stopRecording();
-                                    console.log(`Recording stopped and saved as ${fileName}`);
+                                    console.log("Recording stopped and saved as " + fileName}`);
                                   } catch (error) {
                                     console.error('Error stopping recording:', error);
                                     // Continue even if stopping recording fails
