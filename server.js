@@ -581,7 +581,8 @@ app.use(vite.middlewares);
 
 // Initialize Object Storage client
 import { Client } from '@replit/object-storage';
-let objectStorageClient;
+let objectStorageClient = null;
+
 try {
   // Check if we have a bucket ID in environment before initializing
   if (process.env.BUCKET_ID) {
@@ -590,14 +591,8 @@ try {
     });
     console.log("Object Storage client initialized successfully with bucket:", process.env.BUCKET_ID);
   } else {
-    // Try to initialize with default bucket
-    try {
-      objectStorageClient = new Client();
-      console.log("Object Storage client initialized with default bucket");
-    } catch (innerError) {
-      console.warn("No default bucket found. Will fall back to local storage.");
-      objectStorageClient = null;
-    }
+    // Log message about missing bucket ID
+    console.warn("No BUCKET_ID environment variable found. Falling back to local storage.");
   }
 } catch (error) {
   console.warn("Failed to initialize Object Storage client. Will fall back to local storage.", error);
