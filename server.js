@@ -19,6 +19,38 @@ app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, 'client/assets')));
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
 
+// Debug route to check recordings directory
+app.get('/debug-recordings', (req, res) => {
+  try {
+    const recordingsDir = path.join(__dirname, 'client', 'assets', 'recordings');
+    let files = [];
+    let dirExists = false;
+    
+    if (fs.existsSync(recordingsDir)) {
+      dirExists = true;
+      files = fs.readdirSync(recordingsDir);
+    }
+    
+    // Check if object storage client is initialized
+    const hasObjectStorage = !!process.env.BUCKET_ID;
+    
+    res.json({
+      localRecordings: {
+        directoryExists: dirExists,
+        directoryPath: recordingsDir,
+        fileCount: files.length,
+        files: files
+      },
+      objectStorage: {
+        configured: hasObjectStorage,
+        bucketId: process.env.BUCKET_ID || 'not set'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Create client/assets directory if it doesn't exist
 if (!fs.existsSync(path.join(__dirname, 'client/assets'))) {
   fs.mkdirSync(path.join(__dirname, 'client/assets'), { recursive: true });
@@ -729,9 +761,12 @@ app.get("/token", async (req, res) => {
   try {
     const roleId = req.query.roleId;
     const scenarioId = req.query.scenarioId;
-    const rolesResponse = await fetch('http://localhost:3000/api/roles');
+    
+    // Use absolute URLs to avoid localhost issues
+    const baseUrl = `http://${req.headers.host}`;
+    const rolesResponse = await fetch(`${baseUrl}/api/roles`);
     const rolesData = await rolesResponse.json();
-    const scenariosResponse = await fetch('http://localhost:3000/api/scenarios');
+    const scenariosResponse = await fetch(`${baseUrl}/api/scenarios`);
     const scenariosData = await scenariosResponse.json();
 
     const selectedRole = rolesData.find(r => r.id === Number(roleId));
@@ -743,6 +778,14 @@ app.get("/token", async (req, res) => {
     console.log("Selected role:", selectedRole?.id);
     console.log("Selected scenario:", selectedScenario?.id);
     console.log("Combined instructions:", combinedInstructions);
+
+    // Make sure we have an API key
+    if (!apiKey) {
+      console.error("OpenAI API key is missing");
+      return res.status(500).json({ 
+        error: "OpenAI API key is missing. Please check your .env file." 
+      });
+    }
 
     const response = await fetch(
       "https://api.openai.com/v1/realtime/sessions",
@@ -758,16 +801,27 @@ app.get("/token", async (req, res) => {
           instructions: combinedInstructions,
           input_audio_transcription: {
             model: "whisper-1"
-          }
+          },
+          // Explicitly enable features needed for conversation transcript
+          delta: true,
+          echo: true
         }),
       },
     );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("OpenAI API error:", errorData);
+      return res.status(response.status).json({
+        error: `OpenAI API error: ${errorData.error?.message || response.statusText}`
+      });
+    }
 
     const data = await response.json();
     res.json(data);
   } catch (error) {
     console.error("Token generation error:", error);
-    res.status(500).json({ error: "Failed to generate token" });
+    res.status(500).json({ error: `Failed to generate token: ${error.message}` });
   }
 });
 
