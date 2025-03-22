@@ -157,21 +157,22 @@ select, option {
   min-width: fit-content !important;
 }
 
-/* Ensure transcript content takes full width and scrolls properly */
+/* Enable scrolling on the main container */
+body, #root {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ensure transcript content takes full width */
 .review-section {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   padding-bottom: 2rem;
-  height: auto;
-}
-
-.review-section .bg-white {
   width: 100%;
-  overflow-y: auto;
-  padding: 1rem;
 }
 
+.review-section .bg-white,
 .review-section .bg-gray-50 {
   width: 100%;
   padding: 1rem;
