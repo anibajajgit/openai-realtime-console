@@ -119,11 +119,11 @@ h2:first-of-type {
 .review-section {
   position: relative;
   z-index: 10;
-  width: 100%; /* Full width */
-  padding-right: 40px; /* Increased right padding for balance */
+  width: 100%;
+  padding-right: 40px;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  min-width: 0;
 }
 
 /* Apply same treatment as scenario card to ensure it's not hidden behind sidebar */
@@ -131,9 +131,24 @@ h2:first-of-type {
   position: relative;
   z-index: 20;
   width: 100%;
-  margin-left: 0 !important; /* Remove left margin as we already have padding */
-  max-width: none;
+  margin-left: 0 !important;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.review-section select {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  position: relative;
   overflow: visible;
+}
+
+.review-section select option {
+  width: auto;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 /* Ensure transcript content takes full width and scrolls properly */
