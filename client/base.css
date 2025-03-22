@@ -233,12 +233,29 @@ select {
 }
 
 select, select option {
-  width: auto;
-  min-width: 100%;
-  max-width: none;
-  white-space: normal;
-  overflow: visible;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-wrap: break-word !important;
   padding: 8px;
+}
+
+/* Override any potential Tailwind classes */
+.whitespace-normal {
+  white-space: normal !important;
+}
+
+.text-ellipsis {
+  text-overflow: clip !important;
+}
+
+.truncate {
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow: visible !important;
 }
 
 
