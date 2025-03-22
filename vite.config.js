@@ -4,25 +4,23 @@ import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from 'vite';
 
-const path = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig({
-  root: join(dirname(path), "client"),
+  root: resolve(__dirname, "client"),
   plugins: [react()],
   build: {
-    outDir: join(dirname(path), "dist/client"),
-    emptyOutDir: true,
-    rollupOptions: {
-      external: ['motion-dom']
-    }
+    outDir: resolve(__dirname, "dist/client"),
+    emptyOutDir: true
   },
   optimizeDeps: {
     exclude: ['motion-dom']
   },
   resolve: {
     alias: {
-      '@': resolve(dirname(path), 'client'),
-      '@lib': resolve(dirname(path), 'client/lib')
+      '@': resolve(__dirname, 'client'),
+      '@lib': resolve(__dirname, 'client/lib')
     }
   },
   server: {

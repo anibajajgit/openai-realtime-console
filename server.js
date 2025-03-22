@@ -18,19 +18,36 @@ app.use(express.json());
 // IMPORTANT: Handle production mode static file serving FIRST
 // This ensures static files are served before any API routes
 if (process.env.NODE_ENV === 'production') {
-  const distClientDir = path.join(__dirname, 'dist/client');
-  console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
+  // Try multiple possible locations for static files
+  const possiblePaths = [
+    path.join(__dirname, 'dist/client'),
+    path.join(process.cwd(), 'dist/client')
+  ];
   
-  // Check if directory exists
-  if (!fs.existsSync(distClientDir)) {
-    console.error(`Static files directory ${distClientDir} does not exist! Creating it...`);
-    fs.mkdirSync(distClientDir, { recursive: true });
-  } else {
-    console.log(`Static files directory exists at ${distClientDir}`);
-    // List files in the directory for debugging
-    const files = fs.readdirSync(distClientDir);
-    console.log(`Files in ${distClientDir}:`, files);
+  let distClientDir = null;
+  
+  // Find the first path that exists and has files
+  for (const testPath of possiblePaths) {
+    console.log(`Checking for static files at: ${testPath}`);
+    if (fs.existsSync(testPath)) {
+      const files = fs.readdirSync(testPath);
+      console.log(`Found directory at ${testPath} with ${files.length} files`);
+      if (files.length > 0) {
+        distClientDir = testPath;
+        break;
+      }
+    }
   }
+  
+  if (!distClientDir) {
+    console.error(`Could not find static files directory! Creating fallback location...`);
+    distClientDir = path.join(__dirname, 'dist/client');
+    fs.mkdirSync(distClientDir, { recursive: true });
+  }
+  
+  console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
+  const files = fs.readdirSync(distClientDir);
+  console.log(`Files in ${distClientDir}:`, files);
   
   // Serve static files
   app.use(express.static(distClientDir));
