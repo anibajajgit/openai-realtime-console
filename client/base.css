@@ -158,20 +158,23 @@ select, option {
 }
 
 /* Ensure transcript content takes full width and scrolls properly */
-.review-section .bg-white,
-.review-section .bg-gray-50 {
-  width: 100%;
+.review-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 2rem;
   height: auto;
-  min-height: 100%;
-  overflow: visible;
 }
 
-/* Add smooth scrolling */
-.review-section {
-  height: auto;
-  min-height: calc(100vh - 100px);
-  overflow: visible;
-  padding-bottom: 2rem;
+.review-section .bg-white {
+  width: 100%;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.review-section .bg-gray-50 {
+  width: 100%;
+  padding: 1rem;
 }
 
 /* Make cards responsive */
