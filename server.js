@@ -1,4 +1,3 @@
-
 import express from "express";
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -658,6 +657,16 @@ app.use("*", async (req, res, next) => {
     next(e);
   }
 });
+
+
+//Production build serving
+if (process.env.NODE_ENV === 'production') {
+  const buildDir = path.join(__dirname, 'dist/client');
+  app.use(express.static(buildDir));
+  app.use('/', express.static(buildDir));
+  console.log(`Serving production build from: ${buildDir}`);
+}
+
 
 const server = app.listen(port, '0.0.0.0', () => {
   console.log(`Express server running on *:${port} (NODE_ENV: ${process.env.NODE_ENV || 'development'})`);
