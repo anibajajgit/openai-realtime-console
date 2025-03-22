@@ -16,15 +16,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// Serve static files
+// Serve attached_assets directory
 app.use('/assets', express.static(path.join(__dirname, 'client/assets')));
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
-app.use(express.static(path.join(__dirname, 'client')));
-
-// Handle favicon.ico request
-app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/assets/favicon.ico'));
-});
 
 // Create client/assets directory if it doesn't exist
 if (!fs.existsSync(path.join(__dirname, 'client/assets'))) {
@@ -577,12 +571,6 @@ const vite = await createViteServer({
   }
 });
 
-// Import the JSX middleware
-import { jsxMiddleware } from './client/middleware/jsx-middleware.js';
-
-// Apply the JSX middleware before any other middleware
-app.use(jsxMiddleware);
-
 // Allow CORS for API requests
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -684,19 +672,7 @@ const server = app.listen(port, '0.0.0.0', () => {
 
 // Handle WebSocket upgrade requests
 server.on('upgrade', (request, socket, head) => {
-  // For favicon.ico and other static requests, don't try to upgrade
-  if (request.url === '/favicon.ico' || request.url.includes('.ico') || 
-      !request.headers['upgrade'] || request.headers['upgrade'].toLowerCase() !== 'websocket') {
-    // Return a normal HTTP response for non-websocket requests instead of 426
-    socket.write('HTTP/1.1 200 OK\r\n' +
-                'Content-Type: text/plain\r\n' +
-                'Content-Length: 0\r\n\r\n');
-    socket.end();
-    return;
-  }
-  
-  // Only upgrade actual WebSocket connections
-  if (request.headers['upgrade'] && request.headers['upgrade'].toLowerCase() === 'websocket') {
+  if (request.url?.startsWith('/api/')) {
     socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
                 'Upgrade: websocket\r\n' +
                 'Connection: Upgrade\r\n\r\n');
