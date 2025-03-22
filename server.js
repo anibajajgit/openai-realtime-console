@@ -583,8 +583,8 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', '*');
   
   // Set proper MIME types for JSX files
-  if (req.url.endsWith('.jsx')) {
-    res.type('application/javascript');
+  if (req.url.endsWith('.jsx') || req.url.includes('.jsx')) {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
   }
   
   next();

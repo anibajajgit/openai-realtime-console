@@ -15,6 +15,7 @@
   <body>
     <div id="root"><!--ssr-outlet--></div>
     <!-- hydration -->
-    <script type="module" src="./entry-client.jsx?t=js"></script>
+    <link rel="modulepreload" href="./entry-client.jsx" as="script" type="application/javascript">
+    <script type="module" src="./entry-client.jsx"></script>
   </body>
 </html>

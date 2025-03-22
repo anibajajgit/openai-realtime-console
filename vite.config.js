@@ -16,6 +16,11 @@ export default {
   optimizeDeps: {
     exclude: ['motion-dom']
   },
+  assetsInclude: ['**/*.jsx'],
+  esbuild: {
+    loader: { '.js': 'jsx', '.ts': 'tsx' },
+    jsxInject: "import React from 'react'",
+  },
   resolve: {
     alias: {
       '@': resolve(dirname(path), 'client'),
