@@ -219,13 +219,18 @@ export default function Review() {
                           Select a conversation
                         </label>
                         <select
-                          id="transcript-select"
-                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md whitespace-normal"
+                          id="transcript-select" 
+                          className="mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                           style={{
-                            width: '100%',
+                            width: 'auto',
+                            minWidth: 'fit-content',
+                            maxWidth: 'none',
                             whiteSpace: 'normal',
                             textOverflow: 'clip',
-                            overflow: 'visible'
+                            overflow: 'visible',
+                            textWrap: 'normal',
+                            wordWrap: 'normal',
+                            wordBreak: 'normal'
                           }}
                           onChange={(e) => handleTranscriptSelect(transcripts.find(t => t.id.toString() === e.target.value))}
                           value={selectedTranscript?.id || ""}
