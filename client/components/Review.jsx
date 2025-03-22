@@ -190,7 +190,7 @@ export default function Review() {
       <main className="fixed top-16 left-0 right-0 bottom-0 overflow-auto md:overflow-hidden relative z-10">
         <div className="flex flex-col md:flex-row h-full bg-gray-50 relative">
           <AppSidebar />
-          <div className="w-full overflow-auto pl-16 md:pl-32"> {/* Removed md:w-2/5 to allow full width */}
+          <div className="w-full overflow-visible pl-16 md:pl-32 relative">
             <h2 className="text-xl font-semibold mb-4">Your Conversation History</h2>
             <section className="w-full p-4 review-section">
               {!user ? (
