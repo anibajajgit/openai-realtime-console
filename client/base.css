@@ -124,6 +124,7 @@ h2:first-of-type {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  max-width: 100%;
 }
 
 /* Apply same treatment as scenario card to ensure it's not hidden behind sidebar */
@@ -133,22 +134,23 @@ h2:first-of-type {
   width: 100%;
   margin-left: 0 !important;
   min-width: 0;
-  flex-shrink: 1;
+  flex: 1 1 auto;
 }
 
 .review-section select {
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: none !important;
+  width: 100%;
+  min-width: fit-content;
+  max-width: 100%;
   position: relative;
-  overflow: visible;
+  white-space: normal;
 }
 
-.review-section select option {
-  width: auto;
+select option {
   white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  width: auto;
+  min-width: max-content;
 }
 
 /* Ensure transcript content takes full width and scrolls properly */
