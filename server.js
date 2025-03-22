@@ -120,6 +120,8 @@ const fallbackPort = 3001;
 const hmrPort = process.env.HMR_PORT || 24678;
 const apiKey = process.env.OPENAI_API_KEY;
 
+console.log(`Starting server with ENV=${process.env.NODE_ENV}, PORT=${port}`);
+
 // Database routes
 app.get('/api/roles', async (req, res) => {
   try {
@@ -658,7 +660,7 @@ app.use("*", async (req, res, next) => {
 });
 
 const server = app.listen(port, '0.0.0.0', () => {
-  console.log(`Express server running on *:${port}`);
+  console.log(`Express server running on *:${port} (NODE_ENV: ${process.env.NODE_ENV || 'development'})`);
 }).on('error', (e) => {
   if (e.code === 'EADDRINUSE') {
     console.log(`Port ${port} is already in use, trying ${fallbackPort}`);
