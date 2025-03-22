@@ -205,16 +205,15 @@ select {
   background-size: 1.5em 1.5em;
   padding-right: 2.5rem;
   width: 100%;
-  max-width: 100%;
+  min-width: 300px;
 }
 
 select option {
-  width: 100%;
-  max-width: none;
+  width: auto;
+  min-width: 100%;
   white-space: normal !important;
   word-wrap: break-word !important;
   padding: 8px;
-  min-width: 300px;
   overflow: visible !important;
 }
 
