@@ -134,10 +134,19 @@ h2:first-of-type {
   max-width: 1200px; /* Prevent excessive stretching on large screens */
 }
 
-/* Ensure transcript content takes full width */
+/* Ensure transcript content takes full width and scrolls properly */
 .review-section .bg-white,
 .review-section .bg-gray-50 {
   width: 100%;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+/* Add smooth scrolling */
+.review-section {
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-bottom: 2rem;
 }
 
 /* Make cards responsive */
