@@ -206,6 +206,8 @@ select {
   padding-right: 2.5rem;
   width: 100%;
   max-width: 100%;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 select option {
@@ -214,6 +216,14 @@ select option {
   white-space: normal;
   word-wrap: break-word;
   padding: 8px;
+  text-overflow: clip;
+  overflow: visible;
+}
+
+.select-auto {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
 }
 
 /* Styles for the elegant background elements */
