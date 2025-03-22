@@ -139,18 +139,35 @@ h2:first-of-type {
 
 .review-section select {
   width: 100%;
-  min-width: fit-content;
-  max-width: 100%;
+  min-width: 0;
+  max-width: none;
   position: relative;
-  white-space: normal;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .review-section select {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 769px) {
+  .review-section select {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
 }
 
 select option {
   white-space: normal;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+  overflow: visible;
+  text-overflow: clip;
   width: auto;
   min-width: max-content;
+  padding: 8px;
 }
 
 /* Ensure transcript content takes full width and scrolls properly */
