@@ -161,14 +161,16 @@ select, option {
 .review-section .bg-white,
 .review-section .bg-gray-50 {
   width: 100%;
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
 }
 
 /* Add smooth scrolling */
 .review-section {
-  height: calc(100vh - 100px);
-  overflow-y: auto;
+  height: auto;
+  min-height: calc(100vh - 100px);
+  overflow: visible;
   padding-bottom: 2rem;
 }
 
