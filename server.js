@@ -694,12 +694,25 @@ const server = app.listen(port, '0.0.0.0', () => {
   }
 });
 
-// Handle WebSocket upgrade requests
+// Handle WebSocket upgrade requests - improved for production
 server.on('upgrade', (request, socket, head) => {
-  if (request.url?.startsWith('/api/')) {
+  console.log(`WebSocket upgrade request: ${request.url}`);
+  
+  // Accept all WebSocket connections (both API and OpenAI WebRTC)
+  if (request.url?.includes('websocket') || request.url?.startsWith('/api/') || request.url?.includes('openai.com')) {
+    console.log(`Accepting WebSocket upgrade for: ${request.url}`);
     socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
                 'Upgrade: websocket\r\n' +
                 'Connection: Upgrade\r\n\r\n');
     socket.pipe(socket);
+  } else {
+    console.log(`Rejecting non-WebSocket upgrade for: ${request.url}`);
+    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
   }
 });
+
+// Log important environment variables at startup for debugging
+console.log('Environment variables:');
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`PORT: ${process.env.PORT}`);
+console.log(`Server URL: ${process.env.NODE_ENV === 'production' ? 'https://'+process.env.REPL_SLUG+'.'+process.env.REPL_OWNER+'.repl.co' : `http://localhost:${port}`}`);

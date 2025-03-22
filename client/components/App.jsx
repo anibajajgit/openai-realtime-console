@@ -97,6 +97,9 @@ export default function App() {
       setSelectedRole(role);
       setSelectedScenario(scenario);
 
+      console.log("Starting session with role:", role.id, "and scenario:", scenario.id);
+      console.log("Environment:", process.env.NODE_ENV || 'development');
+      
       // Use the local variables instead of state since state updates are asynchronous
       const tokenResponse = await fetch(`/token?roleId=${role.id}&scenarioId=${scenario.id}`);
       const data = await tokenResponse.json();
