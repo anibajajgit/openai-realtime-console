@@ -657,15 +657,25 @@ app.use("*", async (req, res, next) => {
   }
 });
 
-const server = app.listen(port, () => {
+const server = app.listen(port, '0.0.0.0', () => {
   console.log(`Express server running on *:${port}`);
 }).on('error', (e) => {
   if (e.code === 'EADDRINUSE') {
     console.log(`Port ${port} is already in use, trying ${fallbackPort}`);
-    app.listen(fallbackPort, () => {
+    app.listen(fallbackPort, '0.0.0.0', () => {
       console.log(`Express server running on *:${fallbackPort}`);
     });
   } else {
     console.error('Server error:', e);
+  }
+});
+
+// Handle WebSocket upgrade requests
+server.on('upgrade', (request, socket, head) => {
+  if (request.url?.startsWith('/api/')) {
+    socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
+                'Upgrade: websocket\r\n' +
+                'Connection: Upgrade\r\n\r\n');
+    socket.pipe(socket);
   }
 });
