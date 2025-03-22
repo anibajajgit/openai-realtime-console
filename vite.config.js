@@ -26,8 +26,10 @@ export default defineConfig({
     }
   },
   server: {
-    hmr: process.env.NODE_ENV === 'production' ? false : {
-      host: '0.0.0.0'
+    hmr: {
+      clientPort: 443,
+      host: '0.0.0.0',
+      protocol: 'wss'
     },
     middlewareMode: true,
     watch: {

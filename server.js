@@ -22,8 +22,12 @@ if (process.env.NODE_ENV === 'production') {
   console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
   app.use(express.static(distClientDir));
   
-  // Make index.html the fallback for client-side routing
-  app.get('/', (req, res) => {
+  // Make index.html the fallback for ALL client-side routes
+  app.get('*', (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
     res.sendFile(path.join(distClientDir, 'index.html'));
   });
 }
