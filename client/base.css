@@ -333,7 +333,15 @@ select, select option {
 }
 
 /* Enhanced dropdown styling */
-select, .dropdown-content {
+select {
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.dropdown-content {
   font-size: 1rem;
   line-height: 1.5;
 }
