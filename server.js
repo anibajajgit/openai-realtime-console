@@ -15,19 +15,24 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// IMPORTANT: Handle production mode static file serving FIRST
-// This ensures static files are served before any API routes
+// IMPORTANT: Handle API routes FIRST
+// This ensures API routes are handled before serving static files
+app.use('/api', (req, res, next) => {
+  console.log(`API request: ${req.method} ${req.url}`);
+  next();
+});
+
+// Then handle production mode static file serving
 if (process.env.NODE_ENV === 'production') {
   const distClientDir = path.join(__dirname, 'dist/client');
   console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
+  
+  // Serve static files
   app.use(express.static(distClientDir));
   
-  // Make index.html the fallback for ALL client-side routes
-  app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-      return next();
-    }
+  // Make index.html the fallback for client-side routes, but AFTER all API routes
+  app.get('*', (req, res) => {
+    console.log(`Fallback route: ${req.url} -> serving index.html`);
     res.sendFile(path.join(distClientDir, 'index.html'));
   });
 }
@@ -697,4 +702,8 @@ const server = app.listen(port, '0.0.0.0', () => {
 console.log('Environment variables:');
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
 console.log(`PORT: ${process.env.PORT}`);
+console.log(`__dirname: ${__dirname}`);
+console.log(`Dist client dir: ${path.join(__dirname, 'dist/client')}`);
+console.log(`Dist client exists: ${fs.existsSync(path.join(__dirname, 'dist/client'))}`);
+console.log(`Index.html exists: ${fs.existsSync(path.join(__dirname, 'dist/client/index.html'))}`);
 console.log(`Server URL: ${process.env.NODE_ENV === 'production' ? 'https://'+process.env.REPL_SLUG+'.'+process.env.REPL_OWNER+'.repl.co' : `http://localhost:${port}`}`);

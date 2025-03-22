@@ -7,10 +7,11 @@ channel = "stable-24_05"
 [deployment]
 run = ["sh", "-c", "NODE_ENV=production PORT=3000 node server.js"]
 deploymentTarget = "cloudrun"
-build = ["sh", "-c", "npm run build"]
+build = ["sh", "-c", "npm run build && mkdir -p dist/client && cp -r dist/client/* dist/client/"]
 
 [[ports]]
 localPort = 3000
+externalPort = 80
 externalPort = 80
 
 # Disable HMR in production to avoid WebSocket connection issues
