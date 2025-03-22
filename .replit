@@ -5,17 +5,9 @@ run = "npm run dev"
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "NODE_ENV=production PORT=80 node server.js"]
+run = ["sh", "-c", "NODE_ENV=production PORT=3000 node server.js"]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
-
-[[ports]]
-localPort = 3000
-externalPort = 3000
-
-[[ports]]
-localPort = 3001
-externalPort = 3001
 
 [[ports]]
 localPort = 3000

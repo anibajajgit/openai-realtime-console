@@ -684,32 +684,10 @@ app.use("*", async (req, res, next) => {
 const server = app.listen(port, '0.0.0.0', () => {
   console.log(`Express server running on *:${port} (NODE_ENV: ${process.env.NODE_ENV || 'development'})`);
 }).on('error', (e) => {
-  if (e.code === 'EADDRINUSE') {
-    console.log(`Port ${port} is already in use, trying ${fallbackPort}`);
-    app.listen(fallbackPort, '0.0.0.0', () => {
-      console.log(`Express server running on *:${fallbackPort}`);
-    });
-  } else {
-    console.error('Server error:', e);
-  }
+  console.error('Server error:', e);
 });
 
-// Handle WebSocket upgrade requests - improved for production
-server.on('upgrade', (request, socket, head) => {
-  console.log(`WebSocket upgrade request: ${request.url}`);
-  
-  // Accept all WebSocket connections (both API and OpenAI WebRTC)
-  if (request.url?.includes('websocket') || request.url?.startsWith('/api/') || request.url?.includes('openai.com')) {
-    console.log(`Accepting WebSocket upgrade for: ${request.url}`);
-    socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
-                'Upgrade: websocket\r\n' +
-                'Connection: Upgrade\r\n\r\n');
-    socket.pipe(socket);
-  } else {
-    console.log(`Rejecting non-WebSocket upgrade for: ${request.url}`);
-    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
-  }
-});
+// Let Express and HTTP server handle WebSocket upgrades automatically
 
 // Log important environment variables at startup for debugging
 console.log('Environment variables:');
