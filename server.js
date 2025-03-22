@@ -20,15 +20,39 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'production') {
   const distClientDir = path.join(__dirname, 'dist/client');
   console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
+  
+  // Check if directory exists
+  if (!fs.existsSync(distClientDir)) {
+    console.error(`Static files directory ${distClientDir} does not exist! Creating it...`);
+    fs.mkdirSync(distClientDir, { recursive: true });
+  } else {
+    console.log(`Static files directory exists at ${distClientDir}`);
+    // List files in the directory for debugging
+    const files = fs.readdirSync(distClientDir);
+    console.log(`Files in ${distClientDir}:`, files);
+  }
+  
+  // Serve static files
   app.use(express.static(distClientDir));
   
-  // Make index.html the fallback for ALL client-side routes
+  // Make index.html the fallback for client-side routes
   app.get('*', (req, res, next) => {
     // Skip API routes
     if (req.path.startsWith('/api/')) {
       return next();
     }
-    res.sendFile(path.join(distClientDir, 'index.html'));
+    
+    const indexPath = path.join(distClientDir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      console.log(`Serving index.html for route: ${req.path}`);
+      res.sendFile(indexPath);
+    } else {
+      console.error(`index.html not found at ${indexPath}`);
+      res.status(404).send(`File not found: index.html. 
+        Build directory: ${distClientDir}
+        Current directory: ${__dirname}
+        Files available: ${fs.existsSync(distClientDir) ? fs.readdirSync(distClientDir).join(', ') : 'Directory not found'}`);
+    }
   });
 }
 
