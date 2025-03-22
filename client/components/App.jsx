@@ -10,7 +10,6 @@ import "../base.css";
 import SessionControls from "./SessionControls";
 import { AuthContext, AuthProvider } from "../utils/AuthContext"; // Assuming AuthContext is in ../utils
 import { BorderTrail } from './BorderTrail';
-import AudioRecorder from "../utils/AudioRecorder";
 
 export default function App() {
   // Get user from context if available, otherwise null
@@ -106,9 +105,7 @@ export default function App() {
       const pc = new RTCPeerConnection();
       audioElement.current = document.createElement("audio");
       audioElement.current.autoplay = true;
-      pc.ontrack = (e) => {
-        audioElement.current.srcObject = e.streams[0];
-      };
+      pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
 
       const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
       pc.addTrack(ms.getTracks()[0]);
