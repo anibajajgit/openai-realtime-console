@@ -204,6 +204,16 @@ select {
   background-repeat: no-repeat;
   background-size: 1.5em 1.5em;
   padding-right: 2.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+}
+
+select option {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 /* Styles for the elegant background elements */
