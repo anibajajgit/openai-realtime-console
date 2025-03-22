@@ -206,17 +206,15 @@ select {
   padding-right: 2.5rem;
   width: 100%;
   max-width: 100%;
-  text-overflow: ellipsis;
 }
 
 select option {
   width: 100%;
-  max-width: 100%;
+  max-width: none;
   white-space: normal !important;
   word-wrap: break-word !important;
   padding: 8px;
   min-width: 300px;
-  text-overflow: ellipsis;
   overflow: visible !important;
 }
 
