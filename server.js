@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// IMPORTANT: Handle API routes FIRST
+// IMPORTANT: Handle API routes FIRST 
 // This ensures API routes are handled before serving static files
 app.use('/api', (req, res, next) => {
   console.log(`API request: ${req.method} ${req.url}`);
@@ -27,13 +27,26 @@ if (process.env.NODE_ENV === 'production') {
   const distClientDir = path.join(__dirname, 'dist/client');
   console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
   
+  // Check if directory exists
+  if (!fs.existsSync(distClientDir)) {
+    console.error(`Error: Static files directory ${distClientDir} does not exist!`);
+    fs.mkdirSync(distClientDir, { recursive: true });
+    console.log(`Created ${distClientDir} directory`);
+  }
+  
   // Serve static files
   app.use(express.static(distClientDir));
   
   // Make index.html the fallback for client-side routes, but AFTER all API routes
   app.get('*', (req, res) => {
-    console.log(`Fallback route: ${req.url} -> serving index.html`);
-    res.sendFile(path.join(distClientDir, 'index.html'));
+    const indexPath = path.join(distClientDir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      console.log(`Fallback route: ${req.url} -> serving index.html`);
+      res.sendFile(indexPath);
+    } else {
+      console.error(`Error: index.html not found at ${indexPath}`);
+      res.status(500).send('Error: index.html not found');
+    }
   });
 }
 
