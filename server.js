@@ -16,9 +16,15 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// Serve attached_assets directory
+// Serve static files
 app.use('/assets', express.static(path.join(__dirname, 'client/assets')));
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
+app.use(express.static(path.join(__dirname, 'client')));
+
+// Handle favicon.ico request
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/assets/favicon.ico'));
+});
 
 // Create client/assets directory if it doesn't exist
 if (!fs.existsSync(path.join(__dirname, 'client/assets'))) {
@@ -672,10 +678,13 @@ const server = app.listen(port, '0.0.0.0', () => {
 
 // Handle WebSocket upgrade requests
 server.on('upgrade', (request, socket, head) => {
-  if (request.url?.startsWith('/api/')) {
+  const upgradeHeader = request.headers['upgrade'];
+  if (upgradeHeader && upgradeHeader.toLowerCase() === 'websocket') {
     socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
                 'Upgrade: websocket\r\n' +
                 'Connection: Upgrade\r\n\r\n');
     socket.pipe(socket);
+  } else {
+    socket.end('HTTP/1.1 426 Upgrade Required\r\n\r\n');
   }
 });
