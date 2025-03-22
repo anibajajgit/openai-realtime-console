@@ -15,6 +15,19 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
+// IMPORTANT: Handle production mode static file serving FIRST
+// This ensures static files are served before any API routes
+if (process.env.NODE_ENV === 'production') {
+  const distClientDir = path.join(__dirname, 'dist/client');
+  console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
+  app.use(express.static(distClientDir));
+  
+  // Make index.html the fallback for client-side routing
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(distClientDir, 'index.html'));
+  });
+}
+
 // Serve attached_assets directory
 app.use('/assets', express.static(path.join(__dirname, 'client/assets')));
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
@@ -644,6 +657,12 @@ app.use("*", async (req, res, next) => {
   const url = req.originalUrl;
 
   try {
+    // For production, we'll use the static HTML file instead of Vite SSR
+    if (process.env.NODE_ENV === 'production') {
+      return res.sendFile(path.join(__dirname, 'dist/client', 'index.html'));
+    }
+    
+    // For development, use Vite's SSR
     const template = await vite.transformIndexHtml(
       url,
       fs.readFileSync("./client/index.html", "utf-8"),
@@ -659,13 +678,7 @@ app.use("*", async (req, res, next) => {
 });
 
 
-//Production build serving
-if (process.env.NODE_ENV === 'production') {
-  const buildDir = path.join(__dirname, 'dist/client');
-  app.use(express.static(buildDir));
-  app.use('/', express.static(buildDir));
-  console.log(`Serving production build from: ${buildDir}`);
-}
+// Production build serving is now handled at the top of the file
 
 
 const server = app.listen(port, '0.0.0.0', () => {

@@ -2,13 +2,16 @@
 import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from 'vite';
 
 const path = fileURLToPath(import.meta.url);
 
-export default {
+export default defineConfig({
   root: join(dirname(path), "client"),
   plugins: [react()],
   build: {
+    outDir: join(dirname(path), "dist/client"),
+    emptyOutDir: true,
     rollupOptions: {
       external: ['motion-dom']
     }
@@ -23,11 +26,13 @@ export default {
     }
   },
   server: {
-    hmr: false,
+    hmr: process.env.NODE_ENV === 'production' ? false : {
+      host: '0.0.0.0'
+    },
     middlewareMode: true,
     watch: {
       usePolling: false,
       ignored: ['**/node_modules/**', '**/.git/**']
     }
   }
-};
+});
