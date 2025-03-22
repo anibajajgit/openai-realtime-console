@@ -1,0 +1,45 @@
+Look for fixed widths or max-widths on the dropdown or parent containers
+
+In your CSS or component styling, see if the dropdown or its parent element has a hard-coded width: xxx px or a max-width that is too small.
+
+Sometimes a parent container (e.g. a flex container) has a rule that restricts child elements more than intended.
+
+Check for text-overflow: ellipsis; usage
+
+This property usually works together with white-space: nowrap; overflow: hidden;.
+
+If these are set on the dropdown or its container, they can cause the text to get truncated, even if space appears available.
+
+If you do need ellipsis in narrow layouts, consider putting them behind a media query that only applies at smaller widths, or remove them if you want the full text shown at all widths.
+
+Examine any flexbox or grid layouts
+
+If your page is using display: flex; or display: grid;, check the container rules. For instance, a flex child can shrink if flex-shrink: 1; is set. This can cause unexpected truncation if the container’s overall width is constrained.
+
+You can try adding flex-shrink: 0; or min-width: auto; (depending on your layout) to ensure the dropdown has enough room.
+
+Review your media queries
+
+If you have breakpoint-specific rules (e.g. @media (min-width: 768px) { … }), check for changes in widths, paddings, or text-overflow behavior that might be causing the truncation only at larger widths.
+
+Allow auto or full-width for the dropdown
+
+Often, the simplest fix is to make the dropdown auto-size to its content. For instance:
+
+css
+Copy
+Edit
+.dropdown-selector {
+  width: auto;
+  max-width: 100%; /* or remove max-width altogether if it’s not needed */
+  white-space: nowrap; /* remove this if you want it to wrap instead of truncate */
+  overflow: visible;   /* remove or adjust if you don’t want ellipsis */
+  text-overflow: clip; /* or remove text-overflow if not needed */
+}
+If you need a fixed width for design reasons, consider letting the dropdown open “over” the rest of the page or removing the ellipsis so it can show the full text.
+
+Check for conflicting container styles
+
+If the dropdown is nested in a parent that has overflow: hidden; or a forced width, that can also cause issues.
+
+Sometimes you need to set position: absolute; on the dropdown menu to let it expand outside of a parent’s bounding bo
