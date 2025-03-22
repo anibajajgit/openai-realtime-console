@@ -23,9 +23,9 @@ if (process.env.NODE_ENV === 'production') {
     path.join(__dirname, 'dist/client'),
     path.join(process.cwd(), 'dist/client')
   ];
-  
+
   let distClientDir = null;
-  
+
   // Find the first path that exists and has files
   for (const testPath of possiblePaths) {
     console.log(`Checking for static files at: ${testPath}`);
@@ -38,37 +38,33 @@ if (process.env.NODE_ENV === 'production') {
       }
     }
   }
-  
+
   if (!distClientDir) {
-    console.error(`Could not find static files directory! Creating fallback location...`);
-    distClientDir = path.join(__dirname, 'dist/client');
-    fs.mkdirSync(distClientDir, { recursive: true });
+    console.error(`Could not find static files directory!  Exiting.`);
+    process.exit(1); // Exit with an error code
   }
-  
+
   console.log(`NODE_ENV=${process.env.NODE_ENV} - Serving static files from: ${distClientDir}`);
   const files = fs.readdirSync(distClientDir);
   console.log(`Files in ${distClientDir}:`, files);
-  
+
   // Serve static files
   app.use(express.static(distClientDir));
-  
+
   // Make index.html the fallback for client-side routes
   app.get('*', (req, res, next) => {
     // Skip API routes
     if (req.path.startsWith('/api/')) {
       return next();
     }
-    
+
     const indexPath = path.join(distClientDir, 'index.html');
     if (fs.existsSync(indexPath)) {
       console.log(`Serving index.html for route: ${req.path}`);
       res.sendFile(indexPath);
     } else {
       console.error(`index.html not found at ${indexPath}`);
-      res.status(404).send(`File not found: index.html. 
-        Build directory: ${distClientDir}
-        Current directory: ${__dirname}
-        Files available: ${fs.existsSync(distClientDir) ? fs.readdirSync(distClientDir).join(', ') : 'Directory not found'}`);
+      res.status(500).send(`index.html not found in build directory: ${distClientDir}`); //Improved error message
     }
   });
 }
@@ -706,7 +702,7 @@ app.use("*", async (req, res, next) => {
     if (process.env.NODE_ENV === 'production') {
       return res.sendFile(path.join(__dirname, 'dist/client', 'index.html'));
     }
-    
+
     // For development, use Vite's SSR
     const template = await vite.transformIndexHtml(
       url,

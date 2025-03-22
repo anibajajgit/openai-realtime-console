@@ -5,15 +5,13 @@ run = "npm run dev"
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "NODE_ENV=production node server.js"]
+run = ["sh", "-c", "node server.js"]
 deploymentTarget = "cloudrun"
-build = ["sh", "-c", "rm -rf dist && mkdir -p dist/client dist/server && npm run build"]
+build = ["sh", "-c", "npm run build"]
 
 [[ports]]
 localPort = 3000
 externalPort = 80
-
-# Disable HMR in production to avoid WebSocket connection issues
 
 [workflows]
 runButton = "Run"
@@ -25,3 +23,12 @@ author = 39135222
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Build"
+author = 39135222
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
