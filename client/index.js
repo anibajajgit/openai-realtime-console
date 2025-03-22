@@ -1,7 +1,7 @@
 
-import create from "./create.jsx";
+import App from "./components/App";
 
 export default {
-  context: import("./context.js"),
-  create,
+  context: import("./utils/AuthContext"),
+  create: App
 };
