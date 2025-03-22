@@ -1,15 +1,25 @@
 
-// Custom transform to handle JSX files
-export function enforceJSXAsJS() {
+// Custom Vite plugin for handling JSX files
+export function jsxAsJsPlugin() {
   return {
-    name: 'enforce-jsx-as-js',
+    name: 'vite-plugin-jsx-as-js',
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        if (req.url && (req.url.endsWith('.jsx') || req.url.includes('.jsx'))) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        }
-        next();
-      });
+      return () => {
+        server.middlewares.use((req, res, next) => {
+          if (req.url && (req.url.endsWith('.jsx') || req.url.includes('.jsx'))) {
+            res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+          }
+          next();
+        });
+      };
+    },
+    transform(code, id) {
+      if (id.endsWith('.jsx')) {
+        return {
+          code,
+          map: null
+        };
+      }
     }
   };
 }

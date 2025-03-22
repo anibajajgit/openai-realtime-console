@@ -577,16 +577,16 @@ const vite = await createViteServer({
   }
 });
 
+// Import the JSX middleware
+import { jsxMiddleware } from './client/middleware/jsx-middleware.js';
+
+// Apply the JSX middleware before any other middleware
+app.use(jsxMiddleware);
+
 // Allow CORS for API requests
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
-  
-  // Set proper MIME types for JSX files
-  if (req.url.endsWith('.jsx') || req.url.includes('.jsx')) {
-    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-  }
-  
   next();
 });
 
