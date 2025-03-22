@@ -214,14 +214,14 @@ export default function Review() {
                     <p>You don't have any saved conversations yet.</p>
                   ) : (
                     <div className="w-full gap-4">
-                      <div className="mb-4 w-full">
+                      <div className="mb-4 w-full relative">
                         <label htmlFor="transcript-select" className="block text-sm font-medium text-gray-700 mb-2">
                           Select a conversation
                         </label>
                         <select
                           id="transcript-select"
-                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md select-auto"
-                          style={{textOverflow: 'unset', whiteSpace: 'normal'}}
+                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                          style={{width: 'auto', minWidth: '100%', maxWidth: 'none'}}
                           onChange={(e) => handleTranscriptSelect(transcripts.find(t => t.id.toString() === e.target.value))}
                           value={selectedTranscript?.id || ""}
                         >

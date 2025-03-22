@@ -204,19 +204,17 @@ select {
   background-repeat: no-repeat;
   background-size: 1.5em 1.5em;
   padding-right: 2.5rem;
-  width: 100%;
-  min-width: fit-content;
-  max-width: none;
 }
 
-select option {
-  width: 100%;
-  min-width: max-content;
+select, select option {
+  width: auto !important;
+  min-width: 100% !important;
+  max-width: none !important;
   white-space: normal !important;
   word-wrap: break-word !important;
   padding: 8px;
-  overflow: visible !important;
   text-overflow: clip !important;
+  overflow: visible !important;
 }
 
 .select-auto option {
