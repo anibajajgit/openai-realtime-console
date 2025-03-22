@@ -678,13 +678,22 @@ const server = app.listen(port, '0.0.0.0', () => {
 
 // Handle WebSocket upgrade requests
 server.on('upgrade', (request, socket, head) => {
-  const upgradeHeader = request.headers['upgrade'];
-  if (upgradeHeader && upgradeHeader.toLowerCase() === 'websocket') {
+  // For favicon.ico and other static requests, don't try to upgrade
+  if (request.url === '/favicon.ico' || request.url.includes('.ico') || 
+      !request.headers['upgrade'] || request.headers['upgrade'].toLowerCase() !== 'websocket') {
+    // Return a normal HTTP response for non-websocket requests instead of 426
+    socket.write('HTTP/1.1 200 OK\r\n' +
+                'Content-Type: text/plain\r\n' +
+                'Content-Length: 0\r\n\r\n');
+    socket.end();
+    return;
+  }
+  
+  // Only upgrade actual WebSocket connections
+  if (request.headers['upgrade'] && request.headers['upgrade'].toLowerCase() === 'websocket') {
     socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
                 'Upgrade: websocket\r\n' +
                 'Connection: Upgrade\r\n\r\n');
     socket.pipe(socket);
-  } else {
-    socket.end('HTTP/1.1 426 Upgrade Required\r\n\r\n');
   }
 });
