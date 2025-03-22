@@ -1,3 +1,4 @@
+
 import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
@@ -22,6 +23,11 @@ export default {
     }
   },
   server: {
-    hmr: false // Disable HMR completely to prevent WebSocket errors
+    hmr: false,
+    middlewareMode: true,
+    watch: {
+      usePolling: false,
+      ignored: ['**/node_modules/**', '**/.git/**']
+    }
   }
 };
